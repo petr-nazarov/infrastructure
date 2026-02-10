@@ -1,0 +1,85 @@
+---
+- name: Install hyprland env
+  become_user: aur_builder
+  become: true
+  kewlfft.aur.aur:
+    name: "{{ hyprland_packages }}"
+    use: yay
+- name: Reload user systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+- name: Reload system systemd daemon
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+- name: Gather service facts
+  become: true
+  ansible.builtin.service_facts:
+- name: Check if iwd is active
+  become: true
+  ansible.builtin.systemd:
+    name: iwd
+  register: iwd_status
+- name: Enable iwd
+  become: true
+  ansible.builtin.systemd:
+    name: iwd
+    enabled: true
+    state: started
+  when: iwd_status.status.ActiveState != "active"
+- name: Disable NetworkManager
+  become: true
+  ansible.builtin.systemd:
+    name: NetworkManager
+    enabled: false
+    state: stopped
+  when:
+    - iwd_status.status.ActiveState == "active"
+    - "'NetworkManager.service' in ansible_facts.services"
+- name: Enable  system wide related services
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - bluetooth.service
+    - "syncthing@{{ ansible_facts.user_id }}.service"
+  when: item in ansible_facts.services
+- name: Ensure the Wayland sessions directory exists
+  ansible.builtin.file:
+    path: /usr/share/wayland-sessions
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+- name: Create UWSM Hyprland desktop entry for SDDM
+  become: true
+  ansible.builtin.template:
+    src: hyprland-uwsm.desktop
+    dest: /usr/share/wayland-sessions/hyprland-uwsm.desktop
+    owner: root
+    group: root
+    mode: "0644"
+- name: Copy catppuccin theme for sddm
+  become: true
+  ansible.builtin.copy:
+    src: "{{ role_path }}/templates/catppuccin-macchiato-blue"
+    dest: "/usr/share/sddm/themes/"
+    owner: root
+    group: root
+    mode: "0755" # Directories need execute permissions to be accessible
+- name: Create sddm conf to use the new theme
+  become: true
+  ansible.builtin.template:
+    src: sddm.conf
+    dest: /etc/sddm.conf
+    owner: root
+    group: root
+    mode: "0644"
+- name: Enable SDDM service
+  become: true
+  ansible.builtin.systemd:
+    name: sddm
+    enabled: true

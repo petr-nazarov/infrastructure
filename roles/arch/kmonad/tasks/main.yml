@@ -1,0 +1,44 @@
+---
+- name: Ensure input group exists
+  become: true
+  ansible.builtin.group:
+    name: input
+    state: present
+- name: Add user to input group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_facts['user_id'] }}"
+    groups: input
+    append: true
+- name: Create udev rules for uinput and input devices
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/99-uinput.rules
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      KERNEL=="uinput", MODE="0660", GROUP="input", OPTIONS+="static_node=uinput"
+      KERNEL=="event*", NAME="input/%k", MODE="0660", GROUP="input"
+- name: Ensure uinput kernel module loads at boot
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/uinput.conf
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      uinput
+- name: Load uinput kernel module now
+  become: true
+  community.general.modprobe:
+    name: uinput
+    state: present
+- name: Reload udev rules
+  become: true
+  ansible.builtin.command: udevadm control --reload-rules
+  changed_when: false
+- name: Trigger udev
+  become: true
+  ansible.builtin.command: udevadm trigger
+  changed_when: false

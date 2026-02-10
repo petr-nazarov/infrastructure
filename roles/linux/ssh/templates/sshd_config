@@ -1,0 +1,20 @@
+# Include drop-in configurations
+Include /etc/ssh/sshd_config.d/*.conf
+PubkeyAuthentication yes
+
+# The default is to check both .ssh/authorized_keys and .ssh/authorized_keys2
+# but this is overridden so installations will only check .ssh/authorized_keys
+AuthorizedKeysFile	.ssh/authorized_keys
+# To disable tunneled clear text passwords, change to no here!
+PasswordAuthentication no 
+# override default of no subsystems
+Subsystem	sftp	/usr/lib/ssh/sftp-server
+# Allow more concurrent "unauthenticated" connections during the handshake phase
+MaxStartups 10:30:60
+
+# Allow more multiplexed sessions over a single TCP connection
+MaxSessions 20
+
+# Keep the connection alive if the network is flaky
+ClientAliveInterval 30
+ClientAliveCountMax 3

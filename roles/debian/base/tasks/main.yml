@@ -1,0 +1,21 @@
+---
+- name: Load shared variables
+  ansible.builtin.include_vars: "{{ playbook_dir }}/vars/terminal_packages.yml"
+- name: Ensure user exists and is in sudo group
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: sudo
+    append: true
+    state: present
+  become: true
+- name: Install python3-requests
+  become: true
+  ansible.builtin.apt:
+    name: python3-requests
+    state: present
+- name: Install Debian term base packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ base_packages }}"
+    state: present
+    update_cache: true

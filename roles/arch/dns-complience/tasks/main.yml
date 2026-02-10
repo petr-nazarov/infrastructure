@@ -1,0 +1,62 @@
+---
+- name: Configure Networkd (Ethernet & Wifi)
+  become: true
+  ansible.builtin.copy:
+    dest: "/etc/systemd/network/{{ item.name }}"
+    content: |
+      [Match]
+      Name={{ item.match }}
+
+      [Network]
+      DHCP=yes
+      IPv6AcceptRA=yes
+      MulticastDNS=yes
+
+      [DHCPv4]
+      UseDNS=yes
+
+      [DHCPv6]
+      UseDNS=no
+
+      [IPv6AcceptRA]
+      UseDNS=no
+  loop:
+    - { name: "20-ethernet.network", match: "en*" }
+    - { name: "20-wlan.network", match: "wl*" }
+- name: Stop network services for state reset
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+  loop:
+    - systemd-resolved
+    - systemd-networkd
+- name: Purge leases and fix directory ownership
+  become: true
+  ansible.builtin.shell: |
+    rm -rf /run/systemd/netif/leases/*
+    rm -rf /var/lib/systemd/network/*
+    # This ensures the systemd-network user can actually function
+    chown -R systemd-network:systemd-network /run/systemd/netif/
+  args:
+    executable: /bin/bash
+- name: Force symlink /etc/resolv.conf to systemd stub
+  become: true
+  ansible.builtin.file:
+    src: /run/systemd/resolve/stub-resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+    force: true
+- name: Start and Enable Services
+  become: true
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - systemd-networkd
+    - systemd-resolved
+- name: Flush DNS caches
+  become: true
+  ansible.builtin.command: resolvectl flush-caches
+  changed_when: false

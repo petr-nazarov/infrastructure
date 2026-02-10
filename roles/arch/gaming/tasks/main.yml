@@ -1,0 +1,62 @@
+---
+- name: Enable multilib repository
+  become: true
+  ansible.builtin.replace:
+    path: /etc/pacman.conf
+    regexp: "^#\\[multilib\\]\\n#Include = /etc/pacman.d/mirrorlist"
+    replace: "[multilib]\nInclude = /etc/pacman.d/mirrorlist"
+  register: multilib_enabled
+- name: Update package cache (if multilib was just enabled)
+  become: true
+  community.general.pacman:
+    update_cache: true
+  when: multilib_enabled.changed
+- name: Install AMD Graphics Stack (Mesa + Vulkan)
+  become: true
+  community.general.pacman:
+    update_cache: "{{ multilib_enabled.changed }}"
+    name:
+      - mesa
+      - lib32-mesa
+      - vulkan-radeon
+      - lib32-vulkan-radeon
+      - libva-mesa-driver
+      - lib32-libva-mesa-driver
+    state: present
+- name: Install Steam and Essential Tools
+  become: true
+  community.general.pacman:
+    name:
+      - steam
+      - xpadneo-dkms
+      - flatpak
+      - discord
+      - lutris
+      - wine-stable
+      - gamemode
+      - lib32-gamemode
+      - mangohud
+      - lib32-mangohud
+    state: present
+- name: Install Linux-Zen Kernel for better responsiveness
+  become: true
+  community.general.pacman:
+    name:
+      - linux-zen
+      - linux-zen-headers
+    state: present
+- name: Set vm.max_map_count for Steam/Proton
+  become: true
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: "2147483642"
+    state: present
+    sysctl_file: /etc/sysctl.d/80-gaming.conf
+
+# - name: Install sunshine to stream games
+# become: true
+# become_user: aur_builder
+# kewlfft.aur.aur:
+# name:
+# - sunshine
+# use: yay

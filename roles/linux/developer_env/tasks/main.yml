@@ -1,0 +1,35 @@
+---
+- name: Install starship
+  become: true
+  ansible.builtin.shell: curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+  args:
+    creates: "/usr/local/bin/starship"
+- name: Install mise
+  become: true
+  ansible.builtin.shell: curl https://mise.run | MISE_INSTALL_PATH=$HOME/.local/bin/mise sh
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}./local/bin/mise"
+- name: Set zsh as default shell
+  become: true
+  ansible.builtin.user:
+    name: "{{  ansible_facts['user_id'] }}"
+    shell: "/usr/bin/zsh"
+- name: Install and set default mise dependencies
+  ansible.builtin.shell: |
+    source ~/.zshrc
+    mise install
+  args:
+    executable: /bin/zsh
+- name: Pull and apply tmux config
+  ansible.builtin.shell: |
+    source ~/.zshrc
+    mkdir -p ~/.tmux/plugins/
+    git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+  args:
+    executable: /bin/zsh
+    creates: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tpm"
+- name: Fix for tmuxinator
+  ansible.builtin.shell: |
+    gem install thor -v '~> 1.4.0'
+  args:
+    executable: /bin/zsh

@@ -1,0 +1,11 @@
+---
+- name: Copy sshd configuration
+  become: true
+  ansible.builtin.template:
+    src: sshd_config
+    dest: /etc/ssh/sshd_config
+- name: Restart SSH service
+  become: true
+  ansible.builtin.service:
+    name: sshd
+    state: restarted

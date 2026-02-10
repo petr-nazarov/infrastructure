@@ -1,0 +1,44 @@
+---
+hyprland_packages:
+  # deps
+  - xdg-desktop-portal-hyprland
+  - xdg-terminal-exec
+  - iniparser
+  - libsForQt5.plasma-nm
+  - qt5-wayland
+  - qt6-wayland
+  - libnewt
+  # for sddm theming
+  - qt6-svg
+  - qt6-declarative
+  - qt5-quickcontrols2
+  # utils
+  - kmonad
+  - tofi
+  - cliphist
+  - grimblast
+  - libnewt
+  # sound
+  - sof-firmware
+  - pipewire
+  - pipewire-pulse
+  - alsa-utils
+  - wireplumber
+  - pavucontrol
+  - wiremix
+  # system
+  - brightnessctl
+  - bluetui
+  - impala
+  - calcurse
+  # hyprland
+  - swww
+  - uwsm
+  - sddm
+  - hyprland
+  - hypridle
+  - hyprlock
+  - hyprpolkitagent
+  - waybar
+  - swaync
+  - nwg-dock-hyprland

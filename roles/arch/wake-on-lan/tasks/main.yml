@@ -1,0 +1,18 @@
+---
+- name: Install ethtool
+  become: true
+  community.general.pacman:
+    name: ethtool
+    state: present
+- name: Create WoL systemd service
+  become: true
+  ansible.builtin.template:
+    src: wol.service.j2
+    dest: /etc/systemd/system/wol@.service
+    mode: "0644"
+- name: Enable and start WoL for the interface
+  become: true
+  ansible.builtin.systemd:
+    name: "wol@enp8s0"
+    enabled: true
+    state: started

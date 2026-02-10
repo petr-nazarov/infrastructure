@@ -1,0 +1,23 @@
+---
+gui_apps:
+  # Personal
+  - ghostty
+  - alacritty
+  - zen-browser-bin
+  - opera
+  - obsidian
+  - okular
+  - nemo
+  - qbittorrent
+  - gparted
+  - localsend-bin
+  - nekoray-bin
+  - ark # unzip
+  # Media playing
+  - qimgv
+  - mpv
+  - libmpeg2
+  # Professional
+  - anydesk
+  - studio-3t
+  - dbeaver-ee

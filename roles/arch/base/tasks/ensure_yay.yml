@@ -1,0 +1,55 @@
+---
+- name: Ensure base-devel and git are installed
+  become: true
+  community.general.pacman: # FQCN: Action 'pacman' is now FQCN
+    name:
+      - git
+      - base-devel
+    update_cache: true
+    state: present
+
+- name: Create the `aur_builder` user
+  become: true
+  ansible.builtin.user:
+    name: aur_builder
+    create_home: true
+    group: wheel
+
+- name: Allow the `aur_builder` user to run `sudo pacman` without a password
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/11-install-aur_builder
+    line: "aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman"
+    create: true
+    mode: "0644" # octal-values: Quoted strings prevent implicit octal errors
+    validate: "visudo -cf %s"
+
+- name: Clone yay-bin AUR repo
+  become: true
+  become_user: aur_builder
+  ansible.builtin.git:
+    repo: https://aur.archlinux.org/yay-bin.git
+    dest: /home/aur_builder/yay-bin
+    version: master # latest[git]: Explicit version makes the run predictable
+    update: false # yaml[truthy]: Changed 'no' to 'false'
+
+- name: Build yay package
+  become: true
+  become_user: aur_builder
+  ansible.builtin.command: makepkg -s --noconfirm # command-instead-of-shell: No pipes/redirects needed
+  args:
+    chdir: /home/aur_builder/yay-bin
+    creates: /home/aur_builder/yay-bin/yay-bin-*.pkg.tar.zst
+
+- name: Find built yay package
+  become: true
+  ansible.builtin.find:
+    paths: /home/aur_builder/yay-bin
+    patterns: "yay-bin-*.pkg.tar.zst"
+  register: arch_base_yay_pkg # var-naming: Added role prefix 'arch_base_'
+
+- name: Install yay package
+  become: true
+  community.general.pacman: # FQCN: Action 'pacman' is now FQCN
+    name: "{{ arch_base_yay_pkg.files[0].path }}"
+    state: present

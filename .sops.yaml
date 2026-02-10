@@ -1,0 +1,4 @@
+---
+creation_rules:
+  - path_regex: inventory/.*\.yml$
+    age: "age1dkl6vjdhx22jdwygztkcxkzyss0ajnzfp4k7ryljc0g6egqsuc0s9guqg7" # Replace with the public key from keys.txt

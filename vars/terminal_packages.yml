@@ -1,0 +1,48 @@
+---
+# # Required on any machine, server or
+base_packages:
+  - git
+  - rsync
+#### Specific to arch
+arch_specific_packages:
+  - github-cli
+  - bind
+  - poppler # yazi pdf preview
+  - ueberzugpp # yazi image preview
+  # Fonts
+  - ttf-fira-code
+  - ttf-nerd-fonts-symbols
+  - noto-fonts
+  # AI
+  - fabric-ai
+  - opencode
+#### Specific to debian
+debian_specific_packages:
+  - gh
+  - poppler-utils # yazi pdf preview
+common_packages:
+  - vi
+  - vim
+  - fzf
+  - curl
+  - wget
+  - zsh
+  - stow
+  - rclone
+  - syncthing
+  - ncdu
+  - btop
+  # yazi and dependencies
+  - ffmpeg # video thumbnails
+  - 7-zip # archive preview
+  - resvg # svg preview
+  - imagemagick # image preview
+  # TUI
+  - neovim
+  - tmuxinator
+  - dysk
+  # System
+  - asciidoctor
+  - libmagic-dev
+  - ffmpegthumbnailer
+  - xclip

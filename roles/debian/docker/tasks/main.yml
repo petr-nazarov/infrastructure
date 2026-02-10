@@ -1,0 +1,46 @@
+---
+- name: Update apt cache
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+- name: Install pre req packages
+  become: true
+  ansible.builtin.apt:
+    name: "{{ docker_packages }}"
+    state: present
+- name: Download Docker GPG key
+  become: true
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/debian/gpg
+    dest: /usr/share/keyrings/docker-archive-keyring.gpg
+    mode: "0644"
+- name: Add Docker repository
+  become: true
+  ansible.builtin.apt_repository:
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_lsb.codename }} stable"
+    state: present
+- name: Update apt cache after adding Docker repo
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+- name: Install Docker packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+- name: Ensure Docker service is running
+  become: true
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+- name: Add Ansible user to docker group
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true

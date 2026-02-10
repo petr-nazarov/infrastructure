@@ -1,0 +1,94 @@
+---
+- name: Disable all existing swap to prevent conflicts
+  become: true
+  ansible.builtin.command: swapoff -a
+  changed_when: false
+- name: Remove archinstall default swap if it exists
+  become: true
+  ansible.builtin.file:
+    path: /swap/swapfile
+    state: absent
+- name: Remove the entry for old swap from fstab
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: ".*\\/swap\\/swapfile.*"
+    state: absent
+- name: Force delete existing /swapfile to reset Btrfs attributes
+  become: true
+  ansible.builtin.file:
+    path: /swapfile
+    state: absent
+- name: Create empty NOCOW swapfile
+  become: true
+  ansible.builtin.shell: |
+    truncate -s 0 /swapfile
+    chattr +C /swapfile
+  args:
+    creates: /swapfile
+- name: Allocate swapfile size
+  become: true
+  ansible.builtin.command: fallocate -l {{ swap_size | default('20G') }} /swapfile
+- name: Setup swapfile permissions and format
+  become: true
+  ansible.builtin.shell: |
+    chmod 600 /swapfile
+    mkswap -L SWAP_HIBERNATE /swapfile
+    swapon /swapfile
+- name: Get Root Partition UUID
+  become: true
+  ansible.builtin.shell: lsblk -no UUID $(findmnt -uno SOURCE / | cut -d'[' -f1)
+  register: root_uuid
+  changed_when: false
+- name: Calculate Btrfs swap offset
+  become: true
+  ansible.builtin.command: "btrfs inspect-internal map-swapfile -r /swapfile"
+  register: swap_offset
+  changed_when: false
+- name: Find the systemd-boot entry file
+  become: true
+  ansible.builtin.find:
+    paths: /boot/loader/entries/
+    patterns: "*.conf"
+  register: boot_entries
+- name: Add resume parameters to systemd-boot entry
+  become: true
+  ansible.builtin.lineinfile:
+    path: "{{ item.path }}"
+    # This regex is more aggressive to ensure we overwrite old resume params if they changed
+    regexp: "^(options .*?)( resume=UUID=[^ ]+)?( resume_offset=[0-9]+)?$"
+    line: "\\1 resume=UUID={{ root_uuid.stdout.strip() }} resume_offset={{ swap_offset.stdout.strip() }}"
+    backrefs: true
+  loop: "{{ boot_entries.files }}"
+- name: Add resume hook to mkinitcpio
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/mkinitcpio.conf
+    regexp: "^HOOKS=\\((.*?\\s*filesystems\\s*)(?![^)]*resume)([^)]*)\\)"
+    line: "HOOKS=(\\1resume \\2)"
+    backrefs: true
+  register: mkinitcpio_config
+- name: Regenerate initramfs
+  become: true
+  ansible.builtin.command: mkinitcpio -P
+  when: mkinitcpio_config.changed
+- name: Ensure swap is in fstab
+  become: true
+  ansible.posix.mount:
+    name: none
+    src: /swapfile
+    fstype: swap
+    opts: defaults
+    passno: 0
+    dump: 0
+    state: present
+- name: Configure systemd sleep settings
+  become: true
+  community.general.ini_file:
+    path: /etc/systemd/sleep.conf
+    section: Sleep
+    option: "{{ item.opt }}"
+    value: "{{ item.val }}"
+  loop:
+    - { opt: "HibernateDelaySec", val: "900s" }
+    - { opt: "HibernateMode", val: "platform shutdown" }

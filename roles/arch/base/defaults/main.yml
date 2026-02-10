@@ -1,0 +1,13 @@
+---
+# A list of most basic packages to only be installed through pacman
+arch_base_packages:
+  - git
+  - base-devel
+  - openssh
+  - wget
+  - linux-headers
+  - curl
+  - unzip
+  - unrar
+  - cronie
+  - less

@@ -1,0 +1,21 @@
+---
+- name: Load shared variables
+  ansible.builtin.include_vars: "{{ playbook_dir }}/vars/terminal_packages.yml"
+- name: Install term base packages
+  become: true
+  become_user: aur_builder
+  kewlfft.aur.aur:
+    name: "{{ base_packages }}"
+    use: yay
+- name: Install term arch specific packages
+  become: true
+  become_user: aur_builder
+  kewlfft.aur.aur:
+    name: "{{ arch_specific_packages }}"
+    use: yay
+- name: Install term common packages
+  become: true
+  become_user: aur_builder
+  kewlfft.aur.aur:
+    name: "{{ common_packages }}"
+    use: yay

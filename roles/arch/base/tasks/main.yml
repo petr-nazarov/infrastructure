@@ -1,0 +1,13 @@
+---
+- name: Ensure base-devel and git are installed
+  become: true
+  community.general.pacman:
+    name:
+      - git
+      - base-devel
+    update_cache: true
+    state: present
+- name: Install yay
+  ansible.builtin.import_tasks: ensure_yay.yml
+- name: Install required terminal packages
+  ansible.builtin.import_tasks: install_term_packages.yml

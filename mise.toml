@@ -1,0 +1,10 @@
+[tools]
+dagger = "latest"
+editorconfig-checker = "latest"
+just = "latest"
+pre-commit = "latest"
+python = "latest"
+shfmt = "latest"
+stylua = "latest"
+taplo = "latest"
+yamlfmt = "latest"

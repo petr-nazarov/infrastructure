@@ -3,7 +3,7 @@ services:
     image: lscr.io/linuxserver/syncthing:latest
     hostname: "{{ hostname_media }}"
     networks:
-      - media_net
+      - local_net
     dns:
       - "{{ local_dns }}"
     environment:

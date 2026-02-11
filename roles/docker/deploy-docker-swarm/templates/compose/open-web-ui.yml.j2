@@ -2,7 +2,7 @@ services:
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
     networks:
-      - media_net
+      - local_net
     dns:
       - "{{ local_dns }}"
     volumes:
@@ -18,4 +18,4 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.open-webui.rule=Host(`ai.{{ public_top_domain }}`)"
         - "traefik.http.services.open-webui.loadbalancer.server.port=8080"
-        - "traefik.http.routers.open-webui.entrypoints=web"
+        - "traefik.http.routers.adguardhome.entrypoints=websecure"

@@ -1,0 +1,32 @@
+services:
+  glance:
+    image: glanceapp/glance:latest
+    networks:
+      - local_net
+    dns:
+      - "{{ local_dns }}"
+    environment:
+      TOP_LOCAL_DOMAIN: "{{ top_local_domain }}"
+      LOCAL_EDGE_DOMAIN: "{{ local_edge_domain }}"
+      LOCAL_TOOLS_DOMAIN: "{{ local_tools_domain }}"
+      LOCAL_MEDIA_DOMAIN: "{{ local_media_domain }}"
+      PUBLIC_HOME_DOMAIN: "{{ public_home_domain }}"
+      PUBLIC_TOP_DOMAIN: "{{ public_top_domain }}"
+      BESZEL_AUTH_TOKEN: "{{ beszel_auth_token }}"
+      ADMIN_PASS: "{{ admin_pass }}"
+      LOCAL_DNS: "{{ local_dns }}"
+    volumes:
+      - "{{ remote_config }}/glance/config:/app/config"
+      - "{{ remote_config }}/glance/assets:/app/assets"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=true"
+        # Local Access
+        - "traefik.http.routers.glance-local.rule=Host(`home.{{ top_local_domain }}`)"
+        # - "traefik.http.routers.glance-local.entrypoints=web"
+        - "traefik.http.services.glance.loadbalancer.server.port=8080"

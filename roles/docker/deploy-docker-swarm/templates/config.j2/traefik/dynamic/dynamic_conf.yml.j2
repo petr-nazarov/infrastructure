@@ -1,0 +1,25 @@
+# 5. Static Middlewares: Defining the CrowdSec logic
+http:
+  middlewares:
+    force-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    # crowdsec-bouncer:
+    #   plugin:
+    #     bouncer: # Matches the name in experimental.plugins
+    #       enabled: true
+    #       logLevel: DEBUG
+    #       crowdsecMode: stream
+    #       crowdsecLapiHost: "crowdsec:8080"
+    #       crowdsecLapiKey: "{{ crowdsec_api_key }}" 
+    #       forwardedHeadersTrustedIPs:
+    #         - "127.0.0.1/32"
+    #         - "172.16.0.0/12"
+    #         - "192.168.0.0/16"
+
+
+tls:
+  certificates:
+    - certFile: /etc/letsencrypt/live/{{ public_top_domain }}/fullchain.pem
+      keyFile: /etc/letsencrypt/live/{{ public_top_domain }}/privkey.pem

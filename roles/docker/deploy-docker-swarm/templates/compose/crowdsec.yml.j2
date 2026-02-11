@@ -1,0 +1,33 @@
+services:
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    networks:
+      - local_net
+    environment:
+      COLLECTIONS: "crowdsecurity/linux crowdsecurity/traefik crowdsecurity/http-cve"
+      EVL_DOCKER_AUTO_RESTART: "true"
+      TZ: "{{ tz }}"
+    volumes:
+      - "{{ remote_config }}/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro"
+      - "{{ remote_data }}/crowdsec/data:/var/lib/crowdsec/data"
+      - "{{ remote_data }}/traefik/logs:/var/log/traefik:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  crowdsec-web-ui:
+    image: ghcr.io/theduffman85/crowdsec-web-ui:latest
+    networks:
+      - local_net
+    environment:
+      - CROWDSEC_URL=http://crowdsec:8080
+      - CROWDSEC_USER=localhost
+      - CROWDSEC_PASSWORD={{ crowdsec_machine_pass }}
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.crowdsec.rule=Host(`crowdsec.{{ top_local_domain }}`)"
+        - "traefik.http.routers.crowdsec.entrypoints=web"
+        - "traefik.http.services.crowdsec.loadbalancer.server.port=3000"

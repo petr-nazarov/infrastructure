@@ -2,7 +2,7 @@ services:
   radarr:
     image: linuxserver/radarr:latest
     networks:
-      - media_net
+      - local_net
     dns:
       - "{{ local_dns }}"
     deploy:

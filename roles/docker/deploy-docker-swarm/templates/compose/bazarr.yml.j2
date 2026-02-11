@@ -2,7 +2,7 @@ services:
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     networks:
-      - media_net
+      - local_net
     dns:
       - "{{ local_dns }}"
     environment:

@@ -1,6 +1,15 @@
 ---
 enabled_services:
   - traefik
+  - adguard
+  - ddns
+  - certbot
+  - wg-easy
+  - crowdsec
+  - gotify
+  - glance
+  - gatus
+  ## Media
   - jellyfin
   - sonarr
   - radarr

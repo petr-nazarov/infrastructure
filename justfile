@@ -17,6 +17,9 @@ lint-fix:
 format:
     taplo fmt
     shfmt -w .
+    yamlfmt roles/docker/deploy-docker-swarm/templates/config
+    yamlfmt roles/docker/deploy-docker-swarm/templates/config.j2
+
 fix:
   just lint-fix
   just format

@@ -2,7 +2,7 @@ services:
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     networks:
-      - media_net
+      - local_net
     dns:
       - "{{ local_dns }}"
     environment:

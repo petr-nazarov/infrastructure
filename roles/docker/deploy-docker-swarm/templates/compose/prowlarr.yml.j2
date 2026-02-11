@@ -2,7 +2,7 @@ services:
   prowlarr:
     image: linuxserver/prowlarr
     networks:
-      - media_net
+      - local_net
     dns:
       - "{{ local_dns }}"
     volumes:

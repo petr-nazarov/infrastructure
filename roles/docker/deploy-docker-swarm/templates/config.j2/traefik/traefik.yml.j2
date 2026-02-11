@@ -1,0 +1,40 @@
+api:
+  dashboard: true
+
+# 1. EntryPoints: Defining the doors
+entryPoints:
+  web:
+    address: ":80"
+
+  websecure:
+    address: ":443"
+    forwardedHeaders:
+      # Trust the Docker gateway so Traefik sees the Real IP of visitors
+      trustedIPs:
+        - "127.0.0.1/32"
+        - "172.16.0.0/12"
+        - "192.168.0.0/16"
+    # http:
+    #   middlewares:
+    #     - crowdsec-bouncer@file # This applies it to EVERYTHING on 443
+
+# 2. Experimental: Downloading the plugin
+experimental:
+  plugins:
+    bouncer:
+      moduleName: "github.com/maxlerebourg/crowdsec-bouncer-traefik-plugin"
+      version: "v1.5.0"
+
+# 3. Providers: Where Traefik looks for config
+providers:
+  swarm:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik/dynamic
+    watch: true
+
+# 4. Access Logs: The "Eyes" for CrowdSec
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  format: json

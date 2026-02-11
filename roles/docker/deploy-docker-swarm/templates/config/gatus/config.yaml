@@ -1,0 +1,197 @@
+metrics: false
+ui:
+  title: Home server status
+  header: Home server status
+  default-sort-by: group
+storage:
+  type: postgres
+  path: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?sslmode=disable"
+alerting:
+  gotify:
+    server-url: "${NOTIF_SERVER}"
+    priority: 5
+    token: "${NOTIF_NETWORK_TOKEN}"
+    default-alert:
+      send-on-resolved: true
+      failure-threshold: 5
+      success-threshold: 1
+announcements:
+  - timestamp: 2026-02-01T14:00:00Z
+    type: warning
+    message: "Scheduled move to new infra. Some services will be unavailable"
+endpoints:
+  - name: WGEasy - VPN dashboard
+    url: https://wg-home.${PUBLIC_TOP_DOMAIN}
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: gotify
+  - name: Gotify - Notification Server
+    url: https://ntf.${PUBLIC_TOP_DOMAIN}/health
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].health == green"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: gotify
+  - name: AdGuard - Local DNS
+    url: http://$LOCAL_DNS:8081
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: gotify
+  - name: Qui - torrent manager
+    url: http://torrent.$TOP_LOCAL_DOMAIN/dashboard
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: gotify
+  - name: Syncthing
+    url: http://syncthing:8384/rest/noauth/health
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Gatus - Status page
+    url: http://gatus:8080/
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: gotify
+  - name: Beszel - System Monitoring
+    url: http://monitor.${TOP_LOCAL_DOMAIN}/api/health
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].code == 200"
+    alerts:
+      - type: gotify
+  - name: Glance - Home page
+    url: http://glance:8080/api/healthz
+    interval: 1m
+    group: 01 - Edge
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: gotify
+  - name: Jellyfin
+    url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == Healthy"
+    alerts:
+      - type: gotify
+  - name: Bazarr
+    url: http://bazarr.${LOCAL_MEDIA_DOMAIN}/api/system/ping
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Radarr
+    url: http://radarr.${LOCAL_MEDIA_DOMAIN}/ping
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Sonarr
+    url: http://sonarr.${LOCAL_MEDIA_DOMAIN}/ping
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Prowlarr
+    url: http://prowlarr.${LOCAL_MEDIA_DOMAIN}/ping
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Syncthing
+    url: http://sync.${LOCAL_MEDIA_DOMAIN}/rest/noauth/health
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Qbittorent - torrent
+    url: http://torrent.$LOCAL_MEDIA_DOMAIN
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: gotify
+  - name: Open WebUI - AI chat window
+    url: https://ai.${PUBLIC_TOP_DOMAIN}/health
+    interval: 1m
+    group: 02 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[BODY].status == true"
+    alerts:
+      - type: gotify
+  - name: Ollama
+    url: http://ollama.${LOCAL_DESKTOP_DOMAIN}/api/version
+    interval: 1m
+    group: 03 - Desktop
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].version != null"
+  - name: Traefik
+    url: http://traefik.${LOCAL_DESKTOP_DOMAIN}/
+    interval: 1m
+    group: 03 - Desktop
+    conditions:
+      - "[STATUS] == 200"
+  # DNS
+  - name: Cloudflare
+    url: https://www.cloudflarestatus.com/
+    interval: 1m
+    group: DNS
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == pat(*All Systems Operational*)"
+    alerts:
+      - type: gotify
+  - name: DNS *.${PUBLIC_HOME_DOMAIN}
+    url: "8.8.8.8" # Address of the DNS server to use
+    group: DNS
+    interval: 1m
+    dns:
+      query-name: "$PUBLIC_HOME_DOMAIN"
+      query-type: "A"
+    conditions:
+      - "[DNS_RCODE] == NOERROR"
+    alerts:
+      - type: gotify

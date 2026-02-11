@@ -1,0 +1,219 @@
+- name: Home Network
+  # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+  # hide-desktop-navigation: true
+  columns:
+    - size: small
+      widgets:
+        - $include: plugins/beszel.yml
+        - type: dns-stats
+          service: adguard
+          url: http://${LOCAL_DNS}:8081/
+          username: administrator
+          password: ${ADMIN_PASS}
+        - $include: plugins/gatus-full.yml
+    - size: full
+      widgets:
+        - title: Home Network
+          type: bookmarks
+          groups:
+            - title: Public
+              hide-arrow: true
+              links:
+                - title: Gotify
+                  url: https://ntf.${PUBLIC_TOP_DOMAIN}
+                  description: Notification server
+                  icon: sh:gotify
+                - title: Open WebUI
+                  url: https://ai.${PUBLIC_TOP_DOMAIN}
+                  description: AI chat window
+                  icon: sh:open-webui
+            - title: Edge
+              hide-arrow: true
+              links:
+                - title: Beszel
+                  url: http://monitor.${TOP_LOCAL_DOMAIN}
+                  description: Systems monitoring
+                  icon: sh:beszel
+                - title: Gatus
+                  url: http://status.${TOP_LOCAL_DOMAIN}
+                  description: Health checks
+                  icon: sh:gatus
+                - title: Qui
+                  description: Torrent management
+                  url: http://torrent.${TOP_LOCAL_DOMAIN}
+                  icon: sh:qui
+                - title: UpSnap
+                  url: http://${LOCAL_DNS}:8090
+                  description: Wake on LAN
+                  icon: sh:upsnap
+                - title: Syncthing
+                  description: Data sync
+                  url: http://sync.${LOCAL_EDGE_DOMAIN}
+                  icon: sh:syncthing
+            - title: Media
+              hide-arrow: true
+              links:
+                - title: Jellyfin
+                  description: Meida server
+                  url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}
+                  icon: sh:jellyfin
+                - title: Sonarr
+                  description: TV series management
+                  url: http://sonarr.${LOCAL_MEDIA_DOMAIN}
+                  icon: sh:sonarr
+                - title: Radarr
+                  description: Movies management
+                  url: http://radarr.${LOCAL_MEDIA_DOMAIN}
+                  icon: sh:radarr
+                - title: Prowlarr
+                  description: Torrent indexer
+                  url: http://prowlarr.${LOCAL_MEDIA_DOMAIN}
+                  icon: sh:prowlarr
+                - title: Bazarr
+                  description: Subtitle indexer
+                  url: http://bazarr.${LOCAL_MEDIA_DOMAIN}
+                  icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bazarr.png
+                - title: Syncthing
+                  description: Data sync
+                  url: http://sync.${LOCAL_MEDIA_DOMAIN}
+                  icon: sh:syncthing
+            - title: Tools
+              hide-arrow: true
+              links:
+                - title: Stirling PDF
+                  description: PDF tools
+                  url: http://stirling.${LOCAL_TOOLS_DOMAIN}/
+                  icon: sh:stirling-pdf
+                - title: IT tools
+                  description: IT tools
+                  url: http://it-tools.${LOCAL_TOOLS_DOMAIN}/
+                  icon: sh:it-tools
+                - title: omnitools
+                  description: Tools for images and videos
+                  url: http://omni-tools.${LOCAL_TOOLS_DOMAIN}/
+                  icon: https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/omnitools.png
+            - title: Network Management
+              hide-arrow: true
+              links:
+                - title: AdGuard Home
+                  description: Private DNS
+                  url: http://dns.${PUBLIC_TOP_DOMAIN}
+                  icon: sh:adguard-home
+                - title: WG easy
+                  url: https://wg-home.${PUBLIC_TOP_DOMAIN}
+                  description: Vpn dashboard
+                  icon: sh:wireguard
+                - title: Crowdsec
+                  url: http://crowdsec.${LOCAL_TOP_DOMAIN}
+                  description: Security Intelligence
+                  icon: sh:crowdsec
+                - title: Goaccess
+                  url: http://goaccess.${LOCAL_EDGE_DOMAIN}
+                  description: Access log dashboard
+                  icon: sh:goaccess
+            - title: Other
+              hide-arrow: true
+              links:
+                - title: Partner Gateway
+                  description: Network Gateway
+                  url: http://192.168.1.1
+                  icon: https://www.partner.co.il/assets/Favicon%2032X32.png
+                - title: Comfast Wifi AP
+                  description: Wifi Access Point
+                  url: http://192.168.1.10
+                  icon: https://comfastwifi.com/image/catalog/comfastwifi-ico.png
+        - title: Links
+          type: bookmarks
+          groups:
+            - title: Main
+              hide-arrow: true
+              links:
+                - title: Gmail
+                  url: https://mail.google.com/mail/
+                  icon: sh:gmail
+                - title: Docs
+                  url: https://drive.google.com/drive/u/0/folders/149gjCP_SOW3ky0dIrIhkLo6zHWru1a5_
+                  icon: sh:google-drive
+                - title: Calendar
+                  url: https://calendar.google.com/
+                  icon: sh:google-calendar
+                - title: Telegram
+                  url: https://web.telegram.org/
+                  icon: sh:telegram
+            - title: Fun
+              hide-arrow: true
+              links:
+                - title: Youtube
+                  url: https://www.youtube.com/
+                  icon: sh:youtube
+                - title: Music
+                  url: https://music.youtube.com/
+                  icon: https://music.youtube.com/img/favicon_144.png
+                - title: Ororo
+                  url: https://ororo.tv/
+                  icon: https://ororo.tv/favicon.png
+            - title: Local
+              hide-arrow: true
+              links:
+                - title: Localsend
+                  url: https://web.localsend.org/
+                  icon: sh:localsend
+                - title: SMS
+                  url: https://messages.google.com/web
+                  icon: sh:google-messages
+            - title: Git
+              color: 10 70 50
+              hide-arrow: true
+              links:
+                - title: dotfiles
+                  description: My full dotfiles setup
+                  url: https://github.com/petr-nazarov/dotfiles
+                  icon: sh:github
+                - title: .secrets
+                  description: Secrets setup
+                  url: https://github.com/petr-nazarov/.secrets
+                  icon: sh:github
+                - title: home-network
+                  description: Source of truth for the whole network
+                  url: https://github.com/petr-nazarov/home-network
+                  icon: sh:github
+                - title: zmk-config
+                  description: Keyboard configuration
+                  url: https://github.com/petr-nazarov/zmk-config
+                  icon: sh:github
+            - title: Docs
+              hide-arrow: true
+              links:
+                - title: Glance settings
+                  url: https://github.com/glanceapp/glance/blob/main/docs/configuration.md
+                  icon: sh:glance
+                - title: icons
+                  url: https://selfh.st/icons/
+                  icon: sh:selfh-st
+            - title: Cloud infra
+              hide-arrow: true
+              links:
+                - title: Cloudflare
+                  description: DNS register
+                  url: https://dash.cloudflare.com/c9e6332b9b4fa2287a90aa55ce22df93/home/domains
+                  icon: sh:cloudflare
+                - title: Hetzner
+                  description: VPS cloud provider
+                  url: https://console.hetzner.cloud/projects/2278725/servers
+                  icon: sh:hetzner-light
+                - title: VPN - Sun
+                  description: XRay VLESS Server
+                  url: http://23.88.35.102:46298/wp/
+                  icon: sh:openvpn
+                - title: VPN - dimass
+                  description: XRay VLESS Server
+                  url: http://135.181.35.185:46298/HXObtUdMPkEF2IOzdP/
+                  icon: sh:openvpn
+        - type: monitor
+          cache: 1m
+          title: External
+          sites:
+
+# - type: docker-containers
+#   cache: 1m
+#   title: Uncategorized

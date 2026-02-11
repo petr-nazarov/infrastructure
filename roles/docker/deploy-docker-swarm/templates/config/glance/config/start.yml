@@ -1,0 +1,47 @@
+- name: Start Page
+  # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
+  # hide-desktop-navigation: true
+  columns:
+    - size: small
+      widgets:
+        - type: clock
+          hour-format: 24h
+          timezones:
+            - timezone: Asia/Jerusalem
+              label: Tel-Aviv
+            - timezone: Europe/Moscow
+              label: Moscow
+            - timezone: Asia/Vladivostok
+              label: Vladivostok
+        - type: group
+          widgets:
+            - type: weather
+              title: Ramat Gan
+              units: metric
+              hour-format: 24h
+              location: Ramat Gan, Israel
+            - type: weather
+              title: Moscow
+              units: metric
+              hour-format: 24h
+              location: Moscow, Russia
+            - type: weather
+              title: Vladivostok
+              units: metric
+              hour-format: 24h
+              location: Vladivostok, Russia
+        - type: calendar
+          first-day-of-week: sunday
+    - size: full
+      widgets:
+        - type: search
+          search-engine: google
+          autofocus: true
+          bangs:
+            - title: YouTube
+              shortcut: "!yt"
+              url: https://www.youtube.com/results?search_query={QUERY}
+
+# - type: docker-containers
+#   cache: 1m
+#   title: Uncategorized

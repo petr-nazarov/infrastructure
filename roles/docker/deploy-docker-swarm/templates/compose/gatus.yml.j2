@@ -1,0 +1,52 @@
+services:
+  gatus_db:
+    image: postgres:17.5
+    networks:
+      - local_net
+    volumes:
+      - "{{ remote_data }}/gatus/db:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: gatus
+      POSTGRES_USER: "{{ db_postgres_user }}"
+      POSTGRES_PASSWORD: "{{ db_postgres_password }}"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          # Pinning to media node because that's where your big storage/backups likely live
+          - "node.role == manager"
+
+  gatus:
+    image: twinproduction/gatus:latest
+    networks:
+      - local_net
+    dns:
+      - "{{ local_dns }}"
+    environment:
+      TOP_LOCAL_DOMAIN: "{{ top_local_domain }}"
+      LOCAL_EDGE_DOMAIN: "{{ local_edge_domain }}"
+      LOCAL_MEDIA_DOMAIN: "{{ local_media_domain }}"
+      LOCAL_TOOLS_DOMAIN: "{{ local_tools_domain }}"
+      LOCAL_DESKTOP_DOMAIN: "{{ local_desktop_domain }}"
+      PUBLIC_HOME_DOMAIN: "{{ public_home_domain }}"
+      PUBLIC_TOP_DOMAIN: "{{ public_top_domain }}"
+      LOCAL_DNS: "{{ local_dns }}"
+      NOTIF_SERVER: "{{ notif_server }}"
+      NOTIF_NETWORK_TOKEN: "{{ notif_network_token }}"
+      # Swarm uses service names for DNS discovery
+      POSTGRES_HOST: gatus_db
+      POSTGRES_DB: gatus
+      POSTGRES_USER: "{{ db_postgres_user }}"
+      POSTGRES_PASSWORD: "{{ db_postgres_password }}"
+    volumes:
+      - "{{ remote_config }}/gatus:/config"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.gatus.rule=Host(`status.{{ top_local_domain }}`)"
+        - "traefik.http.routers.gatus.entrypoints=web"
+        - "traefik.http.services.gatus.loadbalancer.server.port=8080"

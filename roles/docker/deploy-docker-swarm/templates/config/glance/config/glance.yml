@@ -1,0 +1,20 @@
+server:
+  assets-path: /app/assets
+  proxied: true
+branding:
+  hide-footer: true
+  app-name: Home start page
+theme:
+  # Note: assets are cached by the browser, changes to the CSS file
+  # will not be reflected until the browser cache is cleared (Ctrl+F5)
+  background-color: 232 23 18
+  contrast-multiplier: 1.2
+  primary-color: 220 83 75
+  positive-color: 105 48 72
+  negative-color: 351 74 73
+  custom-css-file: /assets/user.css
+pages:
+  # It's not necessary to create a new file for each page and include it, you can simply
+  # put its contents here, though multiple pages are easier to manage when separated
+  - $include: home-network.yml
+  - $include: start.yml

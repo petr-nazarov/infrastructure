@@ -1,0 +1,35 @@
+---
+- name: Install Docker SDK via apt
+  become: true
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - python3-docker
+    - python3-jsondiff
+
+# 1. Initialize Swarm on the Manager
+- name: Init Swarm on Manager
+  community.docker.docker_swarm:
+    state: present
+    advertise_addr: "{{ ansible_host }}"
+  register: swarm_init_result
+  when: inventory_hostname in groups['docker-swarm-managers']
+
+# 2. Share the Join Token globally
+- name: Set Join Token Fact
+  ansible.builtin.set_fact:
+    docker_worker_token: "{{ swarm_init_result.swarm_facts.JoinTokens.Worker }}"
+  delegate_to: "{{ item }}"
+  delegate_facts: true
+  loop: "{{ groups['docker-swarm-workers'] }}"
+  when: inventory_hostname in groups['docker-swarm-managers']
+
+# 3. Join the Swarm as a Worker
+- name: Join Swarm as Worker
+  community.docker.docker_swarm:
+    state: join
+    join_token: "{{ docker_worker_token }}"
+    remote_addrs: ["{{ hostvars[groups['docker-swarm-managers'][0]]['ansible_host'] }}:2377"]
+  when: inventory_hostname in groups['docker-swarm-workers']

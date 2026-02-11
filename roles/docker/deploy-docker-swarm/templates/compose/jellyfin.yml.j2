@@ -2,7 +2,7 @@ services:
   jellyfin:
     image: jellyfin/jellyfin:latest
     networks:
-      - media_net
+      - local_net
     dns:
       - "{{ local_dns }}"
     ports:
@@ -23,4 +23,4 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.{{ local_media_domain }}`)"
         - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
-        - "traefik.http.routers.jellyfin.entrypoints=web"
+        # - "traefik.http.routers.jellyfin.entrypoints=web"

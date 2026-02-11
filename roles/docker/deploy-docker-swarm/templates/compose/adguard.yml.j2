@@ -1,0 +1,43 @@
+services:
+  adguardhome:
+    image: adguard/adguardhome:latest
+    networks:
+      - local_net
+    environment:
+      TZ: "{{ tz }}"
+    volumes:
+      - "{{ remote_data }}/adguard/work:/opt/adguardhome/work"
+      - "{{ remote_data }}/adguard/conf:/opt/adguardhome/conf"
+      - "{{ remote_data }}/letsencrypt:/opt/adguardhome/certs:ro"
+    ports:
+      # DNS Ports - mode: host is critical for seeing client IPs
+      - target: 53
+        published: 53
+        protocol: tcp
+        mode: host
+      - target: 53
+        published: 53
+        protocol: udp
+        mode: host
+      # Admin UI Port
+      - target: 80
+        published: 8081
+        protocol: tcp
+        mode: ingress
+      # Optional: Encrypted DNS
+      - target: 853
+        published: 853
+        protocol: tcp
+        mode: host
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.adguardhome.rule=Host(`dns.{{ public_top_domain }}`)"
+        - "traefik.http.routers.adguardhome.entrypoints=websecure"
+        - "traefik.http.routers.adguardhome.tls=true"
+        - "traefik.http.services.adguardhome.loadbalancer.server.port=80"

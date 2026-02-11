@@ -1,0 +1,23 @@
+services:
+  sonarr:
+    image: linuxserver/sonarr:latest
+    networks:
+      - media_net
+    dns:
+      - "{{ local_dns }}"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.sonarr.rule=Host(`sonarr.{{ local_media_domain }}`)"
+        - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+    environment:
+      - PUID={{ puid }}
+      - PGID={{ pgid }}
+      - TZ={{ tz }}
+    volumes:
+      - "{{ remote_data }}/sonarr:/config"
+      - "/mnt/storage/Media:/Media"

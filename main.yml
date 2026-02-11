@@ -1,33 +1,39 @@
 ---
-- name: Setup workstations
-  hosts: workstations
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
+# - name: Setup workstations
+#   hosts: workstations
+#   vars:
+#     ansible_python_interpreter: /usr/bin/python3
+#   roles:
+#     - role: arch/base
+#     - role: arch/term_packages
+#     - role: linux/developer_env
+#     - role: arch/hyprland
+#     - role: arch/gui_apps
+#     - role: arch/docker
+#     - role: arch/kmonad
+# - name: Setup desktop specific settings
+#   hosts: desktop
+#   roles:
+#     - role: arch/gaming
+#     - role: arch/dns-complience
+#     - role: arch/wake-on-lan
+# - name: Setup laptop specific settings
+#   hosts: matebook
+#   roles:
+#     - role: arch/hibernation
+# - name: Setup general server settings
+#   hosts: home-servers
+#   roles:
+#     - role: linux/ssh
+#     - role: debian/base
+# - role: debian/docker
+# - name: Setup home-media specific server settings
+#   hosts: home-media
+#   roles:
+#     - role: linux/automount_storage
+
+- name: Setup home network dockers
+  hosts: docker_swarm_managers
   roles:
-    - role: arch/base
-    - role: arch/term_packages
-    - role: linux/developer_env
-    - role: arch/hyprland
-    - role: arch/gui_apps
-    - role: arch/docker
-    - role: arch/kmonad
-- name: Setup desktop specific settings
-  hosts: desktop
-  roles:
-    - role: arch/gaming
-    - role: arch/dns-complience
-    - role: arch/wake-on-lan
-- name: Setup laptop specific settings
-  hosts: matebook
-  roles:
-    - role: arch/hibernation
-- name: Setup general server settings
-  hosts: home-servers
-  roles:
-    - role: linux/ssh
-    - role: debian/base
-    - role: debian/docker
-- name: Setup home-media specific server settings
-  hosts: home-media
-  roles:
-    - role: linux/automount_storage
+    # - role: docker/swarm-setup-managers
+    - role: docker/deploy-docker-swarm

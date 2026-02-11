@@ -1,0 +1,11 @@
+---
+enabled_services:
+  - traefik
+  - jellyfin
+  - sonarr
+  - radarr
+  - prowlarr
+  - bazarr
+  - open-web-ui
+  - qbittorrent
+  - syncthing

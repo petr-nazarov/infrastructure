@@ -1,0 +1,41 @@
+services:
+  syncthing:
+    image: lscr.io/linuxserver/syncthing:latest
+    hostname: "{{ hostname_media }}"
+    networks:
+      - media_net
+    dns:
+      - "{{ local_dns }}"
+    environment:
+      - PUID={{ puid }}
+      - PGID={{ pgid }}
+      - TZ={{ tz }}
+    volumes:
+      - "{{ remote_data }}/Sync:/Sync"
+      - "{{ remote_data }}/syncthing:/config"
+    ports:
+      # Data transfer ports - Using host mode for better discovery performance
+      - target: 22000
+        published: 22000
+        protocol: tcp
+        mode: host
+      - target: 22000
+        published: 22000
+        protocol: udp
+        mode: host
+      # Local discovery port
+      - target: 21027
+        published: 21027
+        protocol: udp
+        mode: host
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.syncthing.rule=Host(`sync.{{ local_media_domain }}`)"
+        - "traefik.http.routers.syncthing.entrypoints=web"
+        # Syncthing GUI port is 8384
+        - "traefik.http.services.syncthing.loadbalancer.server.port=8384"

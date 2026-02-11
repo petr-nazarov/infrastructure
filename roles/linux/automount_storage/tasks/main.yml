@@ -1,11 +1,11 @@
 ---
 - name: Verify disk exists and gather its info
   ansible.builtin.set_fact:
-    linux_target_disk: "{{ ansible_facts['devices']['sda']['partitions']['sda1'] }}"
+    target_disk: "{{ ansible_facts['devices']['sda']['partitions']['sda1'] }}"
   failed_when: target_disk is not defined
 - name: Debug disk size (Just to be sure!)
   ansible.builtin.debug:
-    msg: "Found disk sda1 with size {{ linux_target_disk.size }}"
+    msg: "Found disk sda1 with size {{ target_disk.size }}"
 - name: Ensure mount point exists
   become: true
   ansible.builtin.file:
@@ -15,13 +15,13 @@
 - name: Get UUID of disk
   become: true
   ansible.builtin.command: blkid -s UUID -o value /dev/sda1
-  register: linux_disk_uuid
+  register: disk_uuid
   changed_when: false
 - name: Add fstab entry
   become: true
   ansible.posix.mount:
     path: "/mnt/storage"
-    src: "UUID={{ linux_disk_uuid.stdout }}"
+    src: "UUID={{ disk_uuid.stdout }}"
     fstype: "exfat"
     # Replace 1000 with your actual PUID/PGID values
     opts: "defaults,uid=1000,gid=1000,umask=000"

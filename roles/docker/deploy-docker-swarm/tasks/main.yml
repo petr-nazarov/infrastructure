@@ -1,0 +1,32 @@
+---
+- name: Load shared variables
+  ansible.builtin.include_vars: "{{ playbook_dir }}/vars/docker_swarm.yml"
+
+- name: Template Master file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ remote_root }}/docker-compose.yml"
+    mode: "0644"
+
+- name: Template Service components
+  ansible.builtin.template:
+    src: "compose/{{ item }}.yml.j2"
+    dest: "{{ remote_root }}/compose/{{ item }}.yml"
+    mode: "0644"
+  loop: "{{ enabled_services }}"
+
+- name: Deploy Docker Swarm Stack (via CLI)
+  ansible.builtin.shell:
+    cmd: >
+      docker stack deploy  -c {{ remote_root }}/docker-compose.yml
+      {% for service in enabled_services %}
+      -c {{ remote_root }}/compose/{{ service }}.yml
+      {% endfor %}
+      --prune
+      home
+  register: stack_deploy_result
+  changed_when: "'Creating' in stack_deploy_result.stdout or 'Updating' in stack_deploy_result.stdout"
+
+- name: Show Deployment Output
+  ansible.builtin.debug:
+    var: stack_deploy_result.stdout_lines

@@ -8,11 +8,15 @@
     append: true
     state: present
   become: true
-- name: Install python3-requests
+- name: Install python3 dependencies
   become: true
   ansible.builtin.apt:
-    name: python3-requests
+    name: "{{ item }}"
     state: present
+  loop:
+    - python3
+    - python3-pip
+    - python3-requests
 - name: Install Debian term base packages
   become: true
   ansible.builtin.apt:

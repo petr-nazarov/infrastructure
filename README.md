@@ -24,7 +24,7 @@ apt update && apt install sudo
 adduser USER sudo
 exit
 
-sudo apt install openssh-server python3
+sudo apt install openssh-server python3-pip python3
 sudo service ssh start
 ```
 ## Sync ssh key

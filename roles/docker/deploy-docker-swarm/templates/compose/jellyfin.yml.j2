@@ -1,0 +1,26 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    networks:
+      - media_net
+    dns:
+      - "{{ local_dns }}"
+    ports:
+      - "8096:8096"
+    volumes:
+      - "{{ remote_data }}/jellyfin:/config"
+      - "/mnt/storage/Media:/data/Media"
+    environment:
+      - UID={{ puid }}
+      - GID={{ pgid }}
+      - JELLYFIN_Password={{ admin_pass }}
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.{{ local_media_domain }}`)"
+        - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+        - "traefik.http.routers.jellyfin.entrypoints=web"

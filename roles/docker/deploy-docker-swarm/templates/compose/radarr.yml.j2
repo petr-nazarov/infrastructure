@@ -1,0 +1,27 @@
+services:
+  radarr:
+    image: linuxserver/radarr:latest
+    networks:
+      - media_net
+    dns:
+      - "{{ local_dns }}"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+        - "traefik.http.routers.radarr.rule=Host(`radarr.{{ local_media_domain }}`)"
+        - "traefik.http.routers.radarr.entrypoints=web"
+    environment:
+      - PUID={{ puid }}
+      - PGID={{ pgid }}
+      - TZ={{ tz }}
+    volumes:
+      - "{{ remote_data }}/radarr:/config"
+      - "/mnt/storage/Media:/Media"
+
+
+

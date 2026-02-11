@@ -1,0 +1,24 @@
+services:
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    networks:
+      - media_net
+    dns:
+      - "{{ local_dns }}"
+    environment:
+      - PUID={{ puid }}
+      - PGID={{ pgid }}
+      - TZ={{ tz }}
+    volumes:
+      - "{{ remote_data }}/bazarr:/config"
+      - "/mnt/storage/Media:/Media"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.bazarr.rule=Host(`bazarr.{{ local_media_domain }}`)"
+        - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+        - "traefik.http.routers.bazarr.entrypoints=web"

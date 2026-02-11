@@ -3,6 +3,9 @@
   become: true
   ansible.builtin.copy:
     dest: "/etc/systemd/network/{{ item.name }}"
+    owner: root
+    group: root
+    mode: "0644"
     content: |
       [Match]
       Name={{ item.match }}
@@ -21,8 +24,10 @@
       [IPv6AcceptRA]
       UseDNS=no
   loop:
-    - { name: "20-ethernet.network", match: "en*" }
-    - { name: "20-wlan.network", match: "wl*" }
+    - name: "20-ethernet.network"
+      match: "en*"
+    - name: "20-wlan.network"
+      match: "wl*"
 - name: Stop network services for state reset
   become: true
   ansible.builtin.systemd:
@@ -40,6 +45,7 @@
     chown -R systemd-network:systemd-network /run/systemd/netif/
   args:
     executable: /bin/bash
+  changed_when: true
 - name: Force symlink /etc/resolv.conf to systemd stub
   become: true
   ansible.builtin.file:

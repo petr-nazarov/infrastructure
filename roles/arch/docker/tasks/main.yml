@@ -3,7 +3,7 @@
   become: true
   become_user: aur_builder
   kewlfft.aur.aur:
-    name: "{{ docker_packages }}"
+    name: "{{ arch_docker_packages }}"
     use: yay
 - name: Add user to docker group
   become: true

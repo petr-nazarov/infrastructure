@@ -3,7 +3,7 @@
   become_user: aur_builder
   become: true
   kewlfft.aur.aur:
-    name: "{{ hyprland_packages }}"
+    name: "{{ arch_hyprland_packages }}"
     use: yay
 - name: Reload user systemd daemon
   ansible.builtin.systemd:
@@ -20,14 +20,14 @@
   become: true
   ansible.builtin.systemd:
     name: iwd
-  register: iwd_status
+  register: arch_iwd_status
 - name: Enable iwd
   become: true
   ansible.builtin.systemd:
     name: iwd
     enabled: true
     state: started
-  when: iwd_status.status.ActiveState != "active"
+  when: arch_iwd_status.status.ActiveState != "active"
 - name: Disable NetworkManager
   become: true
   ansible.builtin.systemd:
@@ -35,7 +35,7 @@
     enabled: false
     state: stopped
   when:
-    - iwd_status.status.ActiveState == "active"
+    - arch_iwd_status.status.ActiveState == "active"
     - "'NetworkManager.service' in ansible_facts.services"
 - name: Enable  system wide related services
   become: true

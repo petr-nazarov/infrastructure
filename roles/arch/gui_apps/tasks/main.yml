@@ -3,5 +3,5 @@
   become: true
   become_user: aur_builder
   kewlfft.aur.aur:
-    name: "{{ gui_apps }}"
+    name: "{{ arch_gui_apps }}"
     use: yay

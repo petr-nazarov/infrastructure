@@ -1,0 +1,9 @@
+---
+exclude_paths:
+  - "**/*.sops.yml"
+  - "roles/arch/hyprland/templates/catppuccin-macchiato-blue/"
+
+skip_list:
+  - role-name[path]
+  - var-naming[no-role-prefix]
+  - yaml[line-length]

@@ -1,5 +1,5 @@
 ---
-gui_apps:
+arch_gui_apps:
   # Personal
   - ghostty
   - alacritty

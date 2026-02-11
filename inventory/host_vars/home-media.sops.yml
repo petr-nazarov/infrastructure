@@ -1,3 +1,4 @@
+---
 ansible_user: ENC[AES256_GCM,data:zdGyKw==,iv:jTbdbYtWlbnGOOCDxllC+to+fJm0aB0Mz14iikkNF2A=,tag:lhKnnbaIx6RR1zuMqnCDmQ==,type:str]
 ansible_host: ENC[AES256_GCM,data:yrvAJCBhaLNckvfR,iv:idrojcK5oe7miso0IKlQGoojHQ2vH3y9gc0cKMH9teI=,tag:7spGMmIQhrFWpU8/QdHEqQ==,type:str]
 ansible_ssh_private_key_file: ENC[AES256_GCM,data:RhAx1VDEGJExMMQoNPPC6mLzevbuHw==,iv:7R+fhED0cPiO8CDbvfvVZglO0AuP4zS21Hj71w9UZTg=,tag:P+Zcu12Gbfwttu2L3UdRCQ==,type:str]

@@ -1,5 +1,5 @@
 ---
-hyprland_packages:
+arch_hyprland_packages:
   # deps
   - xdg-desktop-portal-hyprland
   - xdg-terminal-exec

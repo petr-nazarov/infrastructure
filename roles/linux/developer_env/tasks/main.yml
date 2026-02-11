@@ -1,14 +1,20 @@
 ---
 - name: Install starship
   become: true
-  ansible.builtin.shell: curl -fsSL https://starship.rs/install.sh | sh -s -- -y
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL https://starship.rs/install.sh | sh -s -- -y
   args:
+    executable: /bin/bash # Required because 'set -o pipefail' is a bash/zsh feature
     creates: "/usr/local/bin/starship"
 - name: Install mise
   become: true
-  ansible.builtin.shell: curl https://mise.run | MISE_INSTALL_PATH=$HOME/.local/bin/mise sh
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl https://mise.run | MISE_INSTALL_PATH={{ ansible_user_dir }}/.local/bin/mise sh
   args:
-    creates: "{{ ansible_facts['user_dir'] }}./local/bin/mise"
+    executable: /bin/bash # Required because 'set -o pipefail' is a bash/zsh feature
+    creates: "{{ ansible_facts['user_dir'] }}/.local/bin/mise"
 - name: Set zsh as default shell
   become: true
   ansible.builtin.user:
@@ -20,16 +26,13 @@
     mise install
   args:
     executable: /bin/zsh
+    creates: "{{ ansible_facts['user_dir'] }}./local/share/mise/installs/"
 - name: Pull and apply tmux config
   ansible.builtin.shell: |
     source ~/.zshrc
     mkdir -p ~/.tmux/plugins/
     git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-  args:
-    executable: /bin/zsh
-    creates: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tpm"
-- name: Fix for tmuxinator
-  ansible.builtin.shell: |
     gem install thor -v '~> 1.4.0'
   args:
     executable: /bin/zsh
+    creates: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tpm"

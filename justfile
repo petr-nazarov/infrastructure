@@ -8,21 +8,19 @@ source:
   . .venv/bin/activate
 # Run all linters and formatters
 lint:
-    stylua --check .
-    taplo fmt --check
     ansible-lint
+    yamllint . 
+lint-fix:
+    ansible-lint --fix
+    yamllint . 
 
 format:
-    stylua .
     taplo fmt
     shfmt -w .
     yamlfmt .
 fix:
+  just lint-fix
   just format
-  git add .
-  just lint
-  git add .
-
 ci:
   dagger call lint --source .
 

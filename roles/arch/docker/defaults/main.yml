@@ -1,5 +1,5 @@
 ---
-docker_packages:
+arch_docker_packages:
   # Docker
   - docker
   - docker-compose

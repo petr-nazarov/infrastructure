@@ -29,15 +29,20 @@
 - name: Allocate swapfile size
   become: true
   ansible.builtin.command: fallocate -l {{ swap_size | default('20G') }} /swapfile
+  changed_when: true
 - name: Setup swapfile permissions and format
   become: true
   ansible.builtin.shell: |
     chmod 600 /swapfile
     mkswap -L SWAP_HIBERNATE /swapfile
     swapon /swapfile
+  args:
+    creates: /swapfile
 - name: Get Root Partition UUID
   become: true
-  ansible.builtin.shell: lsblk -no UUID $(findmnt -uno SOURCE / | cut -d'[' -f1)
+  ansible.builtin.shell: |
+    set -o pipefail
+    lsblk -no UUID $(findmnt -uno SOURCE / | cut -d'[' -f1)
   register: root_uuid
   changed_when: false
 - name: Calculate Btrfs swap offset
@@ -67,11 +72,7 @@
     regexp: "^HOOKS=\\((.*?\\s*filesystems\\s*)(?![^)]*resume)([^)]*)\\)"
     line: "HOOKS=(\\1resume \\2)"
     backrefs: true
-  register: mkinitcpio_config
-- name: Regenerate initramfs
-  become: true
-  ansible.builtin.command: mkinitcpio -P
-  when: mkinitcpio_config.changed
+  notify: Regenerate initramfs
 - name: Ensure swap is in fstab
   become: true
   ansible.posix.mount:
@@ -89,6 +90,11 @@
     section: Sleep
     option: "{{ item.opt }}"
     value: "{{ item.val }}"
+    owner: root
+    group: root
+    mode: "0644"
   loop:
-    - { opt: "HibernateDelaySec", val: "900s" }
-    - { opt: "HibernateMode", val: "platform shutdown" }
+    - opt: "HibernateDelaySec"
+      val: "900s"
+    - opt: "HibernateMode"
+      val: "platform shutdown"

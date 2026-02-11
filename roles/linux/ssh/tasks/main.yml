@@ -4,6 +4,10 @@
   ansible.builtin.template:
     src: sshd_config
     dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0600" # Tight permissions for security
+    validate: "/usr/sbin/sshd -t -f %s"
 - name: Restart SSH service
   become: true
   ansible.builtin.service:

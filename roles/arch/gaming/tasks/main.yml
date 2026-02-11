@@ -6,11 +6,7 @@
     regexp: "^#\\[multilib\\]\\n#Include = /etc/pacman.d/mirrorlist"
     replace: "[multilib]\nInclude = /etc/pacman.d/mirrorlist"
   register: multilib_enabled
-- name: Update package cache (if multilib was just enabled)
-  become: true
-  community.general.pacman:
-    update_cache: true
-  when: multilib_enabled.changed
+  notify: Update pacman cache
 - name: Install AMD Graphics Stack (Mesa + Vulkan)
   become: true
   community.general.pacman:
@@ -52,11 +48,10 @@
     value: "2147483642"
     state: present
     sysctl_file: /etc/sysctl.d/80-gaming.conf
-
-# - name: Install sunshine to stream games
-# become: true
-# become_user: aur_builder
-# kewlfft.aur.aur:
-# name:
-# - sunshine
-# use: yay
+    # - name: Install sunshine to stream games
+    # become: true
+    # become_user: aur_builder
+    # kewlfft.aur.aur:
+    # name:
+    # - sunshine
+    # use: yay

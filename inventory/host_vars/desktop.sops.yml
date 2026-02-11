@@ -1,3 +1,4 @@
+---
 ansible_user: ENC[AES256_GCM,data:5xZlImtG9A==,iv:M5oARgsY1wA7aT1uRJtIxAgMdznawkBr16uLsScVuOI=,tag:pJsY+zayKdRVGXdbB+7zLQ==,type:str]
 ansible_become_password: ENC[AES256_GCM,data:mzX2tsjhpA==,iv:G9ZjviSdGSVKQA9VPqBC9Gw1S1+pCDNFHr/tladsSps=,tag:kimkH+3w8IhxUxpdKrsstw==,type:str]
 ansible_connection: ENC[AES256_GCM,data:ASCtVBg=,iv:+IqtRCRRHwjhkmQq/5Qeg9cmYLT8snHJ/kv0EiqchXY=,tag:oe7jJbHcaAbw/xZAR8q3fw==,type:str]

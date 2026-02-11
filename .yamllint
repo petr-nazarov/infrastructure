@@ -1,0 +1,32 @@
+---
+extends: default
+# Add this section at the top
+ignore: |
+  */**/*.sops.yml
+  vendor/
+  node_modules/
+rules:
+  line-length:
+    max: 256
+    allow-non-breakable-words: true
+
+  # ansible-lint mandatory: must be 1
+  comments:
+    min-spaces-from-content: 1
+
+  # ansible-lint mandatory: must be false
+  comments-indentation: false
+
+  # ansible-lint mandatory: must be 1
+  braces:
+    max-spaces-inside: 1
+
+  # ansible-lint mandatory: both must be true
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
+  # Handling the 'on' trigger for GitHub Actions
+  truthy:
+    allowed-values: ["true", "false", "on"]
+    check-keys: false

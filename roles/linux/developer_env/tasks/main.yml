@@ -36,3 +36,11 @@
   args:
     executable: /bin/zsh
     creates: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tpm"
+    ## AI
+- name: Install fabric ai
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL https://raw.githubusercontent.com/danielmiessler/fabric/main/scripts/installer/install.sh | bash
+  args:
+    executable: /bin/bash # Required because 'set -o pipefail' is a bash/zsh feature
+    creates: "/home/nazarov/.local/bin/fabric"

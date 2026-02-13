@@ -1,3 +1,4 @@
+---
 metrics: false
 ui:
   title: Home server status
@@ -20,54 +21,62 @@ announcements:
     type: warning
     message: "Scheduled move to new infra. Some services will be unavailable"
 endpoints:
-  - name: WGEasy - VPN dashboard
-    url: https://wg-home.${PUBLIC_TOP_DOMAIN}
-    interval: 1m
-    group: 01 - Edge
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: gotify
+  ## Public
   - name: Gotify - Notification Server
     url: https://ntf.${PUBLIC_TOP_DOMAIN}/health
     interval: 1m
-    group: 01 - Edge
+    group: 00 - Public
     conditions:
       - "[STATUS] == 200"
       - "[BODY].health == green"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     alerts:
       - type: gotify
+  - name: Open WebUI - AI chat window
+    url: https://ai.${PUBLIC_TOP_DOMAIN}/health
+    interval: 1m
+    group: 00 - Public
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+      - "[BODY].status == true"
+    alerts:
+      - type: gotify
+        ## Infra Management
+  - name: WGEasy - VPN dashboard
+    url: https://wg-home.${PUBLIC_TOP_DOMAIN}
+    interval: 1m
+    group: 01 - Infra Management
+    conditions:
+      - "[STATUS] == 200"
+      - "[CERTIFICATE_EXPIRATION] > 48h"
+    alerts:
+      - type: gotify
   - name: AdGuard - Local DNS
     url: http://$LOCAL_DNS:8081
     interval: 1m
-    group: 01 - Edge
+    group: 01 - Infra Management
     conditions:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
-  - name: Qui - torrent manager
-    url: http://torrent.$TOP_LOCAL_DOMAIN/dashboard
+  - name: Traefik
+    url: http://traefik.${TOP_LOCAL_DOMAIN}/
     interval: 1m
-    group: 01 - Edge
+    group: 01 - Infra Management
     conditions:
       - "[STATUS] == 200"
-    alerts:
-      - type: gotify
-  - name: Syncthing
-    url: http://syncthing:8384/rest/noauth/health
+  - name: CrowdSec LAPI
+    group: 01 - Infra Management
+    url: "http://crowdsec:8080/health" # CrowdSec exposes a health check endpoint
     interval: 1m
-    group: 01 - Edge
     conditions:
       - "[STATUS] == 200"
-      - "[BODY].status == OK"
-    alerts:
-      - type: gotify
+      - "[BODY].status == up"
   - name: Gatus - Status page
     url: http://gatus:8080/
     interval: 1m
-    group: 01 - Edge
+    group: 01 - Infra Management
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -75,7 +84,7 @@ endpoints:
   - name: Beszel - System Monitoring
     url: http://monitor.${TOP_LOCAL_DOMAIN}/api/health
     interval: 1m
-    group: 01 - Edge
+    group: 01 - Infra Management
     conditions:
       - "[STATUS] == 200"
       - "[BODY].code == 200"
@@ -84,11 +93,21 @@ endpoints:
   - name: Glance - Home page
     url: http://glance:8080/api/healthz
     interval: 1m
-    group: 01 - Edge
+    group: 01 - Infra Management
     conditions:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
+  - name: Syncthing
+    url: http://syncthing:8384/rest/noauth/health
+    interval: 1m
+    group: 01 - Infra Management
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+        ## Media
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health
     interval: 1m
@@ -143,22 +162,20 @@ endpoints:
       - "[BODY].status == OK"
     alerts:
       - type: gotify
-  - name: Qbittorent - torrent
-    url: http://torrent.$LOCAL_MEDIA_DOMAIN
+  - name: Qui - torrent manager
+    url: http://torrent.$TOP_LOCAL_DOMAIN/dashboard
     interval: 1m
     group: 02 - Media
     conditions:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
-  - name: Open WebUI - AI chat window
-    url: https://ai.${PUBLIC_TOP_DOMAIN}/health
+  - name: Qbittorent - torrent
+    url: http://torrent.$LOCAL_MEDIA_DOMAIN
     interval: 1m
     group: 02 - Media
     conditions:
       - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-      - "[BODY].status == true"
     alerts:
       - type: gotify
   - name: Ollama
@@ -184,7 +201,7 @@ endpoints:
       - "[BODY] == pat(*All Systems Operational*)"
     alerts:
       - type: gotify
-  - name: DNS *.${PUBLIC_HOME_DOMAIN}
+  - name: DNS *.${PUBLIC_TOP_DOMAIN}
     url: "8.8.8.8" # Address of the DNS server to use
     group: DNS
     interval: 1m

@@ -1,3 +1,4 @@
+---
 - name: Home Network
   # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
   # hide-desktop-navigation: true
@@ -27,29 +28,6 @@
                   url: https://ai.${PUBLIC_TOP_DOMAIN}
                   description: AI chat window
                   icon: sh:open-webui
-            - title: Edge
-              hide-arrow: true
-              links:
-                - title: Beszel
-                  url: http://monitor.${TOP_LOCAL_DOMAIN}
-                  description: Systems monitoring
-                  icon: sh:beszel
-                - title: Gatus
-                  url: http://status.${TOP_LOCAL_DOMAIN}
-                  description: Health checks
-                  icon: sh:gatus
-                - title: Qui
-                  description: Torrent management
-                  url: http://torrent.${TOP_LOCAL_DOMAIN}
-                  icon: sh:qui
-                - title: UpSnap
-                  url: http://${LOCAL_DNS}:8090
-                  description: Wake on LAN
-                  icon: sh:upsnap
-                - title: Syncthing
-                  description: Data sync
-                  url: http://sync.${LOCAL_EDGE_DOMAIN}
-                  icon: sh:syncthing
             - title: Media
               hide-arrow: true
               links:
@@ -73,10 +51,10 @@
                   description: Subtitle indexer
                   url: http://bazarr.${LOCAL_MEDIA_DOMAIN}
                   icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bazarr.png
-                - title: Syncthing
-                  description: Data sync
-                  url: http://sync.${LOCAL_MEDIA_DOMAIN}
-                  icon: sh:syncthing
+                - title: Qui
+                  description: Torrent management
+                  url: http://torrent.${TOP_LOCAL_DOMAIN}
+                  icon: sh:qui
             - title: Tools
               hide-arrow: true
               links:
@@ -92,7 +70,7 @@
                   description: Tools for images and videos
                   url: http://omni-tools.${LOCAL_TOOLS_DOMAIN}/
                   icon: https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/omnitools.png
-            - title: Network Management
+            - title: Infra Management
               hide-arrow: true
               links:
                 - title: AdGuard Home
@@ -103,14 +81,37 @@
                   url: https://wg-home.${PUBLIC_TOP_DOMAIN}
                   description: Vpn dashboard
                   icon: sh:wireguard
+                - title: Beszel
+                  url: http://monitor.${TOP_LOCAL_DOMAIN}
+                  description: Systems monitoring
+                  icon: sh:beszel
+                - title: Gatus
+                  url: http://status.${TOP_LOCAL_DOMAIN}
+                  description: Health checks
+                  icon: sh:gatus
+                - title: UpSnap
+                  url: http://${LOCAL_DNS}:8090
+                  description: Wake on LAN
+                  icon: sh:upsnap
                 - title: Crowdsec
-                  url: http://crowdsec.${LOCAL_TOP_DOMAIN}
+                  url: http://crowdsec.${TOP_LOCAL_DOMAIN}
                   description: Security Intelligence
                   icon: sh:crowdsec
-                - title: Goaccess
-                  url: http://goaccess.${LOCAL_EDGE_DOMAIN}
-                  description: Access log dashboard
-                  icon: sh:goaccess
+            - title: Syncthing
+              hide-arrow: true
+              links:
+                - title: Syncthing Edge
+                  description: Data sync
+                  url: http://sync.${LOCAL_EDGE_DOMAIN}
+                  icon: sh:syncthing
+                - title: Syncthing Media
+                  description: Data sync
+                  url: http://sync.${LOCAL_MEDIA_DOMAIN}
+                  icon: sh:syncthing
+                - title: Syncthing Desktop
+                  description: Data sync
+                  url: http://sync.${LOCAL_DESKTOP_DOMAIN}
+                  icon: sh:syncthing
             - title: Other
               hide-arrow: true
               links:

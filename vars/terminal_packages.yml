@@ -14,7 +14,6 @@ arch_specific_packages:
   - ttf-nerd-fonts-symbols
   - noto-fonts
   # AI
-  - fabric-ai
   - opencode
 #### Specific to debian
 debian_specific_packages:

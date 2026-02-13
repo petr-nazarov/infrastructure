@@ -1,0 +1,29 @@
+services:
+  beszel:
+    image: henrygd/beszel:latest
+    container_name: beszel
+    networks:
+      - local_net
+    # dns:
+    #   - ${LOCAL_DNS} 
+    environment:
+      - APP_URL={{ beszel_monitore_url }}
+      - USER_CREATION=true
+      - SHARE_ALL_SYSTEMS=true
+    # - DISABLE_PASSWORD_AUTH=true
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+      # Network
+      - "traefik.enable=true"
+      # Local
+      - "traefik.http.routers.beszel.rule=Host(`beszel.{{ top_local_domain }}`)"
+      - "traefik.http.routers.beszel.entrypoints=web"
+      - "traefik.http.services.beszel.loadbalancer.server.port=8090"
+    volumes:
+      - {{  remote_data }}/beszel/beszel_data:/beszel_data
+      - {{  remote_data }}/beszel/beszel_socket:/beszel_socket
+

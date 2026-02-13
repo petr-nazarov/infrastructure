@@ -1,4 +1,3 @@
----
 - type: custom-api
   title: Gatus
   cache: 1m

@@ -1,4 +1,3 @@
----
 - name: Home Network
   # Optionally, if you only have a single page you can hide the desktop navigation for a cleaner look
   # hide-desktop-navigation: true
@@ -81,8 +80,12 @@
                   url: https://wg-home.${PUBLIC_TOP_DOMAIN}
                   description: Vpn dashboard
                   icon: sh:wireguard
+                - title: Portainer
+                  url: http://portainer.${TOP_LOCAL_DOMAIN}
+                  description: Container management
+                  icon: sh:portainer
                 - title: Beszel
-                  url: http://monitor.${TOP_LOCAL_DOMAIN}
+                  url: http://beszel.${TOP_LOCAL_DOMAIN}
                   description: Systems monitoring
                   icon: sh:beszel
                 - title: Gatus

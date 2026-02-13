@@ -6,6 +6,7 @@ enabled_services:
   - certbot
   - wg-easy
   - crowdsec
+  - portainer
   - gotify
   - glance
   - gatus

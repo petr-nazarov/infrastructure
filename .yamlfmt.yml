@@ -1,4 +1,4 @@
 ---
 formatter:
   type: basic
-  include_document_start: true
+  include_document_start: false

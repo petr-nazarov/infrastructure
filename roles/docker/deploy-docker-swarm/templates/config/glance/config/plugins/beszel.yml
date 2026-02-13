@@ -1,4 +1,3 @@
----
 - type: custom-api
   title: Beszel Metrics
   url: http://monitor.${TOP_LOCAL_DOMAIN}/api/collections/systems/records

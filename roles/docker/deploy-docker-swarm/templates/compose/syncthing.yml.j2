@@ -1,11 +1,11 @@
 services:
-  syncthing:
+{% for node in ['edge', 'media'] %}
+  syncthing-{{ node }}:
     image: lscr.io/linuxserver/syncthing:latest
-    hostname: "{{ hostname_media }}"
+    # We assume your domain variables are named local_edge_domain and local_media_domain
+    {% set current_domain = vars['local_' ~ node ~ '_domain'] -%}
     networks:
       - local_net
-    dns:
-      - "{{ local_dns }}"
     environment:
       - PUID={{ puid }}
       - PGID={{ pgid }}
@@ -14,7 +14,6 @@ services:
       - "{{ remote_data }}/Sync:/Sync"
       - "{{ remote_data }}/syncthing:/config"
     ports:
-      # Data transfer ports - Using host mode for better discovery performance
       - target: 22000
         published: 22000
         protocol: tcp
@@ -23,7 +22,6 @@ services:
         published: 22000
         protocol: udp
         mode: host
-      # Local discovery port
       - target: 21027
         published: 21027
         protocol: udp
@@ -32,10 +30,12 @@ services:
       replicas: 1
       placement:
         constraints:
-          - "node.hostname == {{ hostname_media }}"
+          # This assumes your node names in swarm are 'home-edge' and 'home-media'
+          - "node.hostname == home-{{ node }}"
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.syncthing.rule=Host(`sync.{{ local_media_domain }}`)"
-        - "traefik.http.routers.syncthing.entrypoints=web"
-        # Syncthing GUI port is 8384
-        - "traefik.http.services.syncthing.loadbalancer.server.port=8384"
+        - "traefik.http.routers.syncthing-{{ node }}.rule=Host(`sync.{{ current_domain }}`)"
+        - "traefik.http.routers.syncthing-{{ node }}.entrypoints=web"
+        - "traefik.http.services.syncthing-{{ node }}.loadbalancer.server.port=8384"
+{% endfor %}
+

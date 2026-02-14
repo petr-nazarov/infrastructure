@@ -1,0 +1,59 @@
+services:
+{% for node in ['edge', 'media'] %}
+  {% set current_hostname = 'home-' ~ node -%}
+  
+  # --- S3 Backup for {{ node | capitalize }} ---
+  restic-s3-{{ node }}:
+    image: mazzolino/restic:latest
+    environment:
+      RUN_ON_STARTUP: "true"
+      BACKUP_CRON: "30 */12 * * *"
+      RESTIC_REPOSITORY: "s3:{{ s3_host }}/{{ s3_bucket }}/backups/{{ current_hostname }}"
+      RESTIC_PASSWORD: "{{ restic_password }}"
+      AWS_ACCESS_KEY_ID: "{{ s3_access_key }}"
+      AWS_SECRET_ACCESS_KEY: "{{ s3_secret_key }}"
+      RESTIC_BACKUP_SOURCES: "/mnt/volumes"
+      RESTIC_COMPRESSION: "auto"
+      RESTIC_BACKUP_ARGS: "--tag restic-s3 --verbose"
+      RESTIC_FORGET_ARGS: "--keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12"
+      TZ: "{{ tz }}"
+      NOTIF_SERVER: "{{ notif_server }}"
+      NOTIF_TOKEN: "{{ notif_network_token }}"
+    volumes:
+      - "{{ remote_root }}/backups:/restic"
+      - "{{ remote_data }}:/mnt/volumes/data"
+      - "{{ remote_config }}:/mnt/volumes/config"
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == {{ current_hostname }}"
+      labels:
+        - "traefik.enable=false"
+
+  # --- Local Backup for {{ node | capitalize }} ---
+  restic-local-{{ node }}:
+    image: mazzolino/restic:latest
+    environment:
+      RUN_ON_STARTUP: "true"
+      BACKUP_CRON: "0 */12 * * *"
+      RESTIC_REPOSITORY: "/restic/{{ current_hostname }}"
+      RESTIC_PASSWORD: "{{ restic_password }}"
+      RESTIC_BACKUP_SOURCES: "/mnt/volumes"
+      RESTIC_COMPRESSION: "auto"
+      RESTIC_BACKUP_ARGS: "--tag restic-auto --verbose"
+      RESTIC_FORGET_ARGS: "--keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12"
+      TZ: "{{ tz }}"
+      NOTIF_SERVER: "{{ notif_server }}"
+      NOTIF_TOKEN: "{{ notif_network_token }}"
+    volumes:
+      - "{{ remote_root }}/backups:/restic"
+      - "{{ remote_root }}/backups/tmp-for-restore:/tmp-for-restore"
+      - "{{ remote_data }}:/mnt/volumes/data"
+      - "{{ remote_config }}:/mnt/volumes/config"
+    deploy:
+      placement:
+        constraints:
+          - "node.hostname == {{ current_hostname }}"
+      labels:
+        - "traefik.enable=false"
+{% endfor %}

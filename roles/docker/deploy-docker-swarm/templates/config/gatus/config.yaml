@@ -105,15 +105,6 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
-  - name: Syncthing
-    url: http://syncthing:8384/rest/noauth/health
-    interval: 1m
-    group: 01 - Infra Management
-    conditions:
-      - "[STATUS] == 200"
-      - "[BODY].status == OK"
-    alerts:
-      - type: gotify
         ## Media
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health
@@ -217,5 +208,24 @@ endpoints:
       query-type: "A"
     conditions:
       - "[DNS_RCODE] == NOERROR"
+    alerts:
+      - type: gotify
+  ## Syncthing
+  - name: Syncthing Edge
+    url: http://syncing-edge:8384/rest/noauth/health
+    interval: 1m
+    group: 04 - Syncthing
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Syncthing Media
+    url: http://syncthing-media:8384/rest/noauth/health
+    interval: 1m
+    group: 04 - Syncthing
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
     alerts:
       - type: gotify

@@ -1,5 +1,6 @@
 ---
 enabled_services:
+  # Edge
   - traefik
   - adguard
   - ddns
@@ -19,4 +20,6 @@ enabled_services:
   - bazarr
   - open-web-ui
   - qbittorrent
+  # Multihost
+  - backup
   - syncthing

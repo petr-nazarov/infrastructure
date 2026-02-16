@@ -1,4 +1,4 @@
-services:
+# services:
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     networks:
@@ -12,11 +12,12 @@ services:
       - WEBUI_PORT=8080
       - TORRENTING_PORT=6881
     volumes:
-      - "{{ remote_data }}/qbittorrent:/config"
+      - "{{ remote_data }}/qbittorrent1:/config"
       - "/mnt/storage/Media:/Media"
     ports:
-      - "6881:6881"
-      - "6881:6881/udp"
+      - target: 6881 
+        published: 6881
+        mode: host # Optional: bypasses mesh for direct performance if on manager
     deploy:
       replicas: 1
       placement:

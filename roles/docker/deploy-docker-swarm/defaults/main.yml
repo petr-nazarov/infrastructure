@@ -7,11 +7,13 @@ enabled_services:
   - certbot
   - wg-easy
   - crowdsec
+  - upsnap
   - portainer
   - gotify
   - glance
   - gatus
   - beszel
+  - qui
   ## Media
   - jellyfin
   - sonarr

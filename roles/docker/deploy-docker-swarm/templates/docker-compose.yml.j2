@@ -2,4 +2,10 @@ networks:
   local_net:
     driver: overlay
     attachable: true
-
+  host:
+    external: true
+    name: host
+services:
+  {% for service in enabled_services %}
+    {% include "compose/" + service + ".yml.j2" %}
+  {% endfor %}

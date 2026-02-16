@@ -1,0 +1,19 @@
+# services:
+  upsnap:
+    image: ghcr.io/seriousm4x/upsnap:latest 
+    networks:
+      - host
+    dns:
+      - {{ local_dns }}
+    restart: unless-stopped
+    volumes:
+      - {{ remote_data }}/upsnap:/app/pb_data
+    user: {{ puid }}:{{ pgid }}
+    environment:
+      - TZ={{ tz }}
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr # Best for host mode to avoid ingress mesh conflicts
+      placement:
+        constraints:
+          - "node.role == manager"

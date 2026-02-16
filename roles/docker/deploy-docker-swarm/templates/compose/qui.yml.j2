@@ -1,0 +1,23 @@
+#services:
+  qui:
+    image: ghcr.io/autobrr/qui:latest
+    networks:
+      - local_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.qui.rule=Host(`torrent.{{ top_local_domain }}`)"
+        - "traefik.http.routers.qui.entrypoints=web"
+        - "traefik.http.services.qui.loadbalancer.server.port=7476"
+    dns:
+      - "{{ local_dns }}"
+    environment:
+      - QUI__HOST=0.0.0.0        # Listen address
+      - QUI__PORT=7476           # Port number
+    volumes:
+      - "{{remote_data}}/qui:/config"
+

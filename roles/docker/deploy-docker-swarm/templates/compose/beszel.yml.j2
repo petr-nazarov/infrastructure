@@ -1,4 +1,4 @@
-services:
+# services:
   beszel:
     image: henrygd/beszel:latest
     networks:
@@ -28,7 +28,6 @@ services:
 
   beszel-agent:
     image: henrygd/beszel-agent
-    container_name: beszel-agent
     deploy:
       mode: global
       placement:

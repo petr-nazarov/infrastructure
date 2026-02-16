@@ -1,4 +1,4 @@
-services:
+# services:
   cloudflare-ddns:
     image: favonia/cloudflare-ddns:latest
     networks:
@@ -9,8 +9,6 @@ services:
     read_only: true
     cap_drop:
       - all
-    security_opt:
-      - no-new-privileges:true
     environment:
       CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
       DOMAINS: "{{ cloudflare_managed_domains }}"

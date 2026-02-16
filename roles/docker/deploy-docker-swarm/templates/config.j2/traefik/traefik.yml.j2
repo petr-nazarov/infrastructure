@@ -14,9 +14,10 @@ entryPoints:
         - "127.0.0.1/32"
         - "172.16.0.0/12"
         - "192.168.0.0/16"
-    # http:
-    #   middlewares:
-    #     - crowdsec-bouncer@file # This applies it to EVERYTHING on 443
+        - "192.168.1.1/32" # Trust router ip
+    http:
+      middlewares:
+        - crowdsec-bouncer@file # This applies it to EVERYTHING on 443
 
 # 2. Experimental: Downloading the plugin
 experimental:

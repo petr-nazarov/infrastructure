@@ -20,7 +20,6 @@ enabled_services:
   - radarr
   - prowlarr
   - bazarr
-  - open-web-ui
   - qbittorrent
   # Multihost
   - backup

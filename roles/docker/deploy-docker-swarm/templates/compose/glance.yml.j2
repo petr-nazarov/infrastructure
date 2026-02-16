@@ -28,6 +28,6 @@
       labels:
         - "traefik.enable=true"
         # Local Access
-        - "traefik.http.routers.glance-local.rule=Host(`home.{{ top_local_domain }}`)"
-        # - "traefik.http.routers.glance-local.entrypoints=web"
+        - "traefik.http.routers.glance.rule=Host(`home.{{ top_local_domain }}`)"
+        - "traefik.http.routers.glance.entrypoints=web"
         - "traefik.http.services.glance.loadbalancer.server.port=8080"

@@ -5,18 +5,19 @@ http:
       redirectScheme:
         scheme: https
         permanent: true
-    # crowdsec-bouncer:
-    #   plugin:
-    #     bouncer: # Matches the name in experimental.plugins
-    #       enabled: true
-    #       logLevel: DEBUG
-    #       crowdsecMode: stream
-    #       crowdsecLapiHost: "crowdsec:8080"
-    #       crowdsecLapiKey: "{{ crowdsec_api_key }}" 
-    #       forwardedHeadersTrustedIPs:
-    #         - "127.0.0.1/32"
-    #         - "172.16.0.0/12"
-    #         - "192.168.0.0/16"
+    crowdsec-bouncer:
+      plugin:
+        bouncer: # Matches the name in experimental.plugins
+          enabled: true
+          logLevel: DEBUG
+          crowdsecMode: stream
+          crowdsecLapiHost: "crowdsec:8080"
+          crowdsecLapiKey: "{{ crowdsec_api_key }}" 
+          forwardedHeadersTrustedIPs:
+            - "127.0.0.1/32"
+            - "172.16.0.0/12"
+            - "192.168.0.0/16"
+            - "192.168.1.1/32" # Trust router ip
 
 
 tls:

@@ -23,10 +23,6 @@
                   url: https://ntf.${PUBLIC_TOP_DOMAIN}
                   description: Notification server
                   icon: sh:gotify
-                - title: Open WebUI
-                  url: https://ai.${PUBLIC_TOP_DOMAIN}
-                  description: AI chat window
-                  icon: sh:open-webui
             - title: Media
               hide-arrow: true
               links:

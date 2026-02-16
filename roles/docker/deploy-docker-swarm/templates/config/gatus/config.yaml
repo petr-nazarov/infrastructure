@@ -39,16 +39,6 @@ endpoints:
       - "[CERTIFICATE_EXPIRATION] > 48h"
     alerts:
       - type: gotify
-  - name: Open WebUI - AI chat window
-    url: https://ai.${PUBLIC_TOP_DOMAIN}/health
-    interval: 1m
-    group: 00 - Public
-    conditions:
-      - "[STATUS] == 200"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-      - "[BODY].status == true"
-    alerts:
-      - type: gotify
   ## Infra Management
   - name: WGEasy - VPN dashboard
     url: https://wg-home.${PUBLIC_TOP_DOMAIN}

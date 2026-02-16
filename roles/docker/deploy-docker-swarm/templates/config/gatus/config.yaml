@@ -17,6 +17,7 @@ alerting:
       success-threshold: 1
 announcements:
   - timestamp: 2026-02-01T14:00:00Z
+    archived: true
     type: warning
     message: "Scheduled move to new infra. Some services will be unavailable"
 endpoints:
@@ -50,7 +51,7 @@ endpoints:
     alerts:
       - type: gotify
   - name: AdGuard - Local DNS
-    url: http://$LOCAL_DNS:8081
+    url: http://adguardhome:80
     interval: 1m
     group: 01 - Infra Management
     conditions:

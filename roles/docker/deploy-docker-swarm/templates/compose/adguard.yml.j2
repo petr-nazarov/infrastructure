@@ -20,10 +20,10 @@
         protocol: udp
         mode: host
       # Admin UI Port
-      - target: 80
-        published: 8081
-        protocol: tcp
-        mode: ingress
+      # - target: 80
+      #   published: 8081
+      #   protocol: tcp
+      #   mode: ingress
       # Optional: Encrypted DNS
       - target: 853
         published: 853
@@ -37,6 +37,7 @@
           - "node.role == manager"
       labels:
         - "traefik.enable=true"
+        - "traefik.docker.network=local_net"
         - "traefik.http.routers.adguardhome.rule=Host(`dns.{{ public_top_domain }}`)"
         - "traefik.http.routers.adguardhome.entrypoints=websecure"
         - "traefik.http.routers.adguardhome.tls=true"

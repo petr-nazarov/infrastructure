@@ -7,7 +7,7 @@
         - $include: plugins/beszel.yml
         - type: dns-stats
           service: adguard
-          url: http://${LOCAL_DNS}:8081/
+          url: http://adguardhome:80/
           username: administrator
           password: ${ADMIN_PASS}
         - $include: plugins/gatus-full.yml

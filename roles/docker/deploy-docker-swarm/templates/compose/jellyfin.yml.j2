@@ -5,8 +5,8 @@
       - local_net
     dns:
       - "{{ local_dns }}"
-    ports:
-      - "8096:8096"
+    # ports:
+    #   - "8096:8096"
     volumes:
       - "{{ remote_data }}/jellyfin:/config"
       - "/mnt/storage/Media:/data/Media"

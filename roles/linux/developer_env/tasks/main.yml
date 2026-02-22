@@ -44,3 +44,10 @@
   args:
     executable: /bin/bash # Required because 'set -o pipefail' is a bash/zsh feature
     creates: "/home/nazarov/.local/bin/fabric"
+- name: Install claude
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL https://claude.ai/install.sh | bash
+  args:
+    executable: /bin/bash # Required because 'set -o pipefail' is a bash/zsh feature
+    creates: "/home/nazarov/.local/bin/fabric"

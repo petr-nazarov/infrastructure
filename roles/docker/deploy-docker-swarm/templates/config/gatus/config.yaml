@@ -168,8 +168,8 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
-  - name: Qbittorent - torrent
-    url: http://torrent.$LOCAL_MEDIA_DOMAIN
+  - name: Transmission - torrent
+    url: http://transmission.$LOCAL_MEDIA_DOMAIN
     interval: 1m
     group: 02 - Media
     conditions:

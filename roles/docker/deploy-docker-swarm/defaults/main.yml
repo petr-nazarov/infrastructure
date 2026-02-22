@@ -13,14 +13,14 @@ enabled_services:
   - glance
   - gatus
   - beszel
-  - qui
+  # - qui
   ## Media
   - jellyfin
   - sonarr
   - radarr
   - prowlarr
   - bazarr
-  - qbittorrent
+  - transmission
   # Multihost
   - backup
   - syncthing

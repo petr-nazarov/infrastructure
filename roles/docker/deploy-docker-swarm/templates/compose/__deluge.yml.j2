@@ -1,0 +1,29 @@
+# services:
+  deluge:
+    image: lscr.io/linuxserver/deluge:latest
+    environment:
+      - PUID={{ puid }}
+      - PGID={{ pgid }}
+      - TZ={{ tz }}
+      - DELUGE_LOGLEVEL=error #optional
+    volumes:
+      - "{{ remote_data }}/deluge:/config"
+      - "/mnt/storage/Media:/Media"
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.deluge.rule=Host(`deluge.{{ local_media_domain }}`)"
+        - "traefik.http.services.deluge.loadbalancer.server.port=8112"
+        - "traefik.http.routers.deluge.entrypoints=web"
+    networks:
+      - local_net
+    dns:
+      - "{{ local_dns }}"

@@ -30,7 +30,6 @@
 #     - role: linux/ssh
 #     - role: debian/base
 #
-# - role: debian/docker
 # - name: Setup home-media specific server settings
 #   hosts: home-media
 #   roles:
@@ -42,7 +41,7 @@
 #     - docker-swarm-workers
 #   roles:
 #     - role: docker/swarm-setup
-#
+
 - name: Deploy home docker swarm
   hosts:
     - docker-swarm-managers

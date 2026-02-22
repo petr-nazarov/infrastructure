@@ -50,6 +50,10 @@
                   description: Torrent management
                   url: http://torrent.${TOP_LOCAL_DOMAIN}
                   icon: sh:qui
+                - title: Transmission
+                  description: Torrent client
+                  url: http://transmission.${LOCAL_MEDIA_DOMAIN}
+                  icon: sh:deluge
             - title: Tools
               hide-arrow: true
               links:

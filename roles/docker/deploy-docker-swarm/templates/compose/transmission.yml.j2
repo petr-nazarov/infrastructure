@@ -1,0 +1,29 @@
+# services:
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    environment:
+      - PUID={{ puid }}
+      - PGID={{ pgid }}
+      - TZ={{ tz }}
+    volumes:
+      - "{{ remote_data }}/transmission:/config"
+      - "/mnt/storage/Media:/Media"
+    ports:
+      - target: 51413 
+        published: 6881
+        mode: host # Optional: bypasses mesh for direct performance if on manager
+    restart: unless-stopped
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.transmission.rule=Host(`transmission.{{ local_media_domain }}`)"
+        - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+        - "traefik.http.routers.transmission.entrypoints=web"
+    networks:
+      - local_net
+    dns:
+      - "{{ local_dns }}"

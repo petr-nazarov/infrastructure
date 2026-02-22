@@ -28,3 +28,4 @@ ci:
 
 run host: source
   ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml 
+  notify-send "Infrastructure applied for {{ host }}"

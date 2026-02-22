@@ -45,8 +45,3 @@
       placement:
         constraints:
           - "node.role == manager"
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.gatus.rule=Host(`status.{{ top_local_domain }}`)"
-        - "traefik.http.routers.gatus.entrypoints=web"
-        - "traefik.http.services.gatus.loadbalancer.server.port=8080"

@@ -32,10 +32,5 @@
         constraints:
           # This assumes your node names in swarm are 'home-edge' and 'home-media'
           - "node.hostname == home-{{ node }}"
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.syncthing-{{ node }}.rule=Host(`sync.{{ current_domain }}`)"
-        - "traefik.http.routers.syncthing-{{ node }}.entrypoints=web"
-        - "traefik.http.services.syncthing-{{ node }}.loadbalancer.server.port=8384"
 {% endfor %}
 

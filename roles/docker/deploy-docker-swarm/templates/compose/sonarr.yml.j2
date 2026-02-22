@@ -10,11 +10,6 @@
       placement:
         constraints:
           - "node.hostname == {{ hostname_media }}"
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.sonarr.rule=Host(`sonarr.{{ local_media_domain }}`)"
-        - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
-        - "traefik.http.routers.sonarr.entrypoints=web"
     environment:
       - PUID={{ puid }}
       - PGID={{ pgid }}

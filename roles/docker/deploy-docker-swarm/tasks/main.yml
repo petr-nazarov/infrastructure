@@ -31,10 +31,9 @@
   loop:
     - folder: certs
       file: cloudflare.ini
-    - folder: traefik
-      file: traefik.yml
-    - folder: traefik/dynamic
-      file: dynamic_conf.yml
+    - folder: caddy
+      file: Caddyfile
+  notify: Reload Caddy
 
 - name: Template Master file
   ansible.builtin.template:

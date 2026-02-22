@@ -17,8 +17,3 @@
       placement:
         constraints:
           - "node.hostname == {{ hostname_media }}"
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.bazarr.rule=Host(`bazarr.{{ local_media_domain }}`)"
-        - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
-        - "traefik.http.routers.bazarr.entrypoints=web"

@@ -27,8 +27,6 @@
       placement:
         constraints:
           - "node.hostname == {{ current_hostname }}"
-      labels:
-        - "traefik.enable=false"
 
   # --- Local Backup for {{ node | capitalize }} ---
   restic-local-{{ node }}:
@@ -54,6 +52,4 @@
       placement:
         constraints:
           - "node.hostname == {{ current_hostname }}"
-      labels:
-        - "traefik.enable=false"
 {% endfor %}

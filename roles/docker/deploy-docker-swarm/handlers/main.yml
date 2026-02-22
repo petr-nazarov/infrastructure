@@ -1,0 +1,5 @@
+---
+- name: Reload Caddy
+  ansible.builtin.shell: |
+    docker exec $(docker ps -q -f name=home_caddy) caddy reload --config /etc/caddy/Caddyfile
+  changed_when: true

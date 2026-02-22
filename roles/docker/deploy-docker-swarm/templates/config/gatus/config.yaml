@@ -22,6 +22,15 @@ announcements:
     message: "Scheduled move to new infra. Some services will be unavailable"
 endpoints:
   ## Public
+  - name: CV - personal website
+    url: https://cv.${PUBLIC_TOP_DOMAIN}
+    interval: 1m
+    group: 00 - Public
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == pat(*Petr Nazarov*)"
+    alerts:
+      - type: gotify
   - name: AdGuard - Public DNS
     url: https://dns.${PUBLIC_TOP_DOMAIN}
     interval: 1m
@@ -149,23 +158,6 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
-    alerts:
-      - type: gotify
-  - name: Syncthing
-    url: http://sync.${LOCAL_MEDIA_DOMAIN}/rest/noauth/health
-    interval: 1m
-    group: 02 - Media
-    conditions:
-      - "[STATUS] == 200"
-      - "[BODY].status == OK"
-    alerts:
-      - type: gotify
-  - name: Qui - torrent manager
-    url: http://torrent.$TOP_LOCAL_DOMAIN/dashboard
-    interval: 1m
-    group: 02 - Media
-    conditions:
-      - "[STATUS] == 200"
     alerts:
       - type: gotify
   - name: Transmission - torrent

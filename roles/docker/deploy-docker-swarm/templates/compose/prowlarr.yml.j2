@@ -16,8 +16,3 @@
       placement:
         constraints:
           - "node.hostname == {{ hostname_media }}"
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.{{ local_media_domain }}`)"
-        - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
-        - "traefik.http.routers.prowlarr.entrypoints=web"

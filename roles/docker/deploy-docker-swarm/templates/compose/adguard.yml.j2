@@ -35,10 +35,3 @@
       placement:
         constraints:
           - "node.role == manager"
-      labels:
-        - "traefik.enable=true"
-        - "traefik.docker.network=local_net"
-        - "traefik.http.routers.adguardhome.rule=Host(`dns.{{ public_top_domain }}`)"
-        - "traefik.http.routers.adguardhome.entrypoints=websecure"
-        - "traefik.http.routers.adguardhome.tls=true"
-        - "traefik.http.services.adguardhome.loadbalancer.server.port=80"

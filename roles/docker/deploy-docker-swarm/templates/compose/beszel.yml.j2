@@ -15,13 +15,6 @@
       placement:
         constraints:
           - "node.role == manager"
-      labels:
-      # Network
-      - "traefik.enable=true"
-      # Local
-      - "traefik.http.routers.beszel.rule=Host(`beszel.{{ top_local_domain }}`)"
-      - "traefik.http.routers.beszel.entrypoints=web"
-      - "traefik.http.services.beszel.loadbalancer.server.port=8090"
     volumes:
       - {{  remote_data }}/beszel/beszel_data:/beszel_data
       - {{  remote_data }}/beszel/beszel_socket:/beszel_socket

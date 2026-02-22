@@ -34,10 +34,3 @@
       placement:
         constraints:
           - "node.role == manager"
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.wg-easy.rule=Host(`wg-home.{{ public_top_domain }}`)"
-        - "traefik.http.routers.wg-easy.entrypoints=websecure"
-        - "traefik.http.routers.wg-easy.tls=true"
-        - "traefik.http.services.wg-easy.loadbalancer.server.port=51821"
-        - "traefik.http.routers.wg-easy.middlewares=force-https@file"

@@ -1,19 +1,19 @@
 ---
 enabled_services:
   # Edge
-  - traefik
+  - caddy
   - adguard
   - ddns
   - certbot
   - wg-easy
-  - crowdsec
+  # - crowdsec
   - upsnap
   - portainer
   - gotify
   - glance
   - gatus
   - beszel
-  # - qui
+  - cv
   ## Media
   - jellyfin
   - sonarr

@@ -1,0 +1,10 @@
+# services:
+  cv-petr-nazarov:
+    image: cv-petr-nazarov:latest
+    networks:
+      - local_net
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"

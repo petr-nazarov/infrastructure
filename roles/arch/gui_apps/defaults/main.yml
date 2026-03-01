@@ -21,3 +21,6 @@ arch_gui_apps:
   - anydesk
   - studio-3t
   - dbeaver-ee
+  # Sound
+  - notify-send
+  - paplay

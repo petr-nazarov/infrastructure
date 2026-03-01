@@ -28,4 +28,5 @@ ci:
 
 run host: source
   ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml 
-  notify-send "Infrastructure applied for {{ host }}"
+  paplay /usr/share/sounds/freedesktop/stereo/window-attention.oga
+  notify-send "Done" "Infrastructure applied for {{ host }}"

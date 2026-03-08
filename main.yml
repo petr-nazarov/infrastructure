@@ -43,6 +43,7 @@
     - role: docker/swarm-setup
 
 - name: Deploy home docker swarm
+  tags: home-server
   hosts:
     - docker-swarm-managers
   roles:

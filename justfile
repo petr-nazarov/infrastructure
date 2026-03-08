@@ -25,6 +25,10 @@ fix:
   just format
 ci:
   dagger call lint --source .
+run-tags tags:
+  ansible-playbook -i inventory/hosts.yml --tags {{ tags }} main.yml 
+  paplay /usr/share/sounds/freedesktop/stereo/window-attention.oga
+  notify-send "Done" "Infrastructure applied for tags {{ tags }}"
 
 run host: source
   ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml 

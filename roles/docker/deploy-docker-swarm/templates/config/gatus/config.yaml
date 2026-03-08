@@ -21,20 +21,30 @@ announcements:
     type: warning
     message: "Scheduled move to new infra. Some services will be unavailable"
 endpoints:
-  ## Public
+  ## External
+  - name: Frrcode company website
+    url: https://frrcode.${PUBLIC_TOP_DOMAIN}
+    interval: 1m
+    group: 40 - External
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == pat(*Develop*)"
+    alerts:
+      - type: gotify
   - name: CV - personal website
     url: https://cv.${PUBLIC_TOP_DOMAIN}
     interval: 1m
-    group: 00 - Public
+    group: 40 - External
     conditions:
       - "[STATUS] == 200"
       - "[BODY] == pat(*Petr Nazarov*)"
     alerts:
       - type: gotify
+  ## Public
   - name: AdGuard - Public DNS
     url: https://dns.${PUBLIC_TOP_DOMAIN}
     interval: 1m
-    group: 00 - Public
+    group: 50 - Public
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -42,7 +52,7 @@ endpoints:
   - name: Gotify - Notification Server
     url: https://ntf.${PUBLIC_TOP_DOMAIN}/health
     interval: 1m
-    group: 00 - Public
+    group: 50 - Public
     conditions:
       - "[STATUS] == 200"
       - "[BODY].health == green"
@@ -53,7 +63,7 @@ endpoints:
   - name: WGEasy - VPN dashboard
     url: https://wg-home.${PUBLIC_TOP_DOMAIN}
     interval: 1m
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
@@ -62,7 +72,7 @@ endpoints:
   - name: AdGuard - Local DNS
     url: http://adguardhome:80
     interval: 1m
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -70,11 +80,11 @@ endpoints:
   - name: Traefik
     url: http://traefik.${TOP_LOCAL_DOMAIN}/
     interval: 1m
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
   - name: CrowdSec LAPI
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     url: "http://crowdsec:8080/health" # CrowdSec exposes a health check endpoint
     interval: 1m
     conditions:
@@ -83,7 +93,7 @@ endpoints:
   - name: Gatus - Status page
     url: http://gatus:8080/
     interval: 1m
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -91,7 +101,7 @@ endpoints:
   - name: Upsnap - wake on lan
     url: http://${LOCAL_DNS}:8090/api/health
     interval: 1m
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
       - "[BODY].code == 200"
@@ -100,7 +110,7 @@ endpoints:
   - name: Beszel - System Monitoring
     url: http://beszel.${TOP_LOCAL_DOMAIN}/api/health
     interval: 1m
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
       - "[BODY].code == 200"
@@ -109,7 +119,7 @@ endpoints:
   - name: Glance - Home page
     url: http://glance:8080/api/healthz
     interval: 1m
-    group: 01 - Infra Management
+    group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -118,7 +128,7 @@ endpoints:
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health
     interval: 1m
-    group: 02 - Media
+    group: 52 - Media
     conditions:
       - "[STATUS] == 200"
       - "[BODY] == Healthy"
@@ -127,7 +137,7 @@ endpoints:
   - name: Bazarr
     url: http://bazarr.${LOCAL_MEDIA_DOMAIN}/api/system/ping
     interval: 1m
-    group: 02 - Media
+    group: 52 - Media
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
@@ -136,7 +146,7 @@ endpoints:
   - name: Radarr
     url: http://radarr.${LOCAL_MEDIA_DOMAIN}/ping
     interval: 1m
-    group: 02 - Media
+    group: 52 - Media
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
@@ -145,7 +155,7 @@ endpoints:
   - name: Sonarr
     url: http://sonarr.${LOCAL_MEDIA_DOMAIN}/ping
     interval: 1m
-    group: 02 - Media
+    group: 52 - Media
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
@@ -154,7 +164,7 @@ endpoints:
   - name: Prowlarr
     url: http://prowlarr.${LOCAL_MEDIA_DOMAIN}/ping
     interval: 1m
-    group: 02 - Media
+    group: 52 - Media
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
@@ -163,7 +173,7 @@ endpoints:
   - name: Transmission - torrent
     url: http://transmission.$LOCAL_MEDIA_DOMAIN
     interval: 1m
-    group: 02 - Media
+    group: 52 - Media
     conditions:
       - "[STATUS] == 200"
     alerts:
@@ -171,14 +181,14 @@ endpoints:
   - name: Ollama
     url: http://ollama.${LOCAL_DESKTOP_DOMAIN}/api/version
     interval: 1m
-    group: 03 - Desktop
+    group: 53 - Desktop
     conditions:
       - "[STATUS] == 200"
       - "[BODY].version != null"
   - name: Traefik
     url: http://traefik.${LOCAL_DESKTOP_DOMAIN}/
     interval: 1m
-    group: 03 - Desktop
+    group: 53 - Desktop
     conditions:
       - "[STATUS] == 200"
   # DNS
@@ -206,7 +216,7 @@ endpoints:
   - name: Syncthing Edge
     url: http://syncthing-edge:8384/rest/noauth/health
     interval: 1m
-    group: 04 - Syncthing
+    group: 54 - Syncthing
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
@@ -215,7 +225,7 @@ endpoints:
   - name: Syncthing Media
     url: http://syncthing-media:8384/rest/noauth/health
     interval: 1m
-    group: 04 - Syncthing
+    group: 54 - Syncthing
     conditions:
       - "[STATUS] == 200"
       - "[BODY].status == OK"

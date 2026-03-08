@@ -2,7 +2,6 @@
 arch_gui_apps:
   # Personal
   - ghostty
-  - alacritty
   - zen-browser-bin
   - opera
   - obsidian

@@ -15,6 +15,15 @@ arch_hyprland_packages:
   # utils
   - kmonad
   - tofi
+  ## Walker
+  - elephant # dep of walker
+  - elephant-desktopapplications
+  - elephant-calc
+  - elephant-runner
+  - elephant-files
+  - elephant-clipboard
+  - walker-bin
+
   - cliphist
   - grimblast
   - libnewt

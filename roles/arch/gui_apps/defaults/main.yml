@@ -15,6 +15,7 @@ arch_gui_apps:
   # Media playing
   - qimgv
   - mpv
+  - smplayer
   - libmpeg2
   # Professional
   - anydesk

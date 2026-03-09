@@ -177,13 +177,17 @@
                   description: Secrets setup
                   url: https://github.com/petr-nazarov/.secrets
                   icon: sh:github
-                - title: home-network
-                  description: Source of truth for the whole network
-                  url: https://github.com/petr-nazarov/home-network
+                - title: infrastructure
+                  description: Source of truth for the whole setup
+                  url: https://github.com/petr-nazarov/infrastructure
                   icon: sh:github
                 - title: zmk-config
                   description: Keyboard configuration
                   url: https://github.com/petr-nazarov/zmk-config
+                  icon: sh:github
+                - title: blog
+                  description: Personal blog
+                  url: https://github.com/petr-nazarov/blog
                   icon: sh:github
             - title: Docs
               hide-arrow: true

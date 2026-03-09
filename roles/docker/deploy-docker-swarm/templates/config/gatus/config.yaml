@@ -31,6 +31,15 @@ endpoints:
       - "[BODY] == pat(*Develop*)"
     alerts:
       - type: gotify
+  - name: Nzrv Blog - personal blog
+    url: https://blog.${PUBLIC_TOP_DOMAIN}
+    interval: 1m
+    group: 40 - External
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == pat(*Docker*)"
+    alerts:
+      - type: gotify
   - name: CV - personal website
     url: https://cv.${PUBLIC_TOP_DOMAIN}
     interval: 1m
@@ -83,13 +92,15 @@ endpoints:
     group: 51 - Infra Management
     conditions:
       - "[STATUS] == 200"
-  - name: CrowdSec LAPI
-    group: 51 - Infra Management
-    url: "http://crowdsec:8080/health" # CrowdSec exposes a health check endpoint
-    interval: 1m
-    conditions:
-      - "[STATUS] == 200"
-      - "[BODY].status == up"
+    alerts:
+      - type: gotify
+  # - name: CrowdSec LAPI
+  #   group: 51 - Infra Management
+  #   url: "http://crowdsec:8080/health" # CrowdSec exposes a health check endpoint
+  #   interval: 1m
+  #   conditions:
+  #     - "[STATUS] == 200"
+  #     - "[BODY].status == up"
   - name: Gatus - Status page
     url: http://gatus:8080/
     interval: 1m

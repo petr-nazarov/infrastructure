@@ -42,7 +42,7 @@ beszel.{{ top_local_domain }}:80 {
 
 ## Edge
 sync.{{ local_edge_domain }}:80 {
-    reverse_proxy syncthing-edge:80
+    reverse_proxy syncthing-edge:8384
 }
 
 
@@ -66,5 +66,5 @@ transmission.{{ local_media_domain }}:80 {
     reverse_proxy transmission:9091
 }
 sync.{{ local_media_domain }}:80 {
-    reverse_proxy syncthing-media:80
+    reverse_proxy syncthing-media:8384
 }

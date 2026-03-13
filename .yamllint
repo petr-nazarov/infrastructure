@@ -2,6 +2,7 @@
 extends: default
 # Add this section at the top
 ignore: |
+  .venv/*
   */**/*.sops.yml
   vendor/
   node_modules/

@@ -1,5 +1,6 @@
 ---
 exclude_paths:
+  - ".venv/*"
   - "**/*.sops.yml"
   - "roles/arch/hyprland/templates/catppuccin-macchiato-blue/"
 

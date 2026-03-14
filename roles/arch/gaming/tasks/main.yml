@@ -19,21 +19,29 @@
       - libva-mesa-driver
       - lib32-libva-mesa-driver
     state: present
+
 - name: Install Steam and Essential Tools
   become: true
-  community.general.pacman:
+  become_user: aur_builder
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  kewlfft.aur.aur:
     name:
       - steam
       - xpadneo-dkms
       - flatpak
       - discord
       - lutris
-      - wine-stable
+      - wine
+      - wine-mono
+      - wine-geko
       - gamemode
       - lib32-gamemode
       - mangohud
       - lib32-mangohud
-    state: present
+      - sunshine-bin
+    use: yay
+      
 - name: Install Linux-Zen Kernel for better responsiveness
   become: true
   community.general.pacman:
@@ -48,10 +56,3 @@
     value: "2147483642"
     state: present
     sysctl_file: /etc/sysctl.d/80-gaming.conf
-    # - name: Install sunshine to stream games
-    # become: true
-    # become_user: aur_builder
-    # kewlfft.aur.aur:
-    # name:
-    # - sunshine
-    # use: yay

@@ -10,7 +10,7 @@ arch_gui_apps:
   - qbittorrent
   - gparted
   - localsend-bin
-  - nekoray-bin
+  # - nekoray-bin
   - ark # unzip
   # Media playing
   - qimgv

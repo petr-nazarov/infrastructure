@@ -5,3 +5,4 @@
   kewlfft.aur.aur:
     name: "{{ arch_gui_apps }}"
     use: yay
+

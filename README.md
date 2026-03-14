@@ -14,7 +14,7 @@ just run HOST
 
 # Managed node arch
 ```bash
-sudo pacman -Sy --needed openssh python
+sudo pacman -Sy --needed openssh python python-pip sops age 
 sudo systemctl enable --now sshd
 ```
 # Managed node debian

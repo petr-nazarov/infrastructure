@@ -10,7 +10,7 @@
     - role: arch/hyprland
     - role: arch/gui_apps
     - role: arch/docker
-    - role: arch/kmonad
+    # - role: arch/kmonad
 
 - name: Setup desktop specific settings
   hosts: desktop

@@ -9,10 +9,6 @@
   ansible.builtin.systemd:
     daemon_reload: true
     scope: user
-- name: Reload system systemd daemon
-  become: true
-  ansible.builtin.systemd:
-    daemon_reload: true
 - name: Gather service facts
   become: true
   ansible.builtin.service_facts:

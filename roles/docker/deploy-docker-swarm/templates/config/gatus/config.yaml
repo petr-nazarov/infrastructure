@@ -86,14 +86,6 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
-  - name: Traefik
-    url: http://traefik.${TOP_LOCAL_DOMAIN}/
-    interval: 1m
-    group: 51 - Infra Management
-    conditions:
-      - "[STATUS] == 200"
-    alerts:
-      - type: gotify
   # - name: CrowdSec LAPI
   #   group: 51 - Infra Management
   #   url: "http://crowdsec:8080/health" # CrowdSec exposes a health check endpoint
@@ -189,19 +181,13 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
-  - name: Ollama
-    url: http://ollama.${LOCAL_DESKTOP_DOMAIN}/api/version
-    interval: 1m
-    group: 53 - Desktop
-    conditions:
-      - "[STATUS] == 200"
-      - "[BODY].version != null"
-  - name: Traefik
-    url: http://traefik.${LOCAL_DESKTOP_DOMAIN}/
-    interval: 1m
-    group: 53 - Desktop
-    conditions:
-      - "[STATUS] == 200"
+  # - name: Ollama
+  #   url: http://ollama.${LOCAL_DESKTOP_DOMAIN}/api/version
+  #   interval: 1m
+  #   group: 53 - Desktop
+  #   conditions:
+  #     - "[STATUS] == 200"
+  #     - "[BODY].version != null"
   # DNS
   - name: Cloudflare
     url: https://www.cloudflarestatus.com/
@@ -235,6 +221,15 @@ endpoints:
       - type: gotify
   - name: Syncthing Media
     url: http://syncthing-media:8384/rest/noauth/health
+    interval: 1m
+    group: 54 - Syncthing
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == OK"
+    alerts:
+      - type: gotify
+  - name: Syncthing Desktop
+    url: http://sync.${LOCAL_DESKTOP_DOMAIN}/rest/noauth/health
     interval: 1m
     group: 54 - Syncthing
     conditions:

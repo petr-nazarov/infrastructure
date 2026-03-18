@@ -10,4 +10,6 @@ arch_base_packages:
   - unzip
   - unrar
   - cronie
+  - inetutils
+  - moreutils
   - less

@@ -19,10 +19,18 @@
             - title: Public
               hide-arrow: true
               links:
-                - title: Gotify
-                  url: https://ntf.${PUBLIC_TOP_DOMAIN}
-                  description: Notification server
-                  icon: sh:gotify
+                - title: Blog
+                  url: https://blog.${PUBLIC_TOP_DOMAIN}
+                  description: Personal blog
+                  icon: https://blog.${PUBLIC_TOP_DOMAIN}/favicon.ico
+                - title: Frrcode
+                  url: https://frrcode.${PUBLIC_TOP_DOMAIN}
+                  description: Copany website
+                  icon: https://frrcode.${PUBLIC_TOP_DOMAIN}/favicon.ico
+                - title: CV
+                  url: https://cv.${PUBLIC_TOP_DOMAIN}
+                  description: Personal website 
+                  icon: https://cv.${PUBLIC_TOP_DOMAIN}/favicon.ico
             - title: Media
               hide-arrow: true
               links:
@@ -54,21 +62,6 @@
                   description: Torrent client
                   url: http://transmission.${LOCAL_MEDIA_DOMAIN}
                   icon: sh:deluge
-            - title: Tools
-              hide-arrow: true
-              links:
-                - title: Stirling PDF
-                  description: PDF tools
-                  url: http://stirling.${LOCAL_TOOLS_DOMAIN}/
-                  icon: sh:stirling-pdf
-                - title: IT tools
-                  description: IT tools
-                  url: http://it-tools.${LOCAL_TOOLS_DOMAIN}/
-                  icon: sh:it-tools
-                - title: omnitools
-                  description: Tools for images and videos
-                  url: http://omni-tools.${LOCAL_TOOLS_DOMAIN}/
-                  icon: https://cdn.jsdelivr.net/gh/selfhst/icons@main/png/omnitools.png
             - title: Infra Management
               hide-arrow: true
               links:
@@ -84,6 +77,10 @@
                   url: http://portainer.${TOP_LOCAL_DOMAIN}
                   description: Container management
                   icon: sh:portainer
+                - title: Gotify
+                  url: https://ntf.${PUBLIC_TOP_DOMAIN}
+                  description: Notification server
+                  icon: sh:gotify
                 - title: Beszel
                   url: http://beszel.${TOP_LOCAL_DOMAIN}
                   description: Systems monitoring
@@ -126,6 +123,7 @@
                   description: Wifi Access Point
                   url: http://192.168.1.10
                   icon: https://comfastwifi.com/image/catalog/comfastwifi-ico.png
+
         - title: Links
           type: bookmarks
           groups:

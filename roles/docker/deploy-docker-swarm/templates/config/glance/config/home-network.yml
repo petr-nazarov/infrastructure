@@ -26,11 +26,13 @@
                 - title: Frrcode
                   url: https://frrcode.${PUBLIC_TOP_DOMAIN}
                   description: Copany website
-                  icon: https://frrcode.${PUBLIC_TOP_DOMAIN}/favicon.ico
                 - title: CV
                   url: https://cv.${PUBLIC_TOP_DOMAIN}
                   description: Personal website 
-                  icon: https://cv.${PUBLIC_TOP_DOMAIN}/favicon.ico
+                - title: VPN
+                  description: XRay VLESS Server
+                  url: http://65.108.86.24:2096/QtgDtgMkbIa2oTPmJT/
+                  icon: sh:openvpn
             - title: Media
               hide-arrow: true
               links:
@@ -187,6 +189,10 @@
                   description: Personal blog
                   url: https://github.com/petr-nazarov/blog
                   icon: sh:github
+                - title: vpn
+                  description: Vpn setup 
+                  url: https://github.com/petr-nazarov/vpn
+                  icon: sh:github
             - title: Docs
               hide-arrow: true
               links:
@@ -207,14 +213,6 @@
                   description: VPS cloud provider
                   url: https://console.hetzner.cloud/projects/2278725/servers
                   icon: sh:hetzner-light
-                - title: VPN - Sun
-                  description: XRay VLESS Server
-                  url: http://23.88.35.102:46298/wp/
-                  icon: sh:openvpn
-                - title: VPN - dimass
-                  description: XRay VLESS Server
-                  url: http://135.181.35.185:46298/HXObtUdMPkEF2IOzdP/
-                  icon: sh:openvpn
         - type: monitor
           cache: 1m
           title: External

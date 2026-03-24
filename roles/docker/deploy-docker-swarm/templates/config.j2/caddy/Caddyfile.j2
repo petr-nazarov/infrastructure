@@ -10,10 +10,11 @@
 }
 
 # Public domains
-cv.{{ public_top_domain }}, petr.{{ public_top_domain }}, me.{{ public_top_domain }}, personal.{{ public_top_domain }}   {
+rss.{{ public_top_domain }} {
     import my_tls
-    reverse_proxy cv-petr-nazarov:80
+    reverse_proxy miniflux:8080
 }
+
 dns.{{ public_top_domain }} {
     import my_tls
     reverse_proxy adguardhome:80
@@ -39,6 +40,7 @@ status.{{ top_local_domain }}:80 {
 beszel.{{ top_local_domain }}:80 {
     reverse_proxy beszel:8090
 }
+
 
 ## Edge
 sync.{{ local_edge_domain }}:80 {

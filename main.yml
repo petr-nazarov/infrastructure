@@ -18,6 +18,7 @@
     - role: arch/gaming
     - role: arch/dns-complience
     - role: arch/wake-on-lan
+    - role: arch/hibernation
 
 - name: Setup laptop specific settings
   hosts: matebook

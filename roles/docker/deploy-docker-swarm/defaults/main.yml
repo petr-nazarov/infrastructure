@@ -13,6 +13,7 @@ enabled_services:
   - glance
   - gatus
   - beszel
+  - rss
   # - cv
   ## Media
   - jellyfin

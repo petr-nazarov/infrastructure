@@ -33,7 +33,7 @@
                   description: XRay VLESS Server
                   url: http://65.108.86.24:2096/QtgDtgMkbIa2oTPmJT/
                   icon: sh:openvpn
-            - title: Media
+            - title: Local tools
               hide-arrow: true
               links:
                 - title: Jellyfin
@@ -56,10 +56,10 @@
                   description: Subtitle indexer
                   url: http://bazarr.${LOCAL_MEDIA_DOMAIN}
                   icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bazarr.png
-                - title: Qui
-                  description: Torrent management
-                  url: http://torrent.${TOP_LOCAL_DOMAIN}
-                  icon: sh:qui
+                - title: Miniflux
+                  description: Rss platform
+                  url: http://rss.${PUBLIC_TOP_DOMAIN}
+                  icon: sh:rss-com
                 - title: Transmission
                   description: Torrent client
                   url: http://transmission.${LOCAL_MEDIA_DOMAIN}
@@ -213,6 +213,14 @@
                   description: VPS cloud provider
                   url: https://console.hetzner.cloud/projects/2278725/servers
                   icon: sh:hetzner-light
+                - title: Umami
+                  description: Analitics platform
+                  url: https://cloud.umami.is/analytics/eu/websites/
+                  icon: sh:umami
+                - title: UTM.io
+                  description: Utm links generator
+                  url: https://app.utm.io/team/69c262d8c3bfffd2deef4776/links 
+                  icon: https://app.utm.io/a676bd1b63aa6e9a.png
         - type: monitor
           cache: 1m
           title: External

@@ -74,4 +74,7 @@ sync.{{ local_media_domain }}:80 {
 sync.{{ local_desktop_domain }}:80 {
     reverse_proxy {{desktop_ip }}:8384
 }
+sunshine.{{ local_desktop_domain }}:80 {
+    reverse_proxy {{desktop_ip }}:47990
+}
 

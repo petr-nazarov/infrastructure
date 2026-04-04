@@ -63,7 +63,11 @@
                 - title: Transmission
                   description: Torrent client
                   url: http://transmission.${LOCAL_MEDIA_DOMAIN}
-                  icon: sh:deluge
+                  icon: sh:transmission
+                - title: Sunshine
+                  description: Game streaming
+                  url: http://sunshine.${LOCAL_DESKTOP_DOMAIN}
+                  icon: sh:sunshine
             - title: Infra Management
               hide-arrow: true
               links:
@@ -213,10 +217,18 @@
                   description: VPS cloud provider
                   url: https://console.hetzner.cloud/projects/2278725/servers
                   icon: sh:hetzner-light
+                - title: Aeza
+                  description: VPS cloud provider ru
+                  url: https://my.aeza.net/home
+                  icon: mdi:server-outline
                 - title: Umami
                   description: Analitics platform
                   url: https://cloud.umami.is/analytics/eu/websites/
                   icon: sh:umami
+                - title: Checkly
+                  description: Health check 
+                  url: https://app.checklyhq.com/accounts/f1fefea7-5708-4b75-a348-a9839c3feb49
+                  icon: https://app.checklyhq.com/static/images/racoon_favicon.png
                 - title: UTM.io
                   description: Utm links generator
                   url: https://app.utm.io/team/69c262d8c3bfffd2deef4776/links 

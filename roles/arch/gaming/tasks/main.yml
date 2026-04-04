@@ -39,6 +39,7 @@
       - lib32-gamemode
       - mangohud
       - lib32-mangohud
+      - icu
       - sunshine-bin
     use: yay
       

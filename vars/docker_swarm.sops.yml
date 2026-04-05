@@ -13,7 +13,8 @@ edge_ip: ENC[AES256_GCM,data:rv26lAwQPbITrpG3,iv:YDfCQb9l8RAu0tWMOetbPN2xlgbPA6t
 media_ip: ENC[AES256_GCM,data:J29SbQR5FIOc+0fc,iv:TXkbWvzaZQeyV8mrZHdR5bjaa9wv2dnioQvMVb77UXQ=,tag:Tl2EOGgYoAUPxoUvepRkWg==,type:str]
 desktop_ip: ENC[AES256_GCM,data:15Sj7CyTXKHeWlZ0Tg==,iv:Pr9fLU1ZtnksHTY/6rPqZTKxnYCXs8WjIbZa2cFDes4=,tag:N38wr/gO+uM2jzVdhpXuBw==,type:str]
 cloudflare_api_token: ENC[AES256_GCM,data:Qxh+hCGEkov+ZLhDNPt2zp81X3KXJ4tHs7DYxF8dtr4kCJZgzPJgQw==,iv:Oz4ciuGHiXDoLnxzejxdhq/lTa08pquKNJ2Q5Xl2+do=,tag:rg7rZAxXuDkUsYmPWdn4tA==,type:str]
-cloudflare_managed_domains: ENC[AES256_GCM,data:ptSsC37H/EV6TdDekcIz59TmtvhHglZXHicFUkhdfy3PZqMo5asTGep7YMMxmDzV3lXaPjglug==,iv:DkUvL9STkIxEw7KnLnI9lPaWvzma7Sl35/xRzTPyRWg=,tag:19UqxWZM5BkheSKdRlDgnw==,type:str]
+cloudflare_managed_domains: ENC[AES256_GCM,data:FlIwEYL0y3TeHdM=,iv:GaxzjzzDRAclmKuF2McoRH2Zo2AA8S/NnJH2QfavhfM=,tag:RVfEU+t6/WUTyHZEfCJR9Q==,type:str]
+cloudflare_proxied_domains: ENC[AES256_GCM,data:aIOF+tPXciX9RDcR3RGc88k5vLw1zMLRkTSLv3eq3K2V5FFkShwLjuY8JLVuF7rgO/LftcWjWdN5zIJOI3E7SnqrDq6EmvJVe3TdveoEaS42Gmi7r3d3iFJdAvKkEpAUyAKUDtd6Zh/G2sRUVwAlMtKBhb8z+73lSmcYZC5T1kJG5CysY7RZcu+VVaHvgYo1D8j6/mhe,iv:nVxz+RPMD5jTE6tqsrlDIwN8ZpTmUJTCAybNMPxjvO0=,tag:mnBMZQkUNYDfVNma824rcQ==,type:str]
 crowdsec_api_key: ENC[AES256_GCM,data:XgVzUFegyZw6zrgQVmXrt3PEUdb1BKVCb0/69t7fpn0/0RtiT/Yg5DDdDg==,iv:nO1xOQlUGXHSE6Nl89iDfKce3NhkVeukcFDzcuNQvAQ=,tag:vO46SN/Ju/aF3AGEZgCsnQ==,type:str]
 crowdsec_machine_pass: ENC[AES256_GCM,data:+OYeHF5w/Pjv3TXg5/gwVR+u3PQgglP83D/8FE95SZ3OpYUt2hOieNU4beqinqSLSOXfj88ryjUAYkCO4Uy5lQ==,iv:/SMYIvgJXWJoQg2PY2anJQ4EDLOkGsu0of3zCTfNa7Q=,tag:uW7LXh6nKMGH6KMsoY2QSQ==,type:str]
 top_local_domain: ENC[AES256_GCM,data:7oPZyrentWU=,iv:t2nIYvi8B7SUvGCLjWH9ygVgQrYNYZdo3wyw6ygpZaE=,tag:WNXk+p5mFGLqh43fNOx0IA==,type:str]
@@ -36,6 +37,8 @@ restic_password: ENC[AES256_GCM,data:lFTpU7DULnebhSj0ntTXQA==,iv:fEHHeTQ3BXr7wPN
 #ENC[AES256_GCM,data:hQA=,iv:KLlvBIa4ueUFN9DbmsX8L3Gum6YkBwF7tGXFuawSP4o=,tag:KoQ9APDNAsO8pDcwSnTs5Q==,type:comment]
 db_postgres_user: ENC[AES256_GCM,data:yz0AZbdinTQ=,iv:ehy8Y2dffgkv2UN+/kfBWK5lGh2f2iXOMcHPKu0SPW0=,tag:TcltaDd1GIj2qF12hfydrw==,type:str]
 db_postgres_password: ENC[AES256_GCM,data:MOeqoEaSf3kPcx58o5Q=,iv:TagrkxT63MYUENFwSGa8c7hF0hgva5ZAkROjs9/Cd3g=,tag:N+M6wHBFpUhKB61ucA4MGA==,type:str]
+#ENC[AES256_GCM,data:s9dDOtkm6YoNkg==,iv:Zx+nueGSVTLuiNP4OfYqJ5Jg55O8ctVfxHk6i29rjrg=,tag:yMNd6HmNamoV66BRmTqiWg==,type:comment]
+authentik_secret_token: ENC[AES256_GCM,data:s9jW8jPbhh2u3YkybI4+L7NUPCTlP93GaDpNKU699kftuxwTUPsAyPTomniF+hl69hp+k+aj8un/2KQxn3XyH7En6JYjbt4WoyLcvmJELGk=,iv:MrZfSOuPtbmv9X8AhxnnDst/xKVY9mXCE6MtOvNKSBA=,tag:GejnzQCYgASHt1+grCTVqA==,type:str]
 #ENC[AES256_GCM,data:8/ZjuOBTVTZCYgg=,iv:4QNOWO0rGHTLAKOT4dwdZ82D1bGgBCUdN2WSam0ORzY=,tag:Q4BSO9LaejBMsKihiULXJA==,type:comment]
 beszel_key: ENC[AES256_GCM,data:GmOCCdI+QWNI3dUJYDSLO5lbWK5CGdph5MhDzn3YK3Ax1bh9vorRow9hSAyWPZODzW1RKbYcbcsbi/0J/H6Bqnflq+ECm/CBbdeblD5DMcE=,iv:dkGgv8c/v0sGyqsSn3Md22gictu7esH4uVZPw1FGSj4=,tag:Bxn5a1vRg/ts4C+OhJ56jA==,type:str]
 beszel_token: ENC[AES256_GCM,data:dFG1fTLqRtmLyFepTbbS8hN432dlk46iPNUUW5lBNR35Mgbp,iv:HKEOkAXQJUm6Z8V+Xl/bq3i9IlmBaL9RGiCcGWh5Q8c=,tag:nHn/wiO1iL7e+rvrMyd82A==,type:str]
@@ -57,7 +60,7 @@ sops:
             WjdQV3pQcm55NEU5b2dzVGVCUVFMczQK3IcNIEqPoz48XwvKzAax+0Amj95ZzY4X
             6yIS7to1t2Rf1lECfhjdLwY/sYGxs3X/5SagfnS7mWeppPjzXpUcKw==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-03-24T07:49:54Z"
-    mac: ENC[AES256_GCM,data:pAXEAjfILr/qwZn/jo0Jb2zvU8bWevm1/fN1GmAv2BDGEkSQGFWx85xQEZCR8JT6EPk4SB5ESyGBMGfeMTj1t2n+rD41t0uviQGWlTJxXnYEL4FyH9REYpp8qerUxgLgOaeksZtB0Mmop9xtHH4KvMhUcD/MecVKIFsTi5fawI8=,iv:jpWML+8GX3MU6znqG4F7ntR8E6fnIFki/HoWaYcAUUA=,tag:y/uzBx/kk0OwrsjxrC9BcA==,type:str]
+    lastmodified: "2026-04-05T20:24:10Z"
+    mac: ENC[AES256_GCM,data:qXWglWAooI+jz9LNqq5voE8FaF6ijZmzox/hHnd8ru1li1hz4rmo8Ej+qwJUNYa8rOXjUjhbMI+3Hfphe4Sq0Svqq1JhstrIRiPmO0ukF2BY8ruI4Me1t5Jc/xfiuQ0fCOq3Oth5mcBNUIxptLBpSiovh5PuJwy+jJYgDqzStX8=,iv:dxfvUqsi02seVlcJQABjZXs/WNKSxwc5NlnrzsiBdeo=,tag:YZ5Ykkm/kvuJYWH0Y7TpCQ==,type:str]
     unencrypted_suffix: _unencrypted
-    version: 3.12.1
+    version: 3.12.2

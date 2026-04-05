@@ -1,0 +1,95 @@
+# services:
+  authentik_redis:
+    networks:
+      - local_net
+    image: docker.io/library/redis:alpine
+    command: --save 60 1 --loglevel warning
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - redis-cli ping | grep PONG
+      interval: 30s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+    volumes:
+      - "{{ remote_data }}/authentik/redis:/data"
+  authentik_postgresql:
+    networks:
+      - local_net
+    environment:
+      POSTGRES_DB: authentik
+      POSTGRES_USER: "{{ db_postgres_user }}"
+      POSTGRES_PASSWORD: "{{ db_postgres_password }}"
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      test:
+        - CMD-SHELL
+        - pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
+      timeout: 5s
+    image: docker.io/library/postgres:16-alpine
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          # Pinning to media node because that's where your big storage/backups likely live
+          - "node.role == manager"
+    volumes:
+    - "{{ remote_data }}/authentik/db:/var/lib/postgresql/data"
+  authentik_server:
+    networks:
+      - local_net
+    command: server
+    environment:
+      AUTHENTIK_HOST: "https://auth.{{ public_top_domain }}"
+      AUTHENTIK_DEFAULT_USER_CHANGE_USERNAME: "true"
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: "{{ db_postgres_password }}"
+      AUTHENTIK_POSTGRESQL__USER: "{{ db_postgres_user }}"
+      AUTHENTIK_REDIS__HOST: authentik_redis
+      AUTHENTIK_SECRET_KEY: "{{ authentik_secret_token }}"
+    image: ghcr.io/goauthentik/server:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          # Pinning to media node because that's where your big storage/backups likely live
+          - "node.role == manager"
+    ports:
+    - 9000:9000
+    - 9443:9443
+    volumes:
+      - "{{ remote_data }}/authentik/data:/data"
+      - "{{ remote_data }}/authentik/templates:/templates"
+  authentik_worker:
+    networks:
+      - local_net
+    command: worker
+    environment:
+      AUTHENTIK_HOST: "https://auth.{{ public_top_domain }}"
+      AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+      AUTHENTIK_POSTGRESQL__NAME: authentik
+      AUTHENTIK_POSTGRESQL__PASSWORD: "{{ db_postgres_password }}"
+      AUTHENTIK_POSTGRESQL__USER: "{{ db_postgres_user }}"
+      AUTHENTIK_REDIS__HOST: authentik_redis
+      AUTHENTIK_SECRET_KEY: "{{ authentik_secret_token }}"
+    image: ghcr.io/goauthentik/server:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          # Pinning to media node because that's where your big storage/backups likely live
+          - "node.role == manager"
+    user: root
+    volumes:
+      - "{{ remote_data }}/authentik/data:/data"
+      - "{{ remote_data }}/authentik/certs:/certs"
+      - "{{ remote_data }}/authentik/templates:/templates"

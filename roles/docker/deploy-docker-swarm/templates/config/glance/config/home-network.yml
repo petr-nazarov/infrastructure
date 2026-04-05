@@ -38,32 +38,32 @@
               links:
                 - title: Jellyfin
                   description: Meida server
-                  url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}
+                  url: https://jellyfin-home.${PUBLIC_TOP_DOMAIN}
                   icon: sh:jellyfin
                 - title: Sonarr
                   description: TV series management
-                  url: http://sonarr.${LOCAL_MEDIA_DOMAIN}
+                  url: https://sonarr-home.${PUBLIC_TOP_DOMAIN}
                   icon: sh:sonarr
                 - title: Radarr
                   description: Movies management
-                  url: http://radarr.${LOCAL_MEDIA_DOMAIN}
+                  url: https://radarr-home.${PUBLIC_TOP_DOMAIN}
                   icon: sh:radarr
                 - title: Prowlarr
                   description: Torrent indexer
-                  url: http://prowlarr.${LOCAL_MEDIA_DOMAIN}
+                  url: https://prowlarr-home.${PUBLIC_TOP_DOMAIN}
                   icon: sh:prowlarr
                 - title: Bazarr
                   description: Subtitle indexer
-                  url: http://bazarr.${LOCAL_MEDIA_DOMAIN}
+                  url: https://bazarr-home.${PUBLIC_TOP_DOMAIN}
                   icon: https://cdn.jsdelivr.net/gh/selfhst/icons/png/bazarr.png
+                - title: Transmission
+                  description: Torrent client
+                  url: https://transmission-home.${PUBLIC_TOP_DOMAIN}
+                  icon: sh:transmission
                 - title: Miniflux
                   description: Rss platform
                   url: http://rss.${PUBLIC_TOP_DOMAIN}
                   icon: sh:rss-com
-                - title: Transmission
-                  description: Torrent client
-                  url: http://transmission.${LOCAL_MEDIA_DOMAIN}
-                  icon: sh:transmission
                 - title: Sunshine
                   description: Game streaming
                   url: http://sunshine.${LOCAL_DESKTOP_DOMAIN}
@@ -80,7 +80,7 @@
                   description: Vpn dashboard
                   icon: sh:wireguard
                 - title: Portainer
-                  url: http://portainer.${TOP_LOCAL_DOMAIN}
+                  url: https://portainer-home.${PUBLIC_TOP_DOMAIN}
                   description: Container management
                   icon: sh:portainer
                 - title: Gotify
@@ -88,21 +88,17 @@
                   description: Notification server
                   icon: sh:gotify
                 - title: Beszel
-                  url: http://beszel.${TOP_LOCAL_DOMAIN}
+                  url: https://beszel-home.${PUBLIC_TOP_DOMAIN}
                   description: Systems monitoring
                   icon: sh:beszel
                 - title: Gatus
-                  url: http://status.${TOP_LOCAL_DOMAIN}
+                  url: https://status-home.${PUBLIC_TOP_DOMAIN}
                   description: Health checks
                   icon: sh:gatus
                 - title: UpSnap
-                  url: http://${LOCAL_DNS}:8090
+                  url: https://upsnap-home.${PUBLIC_TOP_DOMAIN}
                   description: Wake on LAN
                   icon: sh:upsnap
-                - title: Crowdsec
-                  url: http://crowdsec.${TOP_LOCAL_DOMAIN}
-                  description: Security Intelligence
-                  icon: sh:crowdsec
             - title: Syncthing
               hide-arrow: true
               links:

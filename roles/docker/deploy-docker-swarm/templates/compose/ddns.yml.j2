@@ -11,9 +11,32 @@
       - all
     environment:
       CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
-      DOMAINS: "{{ cloudflare_managed_domains }}"
+      DOMAINS: "{{ cloudflare_managed_domains | split(',') | map('trim') | map('regex_replace', '^(.*)$', '\\1.' + public_top_domain) | join(',') }}"
       IP6_PROVIDER: "none"
       PROXIED: "false"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+      labels:
+        - "traefik.enable=false"
+  cloudflare-ddns-proxy:
+    image: favonia/cloudflare-ddns:latest
+    networks:
+      - local_net
+    dns:
+      - "{{ local_dns }}"
+    user: "{{ puid }}:{{ pgid }}"
+    read_only: true
+    cap_drop:
+      - all
+    environment:
+      CLOUDFLARE_API_TOKEN: "{{ cloudflare_api_token }}"
+      DOMAINS: "{{ cloudflare_proxied_domains | split(',') | map('trim') | map('regex_replace', '^(.*)$', '\\1.' + public_top_domain) | join(',') }}"
+      IP6_PROVIDER: "none"
+      PROXIED: "true"
     deploy:
       mode: replicated
       replicas: 1

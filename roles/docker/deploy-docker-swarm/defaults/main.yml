@@ -6,6 +6,7 @@ enabled_services:
   - ddns
   - certbot
   - wg-easy
+  - authentik
   # - crowdsec
   - upsnap
   - portainer

@@ -207,11 +207,11 @@
               links:
                 - title: Cloudflare
                   description: DNS register
-                  url: https://dash.cloudflare.com/c9e6332b9b4fa2287a90aa55ce22df93/home/domains
+                  url: https://dash.cloudflare.com/
                   icon: sh:cloudflare
                 - title: Hetzner
                   description: VPS cloud provider
-                  url: https://console.hetzner.cloud/projects/2278725/servers
+                  url: https://console.hetzner.cloud/
                   icon: sh:hetzner-light
                 - title: Aeza
                   description: VPS cloud provider ru
@@ -223,11 +223,11 @@
                   icon: sh:umami
                 - title: Checkly
                   description: Health check 
-                  url: https://app.checklyhq.com/accounts/f1fefea7-5708-4b75-a348-a9839c3feb49
+                  url: https://app.checklyhq.com/
                   icon: https://app.checklyhq.com/static/images/racoon_favicon.png
                 - title: UTM.io
                   description: Utm links generator
-                  url: https://app.utm.io/team/69c262d8c3bfffd2deef4776/links 
+                  url: https://app.utm.io/
                   icon: https://app.utm.io/a676bd1b63aa6e9a.png
         - type: monitor
           cache: 1m

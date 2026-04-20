@@ -25,7 +25,7 @@ arch_hyprland_packages:
   # - walker-bin
 
   - cliphist
-  - grimblast
+  - hyprshot
   - libnewt
   # sound
   - sof-firmware

@@ -75,6 +75,10 @@
                   description: Private DNS
                   url: http://dns.${PUBLIC_TOP_DOMAIN}
                   icon: sh:adguard-home
+                - title: Authentik
+                  description: Auth service
+                  url: http://auth.${PUBLIC_TOP_DOMAIN}
+                  icon: sh:authentik
                 - title: WG easy
                   url: https://wg-home.${PUBLIC_TOP_DOMAIN}
                   description: Vpn dashboard

@@ -41,7 +41,7 @@ arch_hyprland_packages:
   - impala
   - calcurse
   # hyprland
-  - swww
+  - hyprpaper
   - uwsm
   - sddm
   - hyprland

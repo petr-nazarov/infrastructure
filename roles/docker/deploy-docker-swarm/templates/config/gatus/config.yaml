@@ -23,7 +23,7 @@ announcements:
 endpoints:
   ## External
   - name: Frrcode company website
-    url: https://frrcode.${PUBLIC_TOP_DOMAIN}
+    url: https://frrcode.com
     interval: 1m
     group: 40 - External
     conditions:

@@ -2,6 +2,7 @@
 enabled_services:
   # Edge
   - caddy
+  - tinyproxy
   - adguard
   - ddns
   - certbot

@@ -33,6 +33,8 @@
       file: cloudflare.ini
     - folder: caddy
       file: Caddyfile
+    - folder: tinyproxy
+      file: tinyproxy.conf 
   notify: Reload Caddy
 
 - name: Template Master file

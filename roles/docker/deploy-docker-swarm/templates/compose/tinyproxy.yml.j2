@@ -1,0 +1,13 @@
+# services:
+  tinyproxy:
+    image: vimagick/tinyproxy
+    ports:
+      - "8888:8888"
+    volumes:
+      - {{ remote_config }}/tinyproxy/tinyproxy.conf:/etc/tinyproxy/tinyproxy.conf
+    networks:
+      - local_net
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager

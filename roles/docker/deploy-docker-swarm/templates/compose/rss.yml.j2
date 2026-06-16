@@ -3,6 +3,8 @@
     image: miniflux/miniflux:latest
     networks:
       - local_net
+    dns:
+      - "{{ local_dns }}"
     deploy:
       replicas: 1
       placement:

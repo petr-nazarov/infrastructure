@@ -68,6 +68,14 @@ endpoints:
       - "[CERTIFICATE_EXPIRATION] > 48h"
     alerts:
       - type: gotify
+  - name: Tinyproxy - HTTP Proxy
+    url: "tcp://proxy.${PUBLIC_TOP_DOMAIN}:8888"
+    interval: 1m
+    group: 50 - Public
+    conditions:
+      - "[CONNECTED] == true"
+    alerts:
+      - type: gotify
   ## Infra Management
   - name: WGEasy - VPN dashboard
     url: https://wg-home.${PUBLIC_TOP_DOMAIN}
@@ -127,7 +135,7 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: gotify
-        ## Media
+  ## Media
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health
     interval: 1m
@@ -179,6 +187,15 @@ endpoints:
     group: 52 - Media
     conditions:
       - "[STATUS] == 200"
+    alerts:
+      - type: gotify
+  - name: Miniflux 
+    url: https://rss.${PUBLIC_TOP_DOMAIN}/healthcheck
+    interval: 1m
+    group: 53 - Other
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == pat(*OK*)"
     alerts:
       - type: gotify
   # - name: Ollama

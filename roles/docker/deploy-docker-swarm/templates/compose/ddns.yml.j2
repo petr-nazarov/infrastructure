@@ -14,6 +14,7 @@
       DOMAINS: "{{ cloudflare_managed_domains | split(',') | map('trim') | map('regex_replace', '^(.*)$', '\\1.' + public_top_domain) | join(',') }}"
       IP6_PROVIDER: "none"
       PROXIED: "false"
+      NOTIFY: "gotify://{{ notif_server | regex_replace('^https?://', '') }}/{{ notif_network_token }}?title=Network+IP+Changed&priority=5"
     deploy:
       mode: replicated
       replicas: 1

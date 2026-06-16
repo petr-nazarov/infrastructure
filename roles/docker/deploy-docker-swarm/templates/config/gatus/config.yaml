@@ -7,10 +7,11 @@ storage:
   type: postgres
   path: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/${POSTGRES_DB}?sslmode=disable"
 alerting:
-  gotify:
-    server-url: "${NOTIF_SERVER}"
-    priority: 5
-    token: "${NOTIF_NETWORK_TOKEN}"
+  pushover:
+    application-token: "${PUSHOVER_APP_TOKEN}"
+    user-key: "${PUSHOVER_USER_KEY}"
+    priority: 1
+    resolved-priority: 0
     default-alert:
       send-on-resolved: true
       failure-threshold: 5
@@ -30,7 +31,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY] == pat(*Develop*)"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Nzrv Blog - personal blog
     url: https://blog.${PUBLIC_TOP_DOMAIN}
     interval: 1m
@@ -39,7 +40,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY] == pat(*Docker*)"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: CV - personal website
     url: https://cv.${PUBLIC_TOP_DOMAIN}
     interval: 1m
@@ -48,7 +49,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY] == pat(*Petr Nazarov*)"
     alerts:
-      - type: gotify
+      - type: pushover
   ## Public
   - name: AdGuard - Public DNS
     url: https://dns.${PUBLIC_TOP_DOMAIN}
@@ -57,17 +58,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
     alerts:
-      - type: gotify
-  - name: Gotify - Notification Server
-    url: https://ntf.${PUBLIC_TOP_DOMAIN}/health
-    interval: 1m
-    group: 50 - Public
-    conditions:
-      - "[STATUS] == 200"
-      - "[BODY].health == green"
-      - "[CERTIFICATE_EXPIRATION] > 48h"
-    alerts:
-      - type: gotify
+      - type: pushover
   - name: Tinyproxy - HTTP Proxy
     url: "tcp://proxy.${PUBLIC_TOP_DOMAIN}:8888"
     interval: 1m
@@ -75,7 +66,7 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
     alerts:
-      - type: gotify
+      - type: pushover
   ## Infra Management
   - name: WGEasy - VPN dashboard
     url: https://wg-home.${PUBLIC_TOP_DOMAIN}
@@ -85,7 +76,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[CERTIFICATE_EXPIRATION] > 48h"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: AdGuard - Local DNS
     url: http://adguardhome:80
     interval: 1m
@@ -93,7 +84,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
     alerts:
-      - type: gotify
+      - type: pushover
   # - name: CrowdSec LAPI
   #   group: 51 - Infra Management
   #   url: "http://crowdsec:8080/health" # CrowdSec exposes a health check endpoint
@@ -108,7 +99,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Upsnap - wake on lan
     url: http://${LOCAL_DNS}:8090/api/health
     interval: 1m
@@ -117,7 +108,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].code == 200"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Beszel - System Monitoring
     url: http://beszel.${TOP_LOCAL_DOMAIN}/api/health
     interval: 1m
@@ -126,7 +117,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].code == 200"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Glance - Home page
     url: http://glance:8080/api/healthz
     interval: 1m
@@ -134,7 +125,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
     alerts:
-      - type: gotify
+      - type: pushover
   ## Media
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health
@@ -144,7 +135,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY] == Healthy"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Bazarr
     url: http://bazarr.${LOCAL_MEDIA_DOMAIN}/api/system/ping
     interval: 1m
@@ -153,7 +144,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Radarr
     url: http://radarr.${LOCAL_MEDIA_DOMAIN}/ping
     interval: 1m
@@ -162,7 +153,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Sonarr
     url: http://sonarr.${LOCAL_MEDIA_DOMAIN}/ping
     interval: 1m
@@ -171,7 +162,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Prowlarr
     url: http://prowlarr.${LOCAL_MEDIA_DOMAIN}/ping
     interval: 1m
@@ -180,7 +171,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Transmission - torrent
     url: http://transmission.$LOCAL_MEDIA_DOMAIN
     interval: 1m
@@ -188,7 +179,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Miniflux 
     url: https://rss.${PUBLIC_TOP_DOMAIN}/healthcheck
     interval: 1m
@@ -197,7 +188,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY] == pat(*OK*)"
     alerts:
-      - type: gotify
+      - type: pushover
   # - name: Ollama
   #   url: http://ollama.${LOCAL_DESKTOP_DOMAIN}/api/version
   #   interval: 1m
@@ -214,7 +205,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY] == pat(*All Systems Operational*)"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: DNS *.${PUBLIC_TOP_DOMAIN}
     url: "8.8.8.8" # Address of the DNS server to use
     group: DNS
@@ -225,7 +216,7 @@ endpoints:
     conditions:
       - "[DNS_RCODE] == NOERROR"
     alerts:
-      - type: gotify
+      - type: pushover
   ## Syncthing
   - name: Syncthing Edge
     url: http://syncthing-edge:8384/rest/noauth/health
@@ -235,7 +226,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Syncthing Media
     url: http://syncthing-media:8384/rest/noauth/health
     interval: 1m
@@ -244,7 +235,7 @@ endpoints:
       - "[STATUS] == 200"
       - "[BODY].status == OK"
     alerts:
-      - type: gotify
+      - type: pushover
   - name: Syncthing Desktop
     url: http://sync.${LOCAL_DESKTOP_DOMAIN}/rest/noauth/health
     interval: 1m

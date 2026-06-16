@@ -87,10 +87,6 @@
                   url: https://portainer-home.${PUBLIC_TOP_DOMAIN}
                   description: Container management
                   icon: sh:portainer
-                - title: Gotify
-                  url: https://ntf.${PUBLIC_TOP_DOMAIN}
-                  description: Notification server
-                  icon: sh:gotify
                 - title: Beszel
                   url: https://beszel-home.${PUBLIC_TOP_DOMAIN}
                   description: Systems monitoring
@@ -213,6 +209,10 @@
                   description: DNS register
                   url: https://dash.cloudflare.com/
                   icon: sh:cloudflare
+                - title: Pushover
+                  url: https://pushover.net/
+                  description: Notification server
+                  icon: sh:pushover
                 - title: Hetzner
                   description: VPS cloud provider
                   url: https://console.hetzner.cloud/

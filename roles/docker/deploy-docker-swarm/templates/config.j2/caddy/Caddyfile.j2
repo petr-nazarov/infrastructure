@@ -30,10 +30,14 @@ wg-home.{{ public_top_domain }} {
     import my_tls
     reverse_proxy wg-easy:51821
 }
-ntf.{{ public_top_domain }} {
-    import my_tls
-    reverse_proxy gotify:80
-}
+# Removed for pushover
+# ntf.{{ public_top_domain }} {
+#     import my_tls
+#     reverse_proxy gotify:80
+# }
+# ntf.{{ top_local_domain }}:80 {
+#     reverse_proxy gotify:80
+# }
 auth.{{ public_top_domain }} {
     import my_tls
     reverse_proxy authentik_server:9000
@@ -63,10 +67,9 @@ home.{{ public_top_domain }} {
 home.{{ top_local_domain }}:80 {
     reverse_proxy glance:8080
 }
-### Gatus
+### Gatus # Unauth 
 status-home.{{ public_top_domain }} {
     import my_tls
-    import authentik_auth
     reverse_proxy gatus:8080
 }
 status.{{ top_local_domain }}:80 {

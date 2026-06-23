@@ -29,7 +29,7 @@ endpoints:
     group: 40 - External
     conditions:
       - "[STATUS] == 200"
-      - "[BODY] == pat(*Develop*)"
+      - "[BODY] == pat(*Frrcode*)"
     alerts:
       - type: pushover
   - name: Nzrv Blog - personal blog

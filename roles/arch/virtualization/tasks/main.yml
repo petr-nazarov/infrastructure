@@ -1,0 +1,90 @@
+---
+- name: Install virtualisation packages
+  become: true
+  community.general.pacman:
+    name:
+      - virt-manager
+      - qemu-desktop
+      - libvirt
+      - dnsmasq
+      - python-gobject
+    state: present
+    update_cache: true
+
+
+- name: Allow libvirt group to use Unix socket (group)
+  become: true
+  lineinfile:
+    path: "/etc/libvirt/libvirtd.conf" 
+    regexp: '^#?\s*unix_sock_group\s*='
+    line: 'unix_sock_group = "libvirt"'
+    backup: true
+
+- name: Allow libvirt group to use Unix socket (perms)
+  become: true
+  lineinfile:
+    path: "/etc/libvirt/libvirtd.conf" 
+    regexp: '^#?\s*unix_sock_rw_perms\s*='
+    line: 'unix_sock_rw_perms = "0770"'
+
+
+- name: Enable and start libvirtd
+  become: true
+  systemd:
+    name: libvirtd
+    enabled: true
+    state: started
+
+
+- name: Add user to libvirt group
+  become: true
+  user:
+    name: "{{ ansible_facts['user_id'] }}"
+    groups: libvirt
+    append: true
+
+
+- name: Check if default network exists
+  become: true
+  command: virsh net-info default
+  register: net_info
+  failed_when: false
+  changed_when: false
+
+- name: Load sch_htb kernel module
+  become: true
+  command: modprobe sch_htb
+  changed_when: false
+
+- name: Persist sch_htb module across reboots
+  become: true
+  copy:
+    content: "sch_htb\n"
+    dest: /etc/modules-load.d/libvirt.conf
+
+- name: Check if default network exists
+  become: true
+  command: virsh net-info default
+  register: net_info
+  failed_when: false
+  changed_when: false
+
+- name: Start default network
+  become: true
+  command: virsh net-start default
+  when: "net_info.rc == 0 and 'Active:     yes' not in net_info.stdout"
+  changed_when: true
+  failed_when: false
+
+- name: Set default network to autostart
+  become: true
+  command: virsh net-autostart default
+  when: net_info.rc == 0
+  changed_when: true
+
+- name: Restart libvirtd to apply config changes
+  become: true
+  systemd:
+    name: libvirtd
+    state: restarted
+

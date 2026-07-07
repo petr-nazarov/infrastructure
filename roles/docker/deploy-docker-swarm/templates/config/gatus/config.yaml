@@ -24,7 +24,7 @@ announcements:
 endpoints:
   ## External
   - name: Frrcode company website
-    url: https://frrcode.com
+    url: https://frrcode.com/en/
     interval: 1m
     group: 40 - External
     conditions:

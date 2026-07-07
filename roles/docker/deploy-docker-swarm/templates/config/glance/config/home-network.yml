@@ -24,7 +24,7 @@
                   description: Personal blog
                   icon: https://blog.${PUBLIC_TOP_DOMAIN}/favicon.ico
                 - title: Frrcode
-                  url: https://frrcode.${PUBLIC_TOP_DOMAIN}
+                  url: https://frrcode.com
                   description: Copany website
                 - title: CV
                   url: https://cv.${PUBLIC_TOP_DOMAIN}

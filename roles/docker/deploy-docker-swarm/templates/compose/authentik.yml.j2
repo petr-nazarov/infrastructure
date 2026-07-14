@@ -63,9 +63,6 @@
         constraints:
           # Pinning to media node because that's where your big storage/backups likely live
           - "node.role == manager"
-    ports:
-    - 9000:9000
-    - 9443:9443
     volumes:
       - "{{ remote_data }}/authentik/data:/data"
       - "{{ remote_data }}/authentik/templates:/templates"

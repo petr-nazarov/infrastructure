@@ -26,6 +26,9 @@
                 - title: Frrcode
                   url: https://frrcode.com
                   description: Copany website
+                - title: Buisness card
+                  url: https://petr.${PUBLIC_TOP_DOMAIN}
+                  description: Personal website 
                 - title: CV
                   url: https://cv.${PUBLIC_TOP_DOMAIN}
                   description: Personal website 

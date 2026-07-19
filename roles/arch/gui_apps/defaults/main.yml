@@ -20,7 +20,7 @@ arch_gui_apps:
   # Professional
   - anydesk
   - studio-3t
-  - dbeaver-ee
+  - dbeaver-ce-bin
   # Sound
   - notify-send
   - paplay

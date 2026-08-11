@@ -17,9 +17,16 @@
     mode: "0644"
 - name: Add Docker repository
   become: true
-  ansible.builtin.apt_repository:
-    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian {{ ansible_facts['lsb']['codename'] }} stable"
+  ansible.builtin.deb822_repository:
+    name: docker
+    types: deb
+    uris: https://download.docker.com/linux/debian
+    suites: "{{ ansible_facts['lsb']['codename'] }}"
+    components: stable
+    architectures: amd64
+    signed_by: /usr/share/keyrings/docker-archive-keyring.gpg
     state: present
+    enabled: true
 - name: Update apt cache after adding Docker repo
   become: true
   ansible.builtin.apt:

@@ -44,3 +44,37 @@
     name: "{{ ansible_user }}"
     groups: docker
     append: true
+
+# Boot resilience: dockerd exits 1 when the swarm cluster component cannot
+# reach the network yet ("could not find local IP address ... network is
+# unreachable"). The stock unit then gives up after 3 failures in 60s and
+# Docker stays dead until started by hand.
+- name: Check for the ifupdown wait-online unit
+  ansible.builtin.stat:
+    path: /usr/lib/systemd/system/ifupdown-wait-online.service
+  register: ifupdown_wait_online
+- name: Enable ifupdown wait-online so network-online.target really waits
+  become: true
+  ansible.builtin.systemd:
+    name: ifupdown-wait-online.service
+    enabled: true
+  when: ifupdown_wait_online.stat.exists
+- name: Ensure docker.service drop-in directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+    mode: "0755"
+- name: Let dockerd retry indefinitely instead of hitting the start limit
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/docker.service.d/10-boot-resilience.conf
+    mode: "0644"
+    content: |
+      # Managed by Ansible - roles/debian/docker
+      [Unit]
+      StartLimitIntervalSec=0
+      [Service]
+      Restart=always
+      RestartSec=5
+  notify: Reload systemd daemon

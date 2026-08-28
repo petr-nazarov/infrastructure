@@ -31,6 +31,7 @@
   roles:
     - role: linux/ssh
     - role: debian/base
+    - role: debian/docker
 
 - name: Setup home-media specific server settings
   hosts: home-media

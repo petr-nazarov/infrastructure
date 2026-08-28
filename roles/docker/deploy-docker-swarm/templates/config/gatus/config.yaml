@@ -23,13 +23,13 @@ announcements:
     message: "Scheduled move to new infra. Some services will be unavailable"
 endpoints:
   ## External
-  - name: Frrcode company website
+  - name: FrrCode company website
     url: https://frrcode.com/en/
     interval: 1m
     group: 40 - External
     conditions:
       - "[STATUS] == 200"
-      - "[BODY] == pat(*Frrcode*)"
+      - "[BODY] == pat(*Software Architecture*)"
     alerts:
       - type: pushover
   - name: Nzrv Blog - personal blog
@@ -39,6 +39,33 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
       - "[BODY] == pat(*Docker*)"
+    alerts:
+      - type: pushover
+  - name: Timeinator
+    url: https://timeinator.frrcode.com/api/health
+    interval: 1m
+    group: 40 - External
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == ok"
+    alerts:
+      - type: pushover
+  - name: DaoMoney
+    url: https://money.${PUBLIC_TOP_DOMAIN}/api/health
+    interval: 1m
+    group: 40 - External
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == ok"
+    alerts:
+      - type: pushover
+  - name: Business card
+    url: https://petr.${PUBLIC_TOP_DOMAIN}
+    interval: 1m
+    group: 40 - External
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY] == pat(*Petr*)"
     alerts:
       - type: pushover
   - name: CV - personal website

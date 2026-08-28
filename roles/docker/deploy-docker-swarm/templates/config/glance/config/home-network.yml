@@ -19,23 +19,27 @@
             - title: Public
               hide-arrow: true
               links:
+                - title: FrrCode
+                  url: https://frrcode.com/en
+                  description: Company website
+                - title: Timeintaor
+                  url: https://timeintaor.frrcode.com
+                  description: Timeslot finding tool
                 - title: Blog
                   url: https://blog.${PUBLIC_TOP_DOMAIN}
                   description: Personal blog
-                  icon: https://blog.${PUBLIC_TOP_DOMAIN}/favicon.ico
-                - title: Frrcode
-                  url: https://frrcode.com
-                  description: Copany website
-                - title: Buisness card
+                - title: DaoMoney
+                  url: https://money.${PUBLIC_TOP_DOMAIN}
+                  description: Timeslot finding tool
+                - title: Business card
                   url: https://petr.${PUBLIC_TOP_DOMAIN}
-                  description: Personal website 
+                  description: Business card
                 - title: CV
                   url: https://cv.${PUBLIC_TOP_DOMAIN}
                   description: Personal website 
                 - title: VPN
                   description: XRay VLESS Server
                   url: http://65.108.86.24:2096/QtgDtgMkbIa2oTPmJT/
-                  icon: sh:openvpn
             - title: Local tools
               hide-arrow: true
               links:

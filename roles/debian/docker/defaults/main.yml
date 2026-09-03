@@ -5,3 +5,5 @@ debian_docker_packages:
   - curl
   - gnupg
   - lsb-release
+  # Required by ansible.builtin.deb822_repository on the target host
+  - python3-debian

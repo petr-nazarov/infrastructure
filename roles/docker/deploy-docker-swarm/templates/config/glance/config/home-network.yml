@@ -23,7 +23,7 @@
                   url: https://frrcode.com/en
                   description: Company website
                 - title: Timeintaor
-                  url: https://timeintaor.frrcode.com
+                  url: https://timeinator.frrcode.com
                   description: Timeslot finding tool
                 - title: Blog
                   url: https://blog.${PUBLIC_TOP_DOMAIN}

@@ -11,6 +11,7 @@
     - role: arch/gui_apps
     - role: arch/docker
     - role: arch/virtualization
+    - role: arch/netbird
     # - role: arch/kmonad
 
 - name: Setup desktop specific settings

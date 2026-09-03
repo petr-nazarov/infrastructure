@@ -1,0 +1,8 @@
+---
+- name: Install term netbird
+  become: true
+  become_user: aur_builder
+  kewlfft.aur.aur:
+    name: netbird
+    use: yay
+

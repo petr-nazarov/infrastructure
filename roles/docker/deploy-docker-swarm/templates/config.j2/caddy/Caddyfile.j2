@@ -45,14 +45,14 @@ auth.{{ public_top_domain }} {
     import my_tls
     reverse_proxy authelia:9091
 }
-### Portainer
-portainer-home.{{ public_top_domain }} {
-    import my_tls
-    reverse_proxy portainer:9000
-}
-portainer.{{ top_local_domain }}:80 {
-    reverse_proxy portainer:9000
-}
+# Archived - unused
+# portainer-home.{{ public_top_domain }} {
+#     import my_tls
+#     reverse_proxy portainer:9000
+# }
+# portainer.{{ top_local_domain }}:80 {
+#     reverse_proxy portainer:9000
+# }
 ### Beszel
 beszel-home.{{ public_top_domain }} {
     import my_tls

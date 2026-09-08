@@ -10,7 +10,7 @@ enabled_services:
   - authelia
   # - crowdsec
   - upsnap
-  - portainer
+  # - portainer
   # - gotify
   - glance
   - gatus
@@ -47,11 +47,6 @@ authelia_admin_displayname: Nazarov
 # same credentials Authentik issued - so each app keeps the ID and secret it
 # already holds and only its endpoint URLs need repointing at Authelia.
 authelia_oidc_clients:
-  - key: portainer
-    name: Portainer
-    redirect_uris:
-      - "https://portainer-home.{{ public_top_domain }}"
-    scopes: [openid, profile, email, groups]
   - key: beszel
     name: Beszel
     redirect_uris:

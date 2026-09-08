@@ -7,7 +7,7 @@ enabled_services:
   - ddns
   - certbot
   - wg-easy
-  - authentik
+  - authelia
   # - crowdsec
   - upsnap
   - portainer
@@ -27,3 +27,47 @@ enabled_services:
   # Multihost
   - backup
   - syncthing
+
+# Hosts (subdomains of public_top_domain) that Caddy protects with the
+# `authelia_auth` snippet. Kept in sync with the Authelia access_control rules
+# rendered into config.j2/authelia/configuration.yml.j2.
+authelia_protected_hosts:
+  - home
+  - sonarr-home
+  - radarr-home
+  - bazarr-home
+  - prowlarr-home
+  - transmission-home
+
+authelia_admin_user: nzrv
+authelia_admin_displayname: Nazarov
+
+# OIDC clients migrated from Authentik. The client_id and the hashed
+# client_secret live in vars/docker_swarm.sops.yml keyed by `key`, and are the
+# same credentials Authentik issued - so each app keeps the ID and secret it
+# already holds and only its endpoint URLs need repointing at Authelia.
+authelia_oidc_clients:
+  - key: portainer
+    name: Portainer
+    redirect_uris:
+      - "https://portainer-home.{{ public_top_domain }}"
+    scopes: [openid, profile, email, groups]
+  - key: beszel
+    name: Beszel
+    redirect_uris:
+      - "https://beszel-home.{{ public_top_domain }}/api/oauth2-redirect"
+    scopes: [openid, profile, email, groups]
+  - key: upsnap
+    name: UpSnap
+    redirect_uris:
+      - "https://upsnap-home.{{ public_top_domain }}"
+    scopes: [openid, profile, email, groups]
+  # Authentik stored this one as a bare host with no scheme, which Authelia
+  # rejects. Corrected to Miniflux's documented callback path. Note that
+  # compose/rss.yml.j2 sets no OAUTH2_* vars, so Miniflux is not wired to SSO
+  # yet - this client is defined but unused until those are added.
+  - key: rss
+    name: Miniflux
+    redirect_uris:
+      - "https://rss.{{ public_top_domain }}/oauth2/oidc/callback"
+    scopes: [openid, profile, email, groups]

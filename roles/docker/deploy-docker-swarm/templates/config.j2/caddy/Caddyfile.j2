@@ -2,10 +2,13 @@
 (my_tls) {
     tls /etc/letsencrypt/live/{{ public_top_domain }}/fullchain.pem /etc/letsencrypt/live/{{ public_top_domain }}/privkey.pem
 }
-# Snippet for Authentik Forward Auth
-(authentik_auth) {
-    forward_auth http://authentik_server:9000 {
-        uri /outpost.goauthentik.io/auth/caddy
+# Snippet for Authelia Forward Auth
+# The hosts importing this snippet must also be listed in
+# `authelia_protected_hosts` (roles/docker/deploy-docker-swarm/defaults/main.yml),
+# otherwise Authelia's default deny policy blocks them.
+(authelia_auth) {
+    forward_auth authelia:9091 {
+        uri /api/authz/forward-auth
         copy_headers Remote-User Remote-Groups Remote-Email Remote-Name
     }
 }
@@ -40,7 +43,7 @@ wg-home.{{ public_top_domain }} {
 # }
 auth.{{ public_top_domain }} {
     import my_tls
-    reverse_proxy authentik_server:9000
+    reverse_proxy authelia:9091
 }
 ### Portainer
 portainer-home.{{ public_top_domain }} {
@@ -61,7 +64,7 @@ beszel.{{ top_local_domain }}:80 {
 ### Home
 home.{{ public_top_domain }} {
     import my_tls
-    import authentik_auth
+    import authelia_auth
     reverse_proxy glance:8080
 }
 home.{{ top_local_domain }}:80 {
@@ -95,7 +98,7 @@ jellyfin.{{ local_media_domain }}:80 {
 ### Sonarr
 sonarr-home.{{ public_top_domain }} {
     import my_tls
-    import authentik_auth
+    import authelia_auth
     reverse_proxy sonarr:8989
 }
 sonarr.{{ local_media_domain }}:80 {
@@ -104,7 +107,7 @@ sonarr.{{ local_media_domain }}:80 {
 ### Radarr
 radarr-home.{{ public_top_domain }} {
     import my_tls
-    import authentik_auth
+    import authelia_auth
     reverse_proxy radarr:7878
 }
 radarr.{{ local_media_domain }}:80 {
@@ -113,7 +116,7 @@ radarr.{{ local_media_domain }}:80 {
 ### Bazarr
 bazarr-home.{{ public_top_domain }} {
     import my_tls
-    import authentik_auth
+    import authelia_auth
     reverse_proxy bazarr:6767
 }
 bazarr.{{ local_media_domain }}:80 {
@@ -122,7 +125,7 @@ bazarr.{{ local_media_domain }}:80 {
 ### Prowlarr
 prowlarr-home.{{ public_top_domain }} {
     import my_tls
-    import authentik_auth
+    import authelia_auth
     reverse_proxy prowlarr:9696
 }
 prowlarr.{{ local_media_domain }}:80 {
@@ -131,7 +134,7 @@ prowlarr.{{ local_media_domain }}:80 {
 ### Transmission
 transmission-home.{{ public_top_domain }} {
     import my_tls
-    import authentik_auth
+    import authelia_auth
     reverse_proxy transmission:9091
 }
 transmission.{{ local_media_domain }}:80 {

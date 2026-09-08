@@ -34,8 +34,19 @@
     - folder: caddy
       file: Caddyfile
     - folder: tinyproxy
-      file: tinyproxy.conf 
+      file: tinyproxy.conf
   notify: Reload Caddy
+
+- name: Template Authelia config files
+  ansible.builtin.template:
+    src: "config.j2/authelia/{{ item }}.j2"
+    dest: "{{ remote_config }}/authelia/{{ item }}"
+    mode: "0644"
+  loop:
+    - configuration.yml
+    - users_database.yml
+  when: "'authelia' in enabled_services"
+  notify: Restart Authelia
 
 - name: Template Master file
   ansible.builtin.template:

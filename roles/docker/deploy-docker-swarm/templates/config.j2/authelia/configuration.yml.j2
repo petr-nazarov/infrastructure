@@ -1,0 +1,126 @@
+---
+theme: dark
+
+server:
+  address: "tcp://0.0.0.0:9091"
+  endpoints:
+    authz:
+      forward-auth:
+        implementation: ForwardAuth
+
+log:
+  level: info
+  format: text
+
+totp:
+  issuer: "{{ public_top_domain }}"
+
+identity_validation:
+  reset_password:
+    jwt_secret: "{{ authelia_jwt_secret }}"
+
+authentication_backend:
+  refresh_interval: 1m
+  # The users file is templated by Ansible, so in-app password resets would be
+  # overwritten on the next run. Change passwords in vars/docker_swarm.sops.yml.
+  password_reset:
+    disable: true
+  file:
+    path: /config/users_database.yml
+    watch: true
+    password:
+      algorithm: argon2
+      argon2:
+        variant: argon2id
+        iterations: 3
+        memory: 65536
+        parallelism: 4
+        key_length: 32
+        salt_length: 16
+
+access_control:
+  default_policy: deny
+  rules:
+    # The portal itself must always be reachable
+    - domain: "auth.{{ public_top_domain }}"
+      policy: bypass
+{% for host in authelia_protected_hosts %}
+    - domain: "{{ host }}.{{ public_top_domain }}"
+      policy: one_factor
+{% endfor %}
+
+session:
+  name: authelia_session
+  secret: "{{ authelia_session_secret }}"
+  expiration: 12h
+  inactivity: 45m
+  remember_me: 1M
+  cookies:
+    - domain: "{{ public_top_domain }}"
+      authelia_url: "https://auth.{{ public_top_domain }}"
+      default_redirection_url: "https://home.{{ public_top_domain }}"
+  redis:
+    host: authelia_redis
+    port: 6379
+
+regulation:
+  max_retries: 5
+  find_time: 2m
+  ban_time: 5m
+
+storage:
+  encryption_key: "{{ authelia_storage_encryption_key }}"
+  postgres:
+    address: "tcp://authelia_postgresql:5432"
+    database: authelia
+    schema: public
+    username: "{{ db_postgres_user }}"
+    password: "{{ db_postgres_password }}"
+
+identity_providers:
+  oidc:
+    hmac_secret: "{{ authelia_oidc_hmac_secret }}"
+    jwks:
+      - key_id: main
+        algorithm: RS256
+        use: sig
+        key: |
+{{ authelia_oidc_jwks_key | indent(10, true) }}
+    lifespans:
+      access_token: 1h
+      authorize_code: 1m
+      id_token: 1h
+      refresh_token: 90m
+    cors:
+      endpoints:
+        - authorization
+        - token
+        - revocation
+        - introspection
+        - userinfo
+      allowed_origins_from_client_redirect_uris: true
+    clients:
+{% for c in authelia_oidc_clients %}
+      - client_id: "{{ authelia_oidc_client_ids[c.key] }}"
+        client_name: "{{ c.name }}"
+        client_secret: "{{ authelia_oidc_client_secret_hashes[c.key] }}"
+        public: false
+        authorization_policy: one_factor
+        consent_mode: implicit
+        # Most of these apps send the secret in the request body. If a client
+        # fails at token exchange, switch this to client_secret_basic.
+        token_endpoint_auth_method: client_secret_post
+        redirect_uris:
+{% for uri in c.redirect_uris %}
+          - "{{ uri }}"
+{% endfor %}
+        scopes:
+{% for scope in c.scopes %}
+          - {{ scope }}
+{% endfor %}
+{% endfor %}
+
+notifier:
+  disable_startup_check: false
+  filesystem:
+    filename: /data/notification.txt

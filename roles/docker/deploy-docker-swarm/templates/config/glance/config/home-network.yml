@@ -36,7 +36,7 @@
                   description: Business card
                 - title: CV
                   url: https://cv.${PUBLIC_TOP_DOMAIN}
-                  description: Personal website 
+                  description: Personal website
                 - title: VPN
                   description: XRay VLESS Server
                   url: http://65.108.86.24:2096/QtgDtgMkbIa2oTPmJT/
@@ -82,10 +82,10 @@
                   description: Private DNS
                   url: http://dns.${PUBLIC_TOP_DOMAIN}
                   icon: sh:adguard-home
-                - title: Authentik
+                - title: Authelia
                   description: Auth service
-                  url: http://auth.${PUBLIC_TOP_DOMAIN}
-                  icon: sh:authentik
+                  url: https://auth.${PUBLIC_TOP_DOMAIN}
+                  icon: sh:authelia
                 - title: WG easy
                   url: https://wg-home.${PUBLIC_TOP_DOMAIN}
                   description: Vpn dashboard
@@ -132,7 +132,6 @@
                   description: Wifi Access Point
                   url: http://192.168.1.10
                   icon: https://comfastwifi.com/image/catalog/comfastwifi-ico.png
-
         - title: Links
           type: bookmarks
           groups:
@@ -197,7 +196,7 @@
                   url: https://github.com/petr-nazarov/blog
                   icon: sh:github
                 - title: vpn
-                  description: Vpn setup 
+                  description: Vpn setup
                   url: https://github.com/petr-nazarov/vpn
                   icon: sh:github
             - title: Docs
@@ -233,7 +232,7 @@
                   url: https://cloud.umami.is/analytics/eu/websites/
                   icon: sh:umami
                 - title: Checkly
-                  description: Health check 
+                  description: Health check
                   url: https://app.checklyhq.com/
                   icon: https://app.checklyhq.com/static/images/racoon_favicon.png
                 - title: UTM.io

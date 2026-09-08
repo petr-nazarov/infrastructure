@@ -1,0 +1,13 @@
+---
+# Declaratively managed by Ansible - edit the secrets in vars/docker_swarm.sops.yml.
+# Generate a new password hash with:
+#   docker run --rm authelia/authelia:4.39 authelia crypto hash generate argon2 --password 'SECRET'
+users:
+  {{ authelia_admin_user }}:
+    disabled: false
+    displayname: "{{ authelia_admin_displayname }}"
+    password: "{{ authelia_admin_password_hash }}"
+    email: "{{ personal_email }}"
+    groups:
+      - admins
+      - users

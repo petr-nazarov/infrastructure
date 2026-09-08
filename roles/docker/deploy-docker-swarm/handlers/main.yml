@@ -3,3 +3,7 @@
   ansible.builtin.shell: |
     docker exec $(docker ps -q -f name=home_caddy) caddy reload --config /etc/caddy/Caddyfile
   changed_when: true
+
+- name: Restart Authelia
+  ansible.builtin.command: docker service update --force --detach home_authelia
+  changed_when: true

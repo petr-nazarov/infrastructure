@@ -37,6 +37,32 @@
       file: tinyproxy.conf
   notify: Reload Caddy
 
+- name: Check which Authelia data directories exist
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: authelia_data_dirs
+  loop:
+    - "{{ remote_data }}/authelia"
+    - "{{ remote_data }}/authelia/db"
+    - "{{ remote_data }}/authelia/redis"
+  when: "'authelia' in enabled_services"
+
+- name: Ensure Authelia data directories exist
+  # Swarm rejects a service whose bind mount source is missing on the node, so
+  # these must exist before the stack deploy. Only created when absent: postgres
+  # and redis chown their volume to their own runtime uid on first start, and
+  # re-applying a mode afterwards fails for the unprivileged ansible user.
+  ansible.builtin.file:
+    path: "{{ item.item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ authelia_data_dirs.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item | default('') }}"
+  when:
+    - "'authelia' in enabled_services"
+    - not item.stat.exists
+
 - name: Template Authelia config files
   ansible.builtin.template:
     src: "config.j2/authelia/{{ item }}.j2"

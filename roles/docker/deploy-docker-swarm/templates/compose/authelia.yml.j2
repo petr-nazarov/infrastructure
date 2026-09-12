@@ -58,6 +58,8 @@
       # Rendered from config.j2/authelia/*.j2 by the "Template Authelia config files"
       # task. Mounted as a directory, not as individual files: ansible replaces
       # files by rename and a single-file bind mount would pin the old inode.
-      - "{{ remote_config }}/authelia:/config"
+      # Read-only: mounted writable, the entrypoint chowns it to root and
+      # ansible can no longer sync or replace the rendered files.
+      - "{{ remote_config }}/authelia:/config:ro"
       # Writable state: notifier output, generated OIDC keys, etc.
       - "{{ remote_data }}/authelia:/data"

@@ -20,3 +20,9 @@ darwin_preferences:
   # yabai: spaces must keep their order, and every display gets its own spaces
   - { domain: com.apple.dock, key: mru-spaces, type: bool, value: false }
   - { domain: com.apple.spaces, key: spans-displays, type: bool, value: false }
+
+# Dock apps, in order. Finder and the Trash are always in the Dock and can't be removed,
+# everything else (default apps, the Downloads stack) is.
+darwin_dock_apps:
+  - /Applications/Zen.app
+  - /Applications/Ghostty.app

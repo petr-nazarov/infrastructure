@@ -10,3 +10,24 @@
   loop_control:
     label: "{{ item.domain }} {{ item.key }}={{ item.value }}"
   notify: Restart Dock and Finder
+
+- name: Install dockutil
+  community.general.homebrew:
+    name: dockutil
+    state: present
+- name: Read the Dock items
+  ansible.builtin.command: /opt/homebrew/bin/dockutil --list
+  register: darwin_dock_items
+  changed_when: false
+# Column 2 of `dockutil --list` is the item URL, e.g. file:///Applications/Zen.app/
+- name: Set the Dock items
+  ansible.builtin.shell: |
+    /opt/homebrew/bin/dockutil --remove all --no-restart
+    {% for app in darwin_dock_apps %}
+    /opt/homebrew/bin/dockutil --add {{ app | quote }} --no-restart
+    {% endfor %}
+  when: >-
+    darwin_dock_items.stdout_lines | map('split', '\t') | map(attribute=1) | list
+    != darwin_dock_apps | map('regex_replace', '^', 'file://') | map('regex_replace', '$', '/') | list
+  changed_when: true
+  notify: Restart Dock and Finder

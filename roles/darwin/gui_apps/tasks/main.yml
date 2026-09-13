@@ -1,0 +1,12 @@
+---
+- name: Install gui applications
+  community.general.homebrew_cask:
+    name: "{{ darwin_gui_apps }}"
+    state: present
+    # Take over apps installed by hand before this role ran, instead of failing on them
+    install_options: adopt
+    sudo_password: "{{ ansible_become_password }}"
+- name: Install gui related packages
+  community.general.homebrew:
+    name: "{{ darwin_gui_packages }}"
+    state: present

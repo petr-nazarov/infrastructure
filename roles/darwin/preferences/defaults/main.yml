@@ -1,0 +1,22 @@
+---
+# macOS preferences, written with `defaults write`. Keyboard settings apply after logging out.
+darwin_preferences:
+  # Keyboard: fast key repeat, and repeat instead of the accent popup when holding a key (vim)
+  - { domain: NSGlobalDomain, key: KeyRepeat, type: int, value: 2 }
+  - { domain: NSGlobalDomain, key: InitialKeyRepeat, type: int, value: 15 }
+  - { domain: NSGlobalDomain, key: ApplePressAndHoldEnabled, type: bool, value: false }
+  # No smart quotes / dashes when typing code into GUI apps
+  - { domain: NSGlobalDomain, key: NSAutomaticQuoteSubstitutionEnabled, type: bool, value: false }
+  - { domain: NSGlobalDomain, key: NSAutomaticDashSubstitutionEnabled, type: bool, value: false }
+  - { domain: NSGlobalDomain, key: NSAutomaticSpellingCorrectionEnabled, type: bool, value: false }
+  # Finder
+  - { domain: NSGlobalDomain, key: AppleShowAllExtensions, type: bool, value: true }
+  - { domain: com.apple.finder, key: AppleShowAllFiles, type: bool, value: true }
+  - { domain: com.apple.finder, key: ShowPathbar, type: bool, value: true }
+  - { domain: com.apple.desktopservices, key: DSDontWriteNetworkStores, type: bool, value: true }
+  # Dock
+  - { domain: com.apple.dock, key: autohide, type: bool, value: true }
+  - { domain: com.apple.dock, key: show-recents, type: bool, value: false }
+  # yabai: spaces must keep their order, and every display gets its own spaces
+  - { domain: com.apple.dock, key: mru-spaces, type: bool, value: false }
+  - { domain: com.apple.spaces, key: spans-displays, type: bool, value: false }

@@ -1,0 +1,56 @@
+---
+# The macOS counterpart of arch/hyprland: tiling with yabai, keybindings with skhd.
+# Configs (~/.config/yabai/yabairc, ~/.skhdrc) come from the dotfiles _mac_gui layer.
+#
+# Left manual, macOS won't let these be scripted:
+#   - Accessibility permission for yabai and skhd (System Settings > Privacy & Security)
+#   - Partially disabling SIP, needed by the scripting addition (space focus / move bindings)
+# Homebrew refuses to load formulae from a third-party tap until it is trusted.
+- name: List trusted Homebrew taps
+  ansible.builtin.command: /opt/homebrew/bin/brew trust --json v1
+  register: darwin_yabai_brew_trust
+  changed_when: false
+- name: Trust asmvik/formulae
+  ansible.builtin.command: /opt/homebrew/bin/brew trust --tap asmvik/formulae
+  when: "'asmvik/formulae' not in (darwin_yabai_brew_trust.stdout | from_json).taps | string"
+  changed_when: true
+
+- name: Tap asmvik/formulae
+  community.general.homebrew_tap:
+    name: asmvik/formulae
+    state: present
+
+- name: Install yabai and skhd
+  community.general.homebrew:
+    name: "{{ darwin_yabai_packages }}"
+    state: present
+
+# yabairc runs `sudo yabai --load-sa`. The sudoers entry pins the binary's hash,
+# so every run refreshes it in case brew upgraded yabai.
+- name: Hash the yabai binary
+  ansible.builtin.stat:
+    path: /opt/homebrew/bin/yabai
+    follow: true
+    checksum_algorithm: sha256
+  register: darwin_yabai_binary
+- name: Allow loading the yabai scripting addition without a password
+  become: true
+  ansible.builtin.copy:
+    dest: /private/etc/sudoers.d/yabai
+    owner: root
+    group: wheel
+    mode: "0440"
+    content: |
+      {{ ansible_facts['user_id'] }} ALL=(root) NOPASSWD: sha256:{{ darwin_yabai_binary.stat.checksum }} /opt/homebrew/bin/yabai --load-sa
+    validate: "visudo -cf %s"
+
+# yabai moved to the asmvik namespace, skhd still uses its old launchd label.
+- name: Start yabai and skhd services
+  ansible.builtin.command: "/opt/homebrew/bin/{{ item.name }} --start-service"
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}/Library/LaunchAgents/{{ item.label }}.plist"
+  loop:
+    - { name: yabai, label: com.asmvik.yabai }
+    - { name: skhd, label: com.koekeishiya.skhd }
+  loop_control:
+    label: "{{ item.name }}"

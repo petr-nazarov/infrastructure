@@ -27,6 +27,18 @@
   roles:
     - role: arch/hibernation
 
+- name: Setup mac workstations
+  hosts: mac-workstations
+  roles:
+    - role: darwin/base
+    - role: darwin/term_packages
+    - role: darwin/developer_env
+    - role: darwin/preferences
+    - role: darwin/yabai
+    - role: darwin/gui_apps
+    - role: darwin/docker
+    - role: darwin/netbird
+
 - name: Setup general server settings
   hosts: home-servers
   roles:

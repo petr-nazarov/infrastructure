@@ -1,0 +1,12 @@
+---
+- name: Write macOS defaults
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ darwin_preferences }}"
+  loop_control:
+    label: "{{ item.domain }} {{ item.key }}={{ item.value }}"
+  notify: Restart Dock and Finder

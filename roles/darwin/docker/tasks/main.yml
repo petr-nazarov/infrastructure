@@ -1,0 +1,35 @@
+---
+# Colima runs the docker engine in a lima VM, the docker CLI talks to it through the `colima` context.
+- name: Install colima and docker CLI
+  community.general.homebrew:
+    name:
+      - colima
+      - docker
+      - docker-compose
+      - docker-buildx
+    state: present
+- name: Start colima on login
+  community.general.homebrew_services:
+    name: colima
+    state: present
+
+# compose and buildx are CLI plugins, the Homebrew docker CLI doesn't look for them there by default.
+# Merged into the existing config so `docker login` credentials survive.
+- name: Ensure ~/.docker exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.docker"
+    state: directory
+    mode: "0700"
+- name: Read docker CLI config
+  ansible.builtin.slurp:
+    path: "{{ ansible_facts['user_dir'] }}/.docker/config.json"
+  register: darwin_docker_config
+  failed_when: false
+- name: Point docker at the Homebrew CLI plugins
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/.docker/config.json"
+    mode: "0600"
+    content: >-
+      {{ ((darwin_docker_config.content | default('e30=') | b64decode | from_json)
+          | combine({'cliPluginsExtraDirs': ['/opt/homebrew/lib/docker/cli-plugins']}))
+          | to_nice_json(indent=2) }}

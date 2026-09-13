@@ -9,6 +9,8 @@ darwin_preferences:
   - { domain: NSGlobalDomain, key: NSAutomaticQuoteSubstitutionEnabled, type: bool, value: false }
   - { domain: NSGlobalDomain, key: NSAutomaticDashSubstitutionEnabled, type: bool, value: false }
   - { domain: NSGlobalDomain, key: NSAutomaticSpellingCorrectionEnabled, type: bool, value: false }
+  # 24-hour clock
+  - { domain: NSGlobalDomain, key: AppleICUForce24HourTime, type: bool, value: true }
   # Finder
   - { domain: NSGlobalDomain, key: AppleShowAllExtensions, type: bool, value: true }
   - { domain: com.apple.finder, key: AppleShowAllFiles, type: bool, value: true }
@@ -20,6 +22,17 @@ darwin_preferences:
   # yabai: spaces must keep their order, and every display gets its own spaces
   - { domain: com.apple.dock, key: mru-spaces, type: bool, value: false }
   - { domain: com.apple.spaces, key: spans-displays, type: bool, value: false }
+
+# Short date format (ICU pattern), the one System Settings > Language & Region > Date format sets
+darwin_date_format: y-MM-dd
+
+# Modifier key remaps for the built-in keyboard, as System Settings > Keyboard > Keyboard Shortcuts >
+# Modifier Keys writes them. Values are HID usages (page << 32 | usage). The fn/Globe key is
+# 0xFF00000003 on older Macs and 0xFF0100000003 on some Apple silicon ones, so both are mapped.
+darwin_keyboard_id: 0-0-0  # VendorID-ProductID-0 of the Apple Internal Keyboard
+darwin_modifier_mappings:
+  - { src: 0xFF00000003, dst: 0x7000000E0 }  # fn -> left Control
+  - { src: 0xFF0100000003, dst: 0x7000000E0 }
 
 # Dock apps, in order. Finder and the Trash are always in the Dock and can't be removed,
 # everything else (default apps, the Downloads stack) is.

@@ -11,6 +11,30 @@
     label: "{{ item.domain }} {{ item.key }}={{ item.value }}"
   notify: Restart Dock and Finder
 
+# The next two are plain `defaults write`s: osx_defaults can't read a dict back (plutil refuses to
+# convert it to JSON) and can't write an array of dicts at all.
+- name: Set the date format
+  ansible.builtin.shell: |
+    before=$(defaults read -g AppleICUDateFormatStrings 2>/dev/null)
+    defaults write -g AppleICUDateFormatStrings -dict 1 {{ darwin_date_format | quote }}
+    [ "$before" = "$(defaults read -g AppleICUDateFormatStrings)" ] || echo changed
+  register: darwin_date_format_write
+  changed_when: "'changed' in darwin_date_format_write.stdout"
+
+# Applies after logging out
+- name: Remap modifier keys
+  ansible.builtin.shell: |
+    key=com.apple.keyboard.modifiermapping.{{ darwin_keyboard_id }}
+    before=$(defaults -currentHost read -g "$key" 2>/dev/null)
+    defaults -currentHost write -g "$key" -array \
+    {% for m in darwin_modifier_mappings %}
+      '<dict><key>HIDKeyboardModifierMappingSrc</key><integer>{{ m.src }}</integer><key>HIDKeyboardModifierMappingDst</key><integer>{{ m.dst }}</integer></dict>' \
+    {% endfor %}
+
+    [ "$before" = "$(defaults -currentHost read -g "$key")" ] || echo changed
+  register: darwin_modifier_remap
+  changed_when: "'changed' in darwin_modifier_remap.stdout"
+
 - name: Install dockutil
   community.general.homebrew:
     name: dockutil

@@ -106,6 +106,10 @@
                   url: https://upsnap-home.${PUBLIC_TOP_DOMAIN}
                   description: Wake on LAN
                   icon: sh:upsnap
+                - title: Homelab Inventory
+                  url: https://inventory-home.${PUBLIC_TOP_DOMAIN}
+                  description: Hardware inventory
+                  icon: mdi:server-network
             - title: Syncthing
               hide-arrow: true
               links:

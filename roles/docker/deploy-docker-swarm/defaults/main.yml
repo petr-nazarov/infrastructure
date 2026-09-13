@@ -16,6 +16,7 @@ enabled_services:
   - gatus
   - beszel
   - rss
+  - homelab-inventory
   # - cv
   ## Media
   - jellyfin
@@ -33,6 +34,7 @@ enabled_services:
 # rendered into config.j2/authelia/configuration.yml.j2.
 authelia_protected_hosts:
   - home
+  - inventory-home
   - sonarr-home
   - radarr-home
   - bazarr-home

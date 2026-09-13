@@ -153,6 +153,14 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: pushover
+  - name: Homelab Inventory
+    url: http://homelab-inventory:8798/api/health
+    interval: 1m
+    group: 51 - Infra Management
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: pushover
   ## Media
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health

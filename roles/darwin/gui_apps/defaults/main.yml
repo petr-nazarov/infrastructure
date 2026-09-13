@@ -1,0 +1,25 @@
+---
+# Homebrew casks. Arch apps that macOS already covers are left out:
+# okular / qimgv -> Preview, nemo -> Finder, gparted -> Disk Utility, ark -> Archive Utility
+darwin_gui_apps:
+  # Personal
+  - ghostty
+  - zen
+  - opera
+  - obsidian
+  # qbittorrent: cask disabled by Homebrew on 2026-09-01, it fails the Gatekeeper check
+  - localsend
+  # Media playing
+  - iina # mpv based player, instead of smplayer
+  # Professional
+  - anydesk
+  - studio-3t
+  - dbeaver-community
+  # Fonts
+  - font-fira-code
+  - font-symbols-only-nerd-font
+  - font-noto-sans
+
+# Formulae that go with the GUI
+darwin_gui_packages:
+  - mpv

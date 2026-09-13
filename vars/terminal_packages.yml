@@ -17,6 +17,19 @@ arch_specific_packages:
 debian_specific_packages:
   - gh
   - poppler-utils # yazi pdf preview
+#### Specific to macOS (Homebrew formulae)
+darwin_specific_packages:
+  - gh
+  - poppler # yazi pdf preview
+  - sevenzip # archive preview (7-zip on arch)
+  - libmagic # libmagic-dev on debian
+#### common_packages that Homebrew doesn't have or macOS doesn't need
+darwin_skip_packages:
+  - vi # ships with macOS
+  - zsh # ships with macOS, and is the default shell
+  - 7-zip # called sevenzip in Homebrew
+  - libmagic-dev # called libmagic in Homebrew
+  - xclip # X11 only, macOS has pbcopy / pbpaste
 common_packages:
   - vi
   - vim

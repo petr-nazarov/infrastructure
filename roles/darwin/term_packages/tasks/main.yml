@@ -1,0 +1,15 @@
+---
+- name: Load shared variables
+  ansible.builtin.include_vars: "{{ playbook_dir }}/vars/terminal_packages.yml"
+- name: Install term base packages
+  community.general.homebrew:
+    name: "{{ base_packages }}"
+    state: present
+- name: Install term macOS specific packages
+  community.general.homebrew:
+    name: "{{ darwin_specific_packages }}"
+    state: present
+- name: Install term common packages
+  community.general.homebrew:
+    name: "{{ common_packages | difference(darwin_skip_packages) }}"
+    state: present

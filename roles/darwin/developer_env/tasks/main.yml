@@ -1,0 +1,35 @@
+---
+# Same as linux/developer_env, minus the parts macOS already covers (zsh is the default shell)
+# and with mise coming from Homebrew instead of the curl installer.
+- name: Install mise
+  community.general.homebrew:
+    name: mise
+    state: present
+- name: Check that the dotfiles are synced
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['user_dir'] }}/.config/mise/config.toml"
+  register: darwin_developer_env_mise_config
+- name: Fail if the dotfiles are not synced
+  ansible.builtin.fail:
+    msg: ~/.config/mise/config.toml is missing. Run `just sync` in ~/dotfiles first.
+  when: not darwin_developer_env_mise_config.stat.exists
+- name: Install default mise dependencies
+  ansible.builtin.command: /opt/homebrew/bin/mise install --yes
+  args:
+    chdir: "{{ ansible_facts['user_dir'] }}"
+  register: darwin_developer_env_mise_install
+  changed_when: "'installed' in darwin_developer_env_mise_install.stderr"
+- name: Install tmux plugin manager
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tpm"
+    version: master
+    update: false
+## AI
+- name: Install claude
+  ansible.builtin.shell: |
+    set -o pipefail
+    curl -fsSL https://claude.ai/install.sh | bash
+  args:
+    executable: /bin/bash
+    creates: "{{ ansible_facts['user_dir'] }}/.local/bin/claude"

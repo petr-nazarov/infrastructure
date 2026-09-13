@@ -1,0 +1,5 @@
+---
+darwin_yabai_packages:
+  - asmvik/formulae/yabai
+  - asmvik/formulae/skhd
+  - choose-gui # fuzzy picker used by the skhd bookmark bindings

@@ -1,0 +1,40 @@
+---
+# Homebrew is the pacman of this setup. Its installer is interactive and refuses to run as root,
+# so it is a manual prerequisite (see README) rather than something this role installs.
+- name: Check that Homebrew is installed
+  ansible.builtin.stat:
+    path: /opt/homebrew/bin/brew
+  register: darwin_base_brew
+- name: Fail if Homebrew is missing
+  ansible.builtin.fail:
+    msg: Homebrew is not installed. Follow the "Managed node macOS" section of the README first.
+  when: not darwin_base_brew.stat.exists
+- name: Fail if the become password is missing
+  ansible.builtin.fail:
+    msg: >-
+      ansible_become_password is not set. Casks with pkg installers call sudo themselves and need it.
+      Add it with `sops inventory/host_vars/{{ inventory_hostname }}.sops.yml`.
+  when: ansible_become_password is not defined
+
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: true
+- name: Install base packages
+  community.general.homebrew:
+    name: "{{ darwin_base_packages }}"
+    state: present
+
+- name: Set hostnames
+  become: true
+  ansible.builtin.shell: |
+    set -eu
+    changed=0
+    for kind in ComputerName HostName LocalHostName; do
+      if [ "$(scutil --get "$kind" 2>/dev/null || true)" != "{{ darwin_base_hostname }}" ]; then
+        scutil --set "$kind" "{{ darwin_base_hostname }}"
+        changed=1
+      fi
+    done
+    echo "changed=$changed"
+  register: darwin_base_hostname_result
+  changed_when: "'changed=1' in darwin_base_hostname_result.stdout"

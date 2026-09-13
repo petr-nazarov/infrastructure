@@ -1,0 +1,22 @@
+---
+# Homebrew refuses to load casks from a third-party tap until it is trusted.
+- name: List trusted Homebrew taps
+  ansible.builtin.command: /opt/homebrew/bin/brew trust --json v1
+  register: darwin_netbird_brew_trust
+  changed_when: false
+- name: Trust netbirdio/tap
+  ansible.builtin.command: /opt/homebrew/bin/brew trust --tap netbirdio/tap
+  when: "'netbirdio/tap' not in (darwin_netbird_brew_trust.stdout | from_json).taps | string"
+  changed_when: true
+
+- name: Tap netbirdio/tap
+  community.general.homebrew_tap:
+    name: netbirdio/tap
+    state: present
+
+# The UI cask pulls in the netbird formula and installs the daemon as a launchd service.
+- name: Install netbird
+  community.general.homebrew_cask:
+    name: netbirdio/tap/netbird-ui
+    state: present
+    sudo_password: "{{ ansible_become_password }}"

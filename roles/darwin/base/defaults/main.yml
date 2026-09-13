@@ -1,0 +1,13 @@
+---
+# ComputerName / HostName / LocalHostName. The dotfiles pick per-host config by hostname.
+darwin_base_hostname: "{{ inventory_hostname }}"
+
+# The most basic formulae, needed by the other darwin roles and the dotfiles
+darwin_base_packages:
+  - git
+  - wget
+  - curl
+  - jq
+  - moreutils # ifne, used by skhd bindings
+  - coreutils
+  - unzip

@@ -26,11 +26,18 @@ fix:
 ci:
   dagger call lint --source .
 run-tags tags:
-  ansible-playbook -i inventory/hosts.yml --tags {{ tags }} main.yml 
-  paplay /usr/share/sounds/freedesktop/stereo/window-attention.oga
-  notify-send "Done" "Infrastructure applied for tags {{ tags }}"
+  ansible-playbook -i inventory/hosts.yml --tags {{ tags }} main.yml
+  just notify "Infrastructure applied for tags {{ tags }}"
 
 run host: source
-  ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml 
+  ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml
+  just notify "Infrastructure applied for {{ host }}"
+
+[linux]
+notify message:
   paplay /usr/share/sounds/freedesktop/stereo/window-attention.oga
-  notify-send "Done" "Infrastructure applied for {{ host }}"
+  notify-send "Done" "{{ message }}"
+[macos]
+notify message:
+  afplay /System/Library/Sounds/Glass.aiff
+  osascript -e 'display notification "{{ message }}" with title "Done"'

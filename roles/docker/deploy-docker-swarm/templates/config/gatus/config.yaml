@@ -231,16 +231,6 @@ endpoints:
   #   conditions:
   #     - "[STATUS] == 200"
   #     - "[BODY].version != null"
-  # DNS
-  - name: Cloudflare
-    url: https://www.cloudflarestatus.com/
-    interval: 1m
-    group: DNS
-    conditions:
-      - "[STATUS] == 200"
-      - "[BODY] == pat(*All Systems Operational*)"
-    alerts:
-      - type: pushover
   - name: DNS *.${PUBLIC_TOP_DOMAIN}
     url: "8.8.8.8" # Address of the DNS server to use
     group: DNS

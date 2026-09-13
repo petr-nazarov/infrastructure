@@ -1,0 +1,6 @@
+---
+# Every mac is its own controller, so it is managed over a local connection.
+# Run one mac at a time (`just run <host>`): the play runs on whatever mac starts it.
+# Secrets (ansible_become_password) live in host_vars/<host>.sops.yml.
+ansible_connection: local
+ansible_python_interpreter: "{{ ansible_playbook_python }}"

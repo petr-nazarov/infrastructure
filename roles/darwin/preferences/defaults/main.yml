@@ -14,6 +14,8 @@ darwin_preferences:
   # Finder
   - { domain: NSGlobalDomain, key: AppleShowAllExtensions, type: bool, value: true }
   - { domain: com.apple.finder, key: AppleShowAllFiles, type: bool, value: true }
+  # Hidden files in every app's open/save dialogs too, not just Finder windows (cmd+shift+. toggles)
+  - { domain: NSGlobalDomain, key: AppleShowAllFiles, type: bool, value: true }
   - { domain: com.apple.finder, key: ShowPathbar, type: bool, value: true }
   - { domain: com.apple.desktopservices, key: DSDontWriteNetworkStores, type: bool, value: true }
   # Dock

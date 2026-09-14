@@ -90,6 +90,10 @@
                   url: https://wg-home.${PUBLIC_TOP_DOMAIN}
                   description: Vpn dashboard
                   icon: sh:wireguard
+                - title: NetBird
+                  url: https://app.netbird.io/peers
+                  description: Mesh VPN peers
+                  icon: sh:netbird
                 - title: Beszel
                   url: https://beszel-home.${PUBLIC_TOP_DOMAIN}
                   description: Systems monitoring

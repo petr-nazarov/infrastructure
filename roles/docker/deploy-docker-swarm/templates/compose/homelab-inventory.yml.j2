@@ -1,0 +1,25 @@
+# services:
+  homelab-inventory:
+    image: mriverodorta/homelab-inventory:stable
+    networks:
+      - local_net
+    # The image runs as 10001, which would need root to chown the bind mount.
+    # All app files are world-readable and state lives only in /data, so run
+    # as the host user that owns the data directory instead.
+    user: "{{ puid }}:{{ pgid }}"
+    environment:
+      TZ: "{{ tz }}"
+      AUTH_EXTERNAL_URL: "https://inventory-home.{{ public_top_domain }}"
+      # Caddy is the single hop in front of the app. Without it Express sees
+      # plain http, the Origin check fails and every save returns 403.
+      TRUST_PROXY: "1"
+      # Otherwise the first start enrolls an identity with lab.gd, and that
+      # can't be undone by flipping this later.
+      LABGD_ENABLED: "false"
+    volumes:
+      - "{{ remote_data }}/homelab-inventory:/data"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"

@@ -85,6 +85,13 @@ upsnap-home.{{ public_top_domain }} {
     reverse_proxy {{edge_ip }}:8090
 }
 
+### Homelab Inventory
+inventory-home.{{ public_top_domain }} {
+    import my_tls
+    import authelia_auth
+    reverse_proxy homelab-inventory:8798
+}
+
 
 ## Media
 ### Jellyfin

@@ -1,6 +1,7 @@
 **/.venv
 */**/.log
 .ansible/
+tmp/
 
 
 

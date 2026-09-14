@@ -63,6 +63,15 @@
     - "'authelia' in enabled_services"
     - not item.stat.exists
 
+- name: Ensure Homelab Inventory data directory exists
+  # Must exist before the stack deploy, for the same reason as Authelia's. The
+  # container runs as puid:pgid, so the ansible user keeps ownership.
+  ansible.builtin.file:
+    path: "{{ remote_data }}/homelab-inventory"
+    state: directory
+    mode: "0755"
+  when: "'homelab-inventory' in enabled_services"
+
 - name: Template Authelia config files
   ansible.builtin.template:
     src: "config.j2/authelia/{{ item }}.j2"

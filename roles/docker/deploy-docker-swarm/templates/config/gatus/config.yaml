@@ -153,6 +153,14 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: pushover
+  - name: Homelab Inventory
+    url: http://homelab-inventory:8798/api/health
+    interval: 1m
+    group: 51 - Infra Management
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: pushover
   ## Media
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health
@@ -223,16 +231,6 @@ endpoints:
   #   conditions:
   #     - "[STATUS] == 200"
   #     - "[BODY].version != null"
-  # DNS
-  - name: Cloudflare
-    url: https://www.cloudflarestatus.com/
-    interval: 1m
-    group: DNS
-    conditions:
-      - "[STATUS] == 200"
-      - "[BODY] == pat(*All Systems Operational*)"
-    alerts:
-      - type: pushover
   - name: DNS *.${PUBLIC_TOP_DOMAIN}
     url: "8.8.8.8" # Address of the DNS server to use
     group: DNS

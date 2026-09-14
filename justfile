@@ -33,6 +33,12 @@ run host: source
   ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml
   just notify "Infrastructure applied for {{ host }}"
 
+# Dump the homelab inventory (inventory-home) as Markdown for LLMs
+inventory-dump:
+  mkdir -p tmp
+  ssh home-edge 'docker run --rm -i --quiet --network home_local_net node:24-alpine node --input-type=module -' < scripts/inventory-dump.mjs > tmp/inventory.md
+  @echo "Wrote tmp/inventory.md"
+
 [linux]
 notify message:
   paplay /usr/share/sounds/freedesktop/stereo/window-attention.oga

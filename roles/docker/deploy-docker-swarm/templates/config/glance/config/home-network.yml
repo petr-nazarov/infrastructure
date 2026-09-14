@@ -90,10 +90,6 @@
                   url: https://wg-home.${PUBLIC_TOP_DOMAIN}
                   description: Vpn dashboard
                   icon: sh:wireguard
-                - title: Portainer
-                  url: https://portainer-home.${PUBLIC_TOP_DOMAIN}
-                  description: Container management
-                  icon: sh:portainer
                 - title: Beszel
                   url: https://beszel-home.${PUBLIC_TOP_DOMAIN}
                   description: Systems monitoring
@@ -106,6 +102,10 @@
                   url: https://upsnap-home.${PUBLIC_TOP_DOMAIN}
                   description: Wake on LAN
                   icon: sh:upsnap
+                - title: Homelab Inventory
+                  url: https://inventory-home.${PUBLIC_TOP_DOMAIN}
+                  description: Hardware inventory
+                  icon: mdi:server-network
             - title: Syncthing
               hide-arrow: true
               links:

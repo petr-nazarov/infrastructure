@@ -14,22 +14,20 @@
   community.docker.docker_swarm:
     state: present
     advertise_addr: "{{ ansible_host }}"
-  register: swarm_init_result
   when: inventory_hostname in groups['docker-swarm-managers']
 
-# 2. Share the Join Token globally
-- name: Set Join Token Fact
-  ansible.builtin.set_fact:
-    docker_worker_token: "{{ swarm_init_result.swarm_facts.JoinTokens.Worker }}"
-  delegate_to: "{{ item }}"
-  delegate_facts: true
-  loop: "{{ groups['docker-swarm-workers'] }}"
-  when: inventory_hostname in groups['docker-swarm-managers']
+# 2. Read the worker join token from the manager. Each worker asks the manager
+# directly, so this works when the play is limited to a worker (`just run home-media`).
+- name: Get Join Token from Manager
+  community.docker.docker_swarm_info:
+  delegate_to: "{{ groups['docker-swarm-managers'][0] }}"
+  register: swarm_manager_info
+  when: inventory_hostname in groups['docker-swarm-workers']
 
 # 3. Join the Swarm as a Worker
 - name: Join Swarm as Worker
   community.docker.docker_swarm:
     state: join
-    join_token: "{{ docker_worker_token }}"
+    join_token: "{{ swarm_manager_info.swarm_facts.JoinTokens.Worker }}"
     remote_addrs: ["{{ hostvars[groups['docker-swarm-managers'][0]]['ansible_host'] }}:2377"]
   when: inventory_hostname in groups['docker-swarm-workers']

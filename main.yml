@@ -34,6 +34,7 @@
     - role: darwin/term_packages
     - role: darwin/developer_env
     - role: darwin/preferences
+    - role: darwin/power
     - role: darwin/yabai
     - role: darwin/gui_apps
     - role: darwin/docker

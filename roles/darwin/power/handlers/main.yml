@@ -1,0 +1,7 @@
+---
+- name: Reload the power daemon
+  become: true
+  ansible.builtin.shell: |
+    launchctl bootout system/{{ darwin_power_daemon_label }} 2>/dev/null || true
+    launchctl bootstrap system /Library/LaunchDaemons/{{ darwin_power_daemon_label }}.plist
+  changed_when: true

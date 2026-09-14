@@ -26,6 +26,19 @@ darwin_preferences:
 # Short date format (ICU pattern), the one System Settings > Language & Region > Date format sets
 darwin_date_format: y-MM-dd
 
+# Menu shortcuts in every app (System Settings > Keyboard > Keyboard Shortcuts > App Shortcuts),
+# by menu item title, "nil" removes one. Apps pick changes up when they relaunch.
+# Log Out (cmd+shift+q) goes: it's the skhd close window binding, one missed press from logging out.
+darwin_menu_shortcuts:
+  - { title: "Log Out {{ ansible_facts['user_gecos'] }}…", key: nil }
+
+# System shortcuts (System Settings > Keyboard > Keyboard Shortcuts), by com.apple.symbolichotkeys id.
+# key is [ASCII code, virtual key code, modifier mask]; shift is 0x20000, ctrl 0x40000, alt 0x80000,
+# cmd 0x100000. skhd takes cmd+shift+3/4/5 for moving windows, so screenshots go to cmd+shift+s like
+# hyprshot on Hyprland: 31 is "Copy picture of selected area to the clipboard" (30 saves a file).
+darwin_symbolic_hotkeys:
+  - { id: 31, key: [115, 1, 0x120000] }  # cmd+shift+s
+
 # Modifier key remaps for the built-in keyboard, as System Settings > Keyboard > Keyboard Shortcuts >
 # Modifier Keys writes them. Values are HID usages (page << 32 | usage). The fn/Globe key is
 # 0xFF00000003 on older Macs and 0xFF0100000003 on some Apple silicon ones, so both are mapped.

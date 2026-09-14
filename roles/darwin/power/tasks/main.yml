@@ -1,0 +1,63 @@
+---
+- name: Set the power settings while charging
+  become: true
+  ansible.builtin.shell: |
+    before=$(pmset -g custom)
+    pmset -c {% for k, v in darwin_power_ac.items() %}{{ k }} {{ v }} {% endfor %}
+
+    [ "$before" = "$(pmset -g custom)" ] || echo changed
+  register: darwin_power_ac_write
+  changed_when: "'changed' in darwin_power_ac_write.stdout"
+
+# `pmset -g pslog` prints "Now drawing from 'AC Power'" (or 'Battery Power') on start and on
+# every power source change, so the daemon reacts right away instead of polling.
+- name: Install the lid-closed-while-charging daemon
+  become: true
+  ansible.builtin.copy:
+    dest: /Library/LaunchDaemons/{{ darwin_power_daemon_label }}.plist
+    owner: root
+    group: wheel
+    mode: "0644"
+    validate: plutil -lint %s
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0">
+      <dict>
+        <key>Label</key>
+        <string>{{ darwin_power_daemon_label }}</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>/bin/sh</string>
+          <string>-c</string>
+          <string>
+            /usr/bin/pmset -g pslog | while read -r line; do
+              case $line in
+                *"'AC Power'"*) want=1 ;;
+                *"'Battery Power'"*) want=0 ;;
+                *) continue ;;
+              esac
+              [ "$want" = "$have" ] || /usr/bin/pmset -a disablesleep "$want"
+              have=$want
+            done
+          </string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>KeepAlive</key>
+        <true/>
+      </dict>
+      </plist>
+  notify: Reload the power daemon
+
+- name: Check if the power daemon is loaded
+  become: true
+  ansible.builtin.command: launchctl print system/{{ darwin_power_daemon_label }}
+  register: darwin_power_daemon
+  changed_when: false
+  failed_when: false
+- name: Load the power daemon
+  become: true
+  ansible.builtin.command: launchctl bootstrap system /Library/LaunchDaemons/{{ darwin_power_daemon_label }}.plist
+  when: darwin_power_daemon.rc != 0
+  changed_when: true

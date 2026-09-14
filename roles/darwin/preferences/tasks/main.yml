@@ -11,12 +11,41 @@
     label: "{{ item.domain }} {{ item.key }}={{ item.value }}"
   notify: Restart Dock and Finder
 
-# The next two are plain `defaults write`s: osx_defaults can't read a dict back (plutil refuses to
-# convert it to JSON) and can't write an array of dicts at all.
+# The next tasks are plain `defaults write`s: osx_defaults can't read a dict back (plutil refuses
+# to convert it to JSON) and can't write an array of dicts at all. -dict-add keeps entries added
+# by hand in System Settings.
+
+# activateSettings reloads the shortcuts now instead of at the next login
+- name: Set the system shortcuts
+  ansible.builtin.shell: |
+    before=$(defaults read com.apple.symbolichotkeys AppleSymbolicHotKeys 2>/dev/null)
+    defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add \
+    {% for h in darwin_symbolic_hotkeys %}
+      {{ h.id }} '<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array>{% for p in h.key %}<integer>{{ p }}</integer>{% endfor %}</array><key>type</key><string>standard</string></dict></dict>' \
+    {% endfor %}
+    || exit 1
+    [ "$before" = "$(defaults read com.apple.symbolichotkeys AppleSymbolicHotKeys)" ] && exit 0
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+    echo changed
+  register: darwin_symbolic_hotkeys_write
+  changed_when: "'changed' in darwin_symbolic_hotkeys_write.stdout"
+
+- name: Set the menu shortcuts
+  ansible.builtin.shell: |
+    before=$(defaults read -g NSUserKeyEquivalents 2>/dev/null)
+    defaults write -g NSUserKeyEquivalents -dict-add \
+    {% for s in darwin_menu_shortcuts %}
+      {{ s.title | quote }} {{ s.key | quote }} \
+    {% endfor %}
+    || exit 1
+    [ "$before" = "$(defaults read -g NSUserKeyEquivalents)" ] || echo changed
+  register: darwin_menu_shortcuts_write
+  changed_when: "'changed' in darwin_menu_shortcuts_write.stdout"
+
 - name: Set the date format
   ansible.builtin.shell: |
     before=$(defaults read -g AppleICUDateFormatStrings 2>/dev/null)
-    defaults write -g AppleICUDateFormatStrings -dict 1 {{ darwin_date_format | quote }}
+    defaults write -g AppleICUDateFormatStrings -dict 1 {{ darwin_date_format | quote }} || exit 1
     [ "$before" = "$(defaults read -g AppleICUDateFormatStrings)" ] || echo changed
   register: darwin_date_format_write
   changed_when: "'changed' in darwin_date_format_write.stdout"
@@ -30,7 +59,7 @@
     {% for m in darwin_modifier_mappings %}
       '<dict><key>HIDKeyboardModifierMappingSrc</key><integer>{{ m.src }}</integer><key>HIDKeyboardModifierMappingDst</key><integer>{{ m.dst }}</integer></dict>' \
     {% endfor %}
-
+    || exit 1
     [ "$before" = "$(defaults -currentHost read -g "$key")" ] || echo changed
   register: darwin_modifier_remap
   changed_when: "'changed' in darwin_modifier_remap.stdout"

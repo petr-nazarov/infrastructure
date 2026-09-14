@@ -1,0 +1,11 @@
+---
+# pmset settings while charging (`pmset -c`). sleep 0 keeps the mac running with the display off,
+# so long jobs (Claude Code) keep going; the display still dims and turns off (and locks).
+darwin_power_ac:
+  sleep: 0
+  displaysleep: 10
+
+# Closing the lid always sleeps without an external display, whatever `sleep` says. Only
+# `pmset disablesleep` stops that, and it applies on battery too, so this daemon turns it on
+# while charging and off on battery.
+darwin_power_daemon_label: local.no-sleep-on-ac

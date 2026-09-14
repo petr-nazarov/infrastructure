@@ -1,0 +1,73 @@
+---
+- name: Download NetBird GPG key
+  become: true
+  ansible.builtin.get_url:
+    url: https://pkgs.netbird.io/debian/public.key
+    dest: /usr/share/keyrings/netbird-archive-keyring.asc
+    mode: "0644"
+- name: Add NetBird repository
+  become: true
+  ansible.builtin.deb822_repository:
+    name: netbird
+    types: deb
+    uris: https://pkgs.netbird.io/debian
+    suites: stable
+    components: main
+    signed_by: /usr/share/keyrings/netbird-archive-keyring.asc
+    state: present
+    enabled: true
+- name: Install NetBird
+  become: true
+  ansible.builtin.apt:
+    name: netbird
+    state: present
+    update_cache: true
+
+# Writes the systemd unit; a no-op if the package postinst already did.
+- name: Install the NetBird daemon unit
+  become: true
+  ansible.builtin.command: netbird service install
+  args:
+    creates: /etc/systemd/system/netbird.service
+- name: Ensure NetBird daemon is running
+  become: true
+  ansible.builtin.systemd:
+    name: netbird
+    state: started
+    enabled: true
+    daemon_reload: true
+
+- name: Get NetBird status
+  become: true
+  ansible.builtin.command: netbird status
+  register: debian_netbird_status
+  changed_when: false
+  # The daemon socket takes a moment to appear after a fresh start.
+  retries: 5
+  delay: 2
+  until: debian_netbird_status.rc == 0
+- name: Decide whether NetBird needs to log in
+  ansible.builtin.set_fact:
+    debian_netbird_needs_login: >-
+      {{ debian_netbird_status.stdout is search('Daemon status: (NeedsLogin|LoginFailed|SessionExpired)') }}
+    debian_netbird_connected: "{{ debian_netbird_status.stdout is search('Management: Connected') }}"
+- name: Fail if the setup key is missing
+  ansible.builtin.fail:
+    msg: >-
+      {{ inventory_hostname }} is not registered with NetBird and netbird_setup_key is not set.
+      Add it with `sops inventory/host_vars/{{ inventory_hostname }}.sops.yml`
+      or pass it once with `-e netbird_setup_key=...`.
+  when: debian_netbird_needs_login and netbird_setup_key is not defined
+
+# Flags are stored in the peer config, so this only runs when the peer is not
+# connected. To change them on a live peer run `netbird down` first.
+# The key goes in through the environment (the CLI reads NB_<FLAG>) so it stays
+# out of the logged argv and errors are still visible.
+- name: Bring NetBird up
+  become: true
+  ansible.builtin.command:
+    argv: "{{ ['netbird', 'up'] + debian_netbird_up_flags }}"
+  environment:
+    NB_SETUP_KEY: "{{ netbird_setup_key if debian_netbird_needs_login else '' }}"
+  when: not debian_netbird_connected
+  changed_when: true

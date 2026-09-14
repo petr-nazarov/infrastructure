@@ -1,0 +1,5 @@
+---
+# Extra flags for the first `netbird up`. They are saved in the peer's config,
+# so they only apply when the peer logs in (see tasks/main.yml).
+debian_netbird_up_flags:
+  - --allow-server-ssh

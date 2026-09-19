@@ -23,6 +23,7 @@ enabled_services:
   - sonarr
   - radarr
   - prowlarr
+  - flaresolverr
   - bazarr
   - transmission
   # Multihost

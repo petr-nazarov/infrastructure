@@ -207,6 +207,15 @@ endpoints:
       - "[BODY].status == OK"
     alerts:
       - type: pushover
+  - name: FlareSolverr
+    url: http://flaresolverr:8191/health
+    interval: 1m
+    group: 52 - Media
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == ok"
+    alerts:
+      - type: pushover
   - name: Transmission - torrent
     url: http://transmission.$LOCAL_MEDIA_DOMAIN
     interval: 1m

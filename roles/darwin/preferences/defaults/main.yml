@@ -29,10 +29,11 @@ darwin_preferences:
 darwin_date_format: y-MM-dd
 
 # Menu shortcuts in every app (System Settings > Keyboard > Keyboard Shortcuts > App Shortcuts),
-# by menu item title, "nil" removes one. Apps pick changes up when they relaunch.
+# by menu item title, '\0' (NUL) removes one. Apps pick changes up when they relaunch.
+# Not "nil": that's a literal string, and a shortcut on the bare n key (Zen logged out on every n).
 # Log Out (cmd+shift+q) goes: it's the skhd close window binding, one missed press from logging out.
 darwin_menu_shortcuts:
-  - { title: "Log Out {{ ansible_facts['user_gecos'] }}…", key: nil }
+  - { title: "Log Out {{ ansible_facts['user_gecos'] }}…", key: '\0' }
 
 # System shortcuts (System Settings > Keyboard > Keyboard Shortcuts), by com.apple.symbolichotkeys id.
 # key is [ASCII code, virtual key code, modifier mask]; shift is 0x20000, ctrl 0x40000, alt 0x80000,

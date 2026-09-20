@@ -21,7 +21,7 @@
     before=$(defaults read com.apple.symbolichotkeys AppleSymbolicHotKeys 2>/dev/null)
     defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add \
     {% for h in darwin_symbolic_hotkeys %}
-      {{ h.id }} '<dict><key>enabled</key><true/><key>value</key><dict><key>parameters</key><array>{% for p in h.key %}<integer>{{ p }}</integer>{% endfor %}</array><key>type</key><string>standard</string></dict></dict>' \
+      {{ h.id }} '<dict><key>enabled</key><{{ h.enabled | default(true) | ternary("true", "false") }}/><key>value</key><dict><key>parameters</key><array>{% for p in h.key %}<integer>{{ p }}</integer>{% endfor %}</array><key>type</key><string>standard</string></dict></dict>' \
     {% endfor %}
     || exit 1
     [ "$before" = "$(defaults read com.apple.symbolichotkeys AppleSymbolicHotKeys)" ] && exit 0

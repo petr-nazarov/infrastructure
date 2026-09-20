@@ -7,6 +7,8 @@ darwin_gui_apps:
   - zen
   - opera
   - obsidian
+  # Launcher, replaces Spotlight on cmd+space (see darwin/preferences)
+  - raycast
   # qbittorrent: cask disabled by Homebrew on 2026-09-01, it fails the Gatekeeper check
   - localsend
   # Media playing

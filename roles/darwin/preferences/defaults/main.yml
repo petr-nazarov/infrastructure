@@ -24,6 +24,9 @@ darwin_preferences:
   # yabai: spaces must keep their order, and every display gets its own spaces
   - { domain: com.apple.dock, key: mru-spaces, type: bool, value: false }
   - { domain: com.apple.spaces, key: spans-displays, type: bool, value: false }
+  # Raycast takes over cmd+space from Spotlight (49 is the space key code). Raycast reads this
+  # at launch, so it must be quit (or not running yet) when the play writes it.
+  - { domain: com.raycast.macos, key: raycastGlobalHotkey, type: string, value: Command-49 }
 
 # Short date format (ICU pattern), the one System Settings > Language & Region > Date format sets
 darwin_date_format: y-MM-dd
@@ -39,8 +42,13 @@ darwin_menu_shortcuts:
 # key is [ASCII code, virtual key code, modifier mask]; shift is 0x20000, ctrl 0x40000, alt 0x80000,
 # cmd 0x100000. skhd takes cmd+shift+3/4/5 for moving windows, so screenshots go to cmd+shift+s like
 # hyprshot on Hyprland: 31 is "Copy picture of selected area to the clipboard" (30 saves a file).
+# enabled defaults to true; the key stays on a disabled entry so System Settings can re-enable it.
 darwin_symbolic_hotkeys:
   - { id: 31, key: [115, 1, 0x120000] }  # cmd+shift+s
+  # Spotlight gives cmd+space up to Raycast. 64 is "Show Spotlight search" (cmd+space),
+  # 65 "Show Finder search window" (cmd+alt+space), which would still shadow Raycast's alt variants.
+  - { id: 64, key: [32, 49, 0x100000], enabled: false }
+  - { id: 65, key: [32, 49, 0x180000], enabled: false }
 
 # Modifier key remaps for the built-in keyboard, as System Settings > Keyboard > Keyboard Shortcuts >
 # Modifier Keys writes them. Values are HID usages (page << 32 | usage). The fn/Globe key is

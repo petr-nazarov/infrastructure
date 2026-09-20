@@ -33,6 +33,11 @@ run host: source
   ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml
   just notify "Infrastructure applied for {{ host }}"
 
+# Sync the config dir and restart Glance + Gatus, skipping the full stack deploy
+dashboards:
+  .venv/bin/ansible-playbook -i inventory/hosts.yml -l docker-swarm-managers --tags dashboards main.yml
+  just notify "Dashboards reloaded"
+
 # Dump the homelab inventory (inventory-home) as Markdown for LLMs
 inventory-dump:
   mkdir -p tmp

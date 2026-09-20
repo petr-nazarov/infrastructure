@@ -7,3 +7,16 @@
 - name: Restart Authelia
   ansible.builtin.command: docker service update --force --detach home_authelia
   changed_when: true
+
+# Both read their bind-mounted config only at startup, and a stack deploy
+# leaves them untouched when the compose file itself hasn't changed - so a
+# config-only edit needs an explicit restart.
+- name: Reload Glance
+  ansible.builtin.command: docker service update --force --detach home_glance
+  when: "'glance' in enabled_services"
+  changed_when: true
+
+- name: Reload Gatus
+  ansible.builtin.command: docker service update --force --detach home_gatus
+  when: "'gatus' in enabled_services"
+  changed_when: true

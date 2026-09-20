@@ -13,33 +13,65 @@
         - $include: plugins/gatus-full.yml
     - size: full
       widgets:
-        - title: Home Network
+        - title: Public
           type: bookmarks
           groups:
-            - title: Public
+            - title: Personal
               hide-arrow: true
               links:
-                - title: FrrCode
-                  url: https://frrcode.com/en
-                  description: Company website
-                - title: Timeintaor
-                  url: https://timeinator.frrcode.com
-                  description: Timeslot finding tool
-                - title: Blog
-                  url: https://blog.${PUBLIC_TOP_DOMAIN}
-                  description: Personal blog
-                - title: DaoMoney
-                  url: https://money.${PUBLIC_TOP_DOMAIN}
-                  description: Timeslot finding tool
                 - title: Business card
                   url: https://petr.${PUBLIC_TOP_DOMAIN}
                   description: Business card
+                  icon: mdi:card-account-details-outline
+                - title: Blog
+                  url: https://blog.${PUBLIC_TOP_DOMAIN}
+                  description: Personal blog
+                  icon: mdi:post-outline
                 - title: CV
                   url: https://cv.${PUBLIC_TOP_DOMAIN}
                   description: Personal website
+                  icon: mdi:file-account-outline
+            - title: FrrCode
+              hide-arrow: true
+              links:
+                - title: Website
+                  url: https://frrcode.com/en
+                  description: Company website
+                  icon: https://frrcode.com/favicon.ico
+                - title: GitHub
+                  url: https://github.com/FrrCode/platform
+                  description: Platform monorepo
+                  icon: sh:github-light
+                - title: Accounting
+                  url: https://app.greeninvoice.co.il/lobby
+                  description: Green Invoice
+                  icon: https://wp-static.greeninvoice.co.il/public-website/2023/05/favicon-1.png
+                - title: Time tracking
+                  url: https://time.frrcode.com
+                  description: Kimai
+                  icon: sh:kimai
+                - title: ERPNext
+                  url: https://erp.frrcode.com
+                  description: ERP system
+                  icon: sh:frappe-erpnext
+            - title: Services
+              hide-arrow: true
+              links:
+                - title: Timeinator
+                  url: https://timeinator.frrcode.com
+                  description: Timeslot finding tool
+                  icon: mdi:calendar-clock-outline
+                - title: DaoMoney
+                  url: https://money.${PUBLIC_TOP_DOMAIN}
+                  description: Personal finance tracker
+                  icon: mdi:wallet-outline
                 - title: VPN
                   description: XRay VLESS Server
                   url: http://65.108.86.24:2096/QtgDtgMkbIa2oTPmJT/
+                  icon: mdi:shield-lock-outline
+        - title: Home Network
+          type: bookmarks
+          groups:
             - title: Local tools
               hide-arrow: true
               links:

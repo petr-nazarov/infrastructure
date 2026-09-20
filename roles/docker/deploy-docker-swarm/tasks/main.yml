@@ -6,6 +6,9 @@
     "{{ item.key }}": "{{ item.value }}"
   loop: "{{ lookup('community.sops.sops', playbook_dir + '/vars/docker_swarm.sops.yml') | from_yaml | dict2items }}"
   no_log: true # Recommended to hide sensitive values from terminal output
+  # Every other task needs remote_root and friends, so this one runs whatever
+  # tags were selected - including the `dashboards` fast path.
+  tags: always
 
 - name: Ensure directories exist
   ansible.builtin.file:
@@ -22,6 +25,12 @@
     src: "{{ role_path }}/templates/config"
     dest: "{{ remote_root }}"
     delete: true
+  # Tagged so `just dashboards` can push a Glance or Gatus config edit without
+  # re-templating and re-deploying the whole stack.
+  tags: dashboards
+  notify:
+    - Reload Glance
+    - Reload Gatus
 
 - name: Template config files
   ansible.builtin.template:

@@ -3,6 +3,7 @@
 base_packages:
   - git
   - rsync
+  - tmux
 #### Specific to arch
 arch_specific_packages:
   - github-cli

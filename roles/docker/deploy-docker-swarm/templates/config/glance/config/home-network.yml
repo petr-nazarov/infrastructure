@@ -223,17 +223,18 @@
                   description: Source of truth for the whole setup
                   url: https://github.com/petr-nazarov/infrastructure
                   icon: sh:github
-                - title: zmk-config
-                  description: Keyboard configuration
-                  url: https://github.com/petr-nazarov/zmk-config
-                  icon: sh:github
                 - title: blog
                   description: Personal blog
                   url: https://github.com/petr-nazarov/blog
                   icon: sh:github
-                - title: vpn
-                  description: Vpn setup
-                  url: https://github.com/petr-nazarov/vpn
+
+                - title: FrrCard
+                  description: Self-hosted digital business card
+                  url: https://github.com/FrrCode/FrrCard
+                  icon: sh:github
+                - title: Timeinator
+                  description: World clock
+                  url: https://github.com/FrrCode/Timeinator
                   icon: sh:github
             - title: Docs
               hide-arrow: true

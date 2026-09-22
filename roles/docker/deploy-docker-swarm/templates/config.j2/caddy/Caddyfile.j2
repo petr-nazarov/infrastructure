@@ -92,6 +92,14 @@ inventory-home.{{ public_top_domain }} {
     reverse_proxy homelab-inventory:8798
 }
 
+### Excalidraw
+# No LAN route: ExcaliDash runs with AUTH_MODE=disabled, Authelia is its login.
+excalidraw-home.{{ public_top_domain }} {
+    import my_tls
+    import authelia_auth
+    reverse_proxy excalidraw:80
+}
+
 
 ## Media
 ### Jellyfin

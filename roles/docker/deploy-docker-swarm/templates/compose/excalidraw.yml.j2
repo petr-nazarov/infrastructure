@@ -1,0 +1,44 @@
+# services:
+  # ExcaliDash: Excalidraw with a server-side drawing library. The plain
+  # excalidraw/excalidraw image keeps drawings in browser storage only.
+  excalidraw:
+    image: zimengxiong/excalidash-frontend:latest
+    networks:
+      - local_net
+    environment:
+      TZ: "{{ tz }}"
+      # The bundled nginx proxies /api and /socket.io here. Defaults to
+      # `backend:8000`, which doesn't exist in this stack.
+      BACKEND_URL: excalidraw_backend:8000
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"
+  excalidraw_backend:
+    image: zimengxiong/excalidash-backend:latest
+    networks:
+      - local_net
+    # The entrypoint runs as root to chown /app/prisma and /app/uploads to its
+    # own uid 1001, then drops privileges, so no PUID/user override.
+    environment:
+      TZ: "{{ tz }}"
+      NODE_ENV: production
+      DATABASE_PROVIDER: sqlite
+      DATABASE_URL: file:/app/prisma/dev.db
+      FRONTEND_URL: "https://excalidraw-home.{{ public_top_domain }}"
+      # One trusted hop (the frontend nginx), which passes on Caddy's
+      # X-Forwarded-Proto. Without it the https FRONTEND_URL makes the backend
+      # redirect every request.
+      TRUST_PROXY: "1"
+      # Authelia forward auth gates the only route, so skip the second login.
+      # JWT and CSRF secrets are generated on first start and kept in /app/prisma.
+      AUTH_MODE: disabled
+    volumes:
+      - "{{ remote_data }}/excalidraw/db:/app/prisma"
+      - "{{ remote_data }}/excalidraw/uploads:/app/uploads"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.role == manager"

@@ -233,6 +233,19 @@ endpoints:
       - "[BODY] == pat(*OK*)"
     alerts:
       - type: pushover
+  - name: Excalidraw - whiteboard
+    # Through the frontend nginx to the backend, so it covers both services.
+    url: http://excalidraw:80/api/health
+    # The backend redirects plain-http requests to its https FRONTEND_URL,
+    # which lands on Authelia (401). Claim https like Caddy does.
+    headers:
+      X-Forwarded-Proto: https
+    interval: 1m
+    group: 53 - Other
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: pushover
   # - name: Ollama
   #   url: http://ollama.${LOCAL_DESKTOP_DOMAIN}/api/version
   #   interval: 1m

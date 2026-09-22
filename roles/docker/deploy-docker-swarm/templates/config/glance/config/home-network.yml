@@ -103,6 +103,10 @@
                   description: Rss platform
                   url: http://rss.${PUBLIC_TOP_DOMAIN}
                   icon: sh:rss-com
+                - title: Excalidraw
+                  description: Whiteboard
+                  url: https://excalidraw-home.${PUBLIC_TOP_DOMAIN}
+                  icon: sh:excalidraw
                 - title: Sunshine
                   description: Game streaming
                   url: http://sunshine.${LOCAL_DESKTOP_DOMAIN}

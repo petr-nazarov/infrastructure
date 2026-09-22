@@ -81,6 +81,30 @@
     mode: "0755"
   when: "'homelab-inventory' in enabled_services"
 
+- name: Check which Excalidraw data directories exist
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: excalidraw_data_dirs
+  loop:
+    - "{{ remote_data }}/excalidraw"
+    - "{{ remote_data }}/excalidraw/db"
+    - "{{ remote_data }}/excalidraw/uploads"
+  when: "'excalidraw' in enabled_services"
+
+- name: Ensure Excalidraw data directories exist
+  # Same as Authelia's: must exist before the deploy, and only created when
+  # absent because the backend chowns db and uploads to its uid on start.
+  ansible.builtin.file:
+    path: "{{ item.item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ excalidraw_data_dirs.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item | default('') }}"
+  when:
+    - "'excalidraw' in enabled_services"
+    - not item.stat.exists
+
 - name: Template Authelia config files
   ansible.builtin.template:
     src: "config.j2/authelia/{{ item }}.j2"

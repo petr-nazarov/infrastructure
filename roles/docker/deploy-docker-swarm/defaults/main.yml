@@ -17,6 +17,7 @@ enabled_services:
   - beszel
   - rss
   - homelab-inventory
+  - excalidraw
   # - cv
   ## Media
   - jellyfin
@@ -36,6 +37,7 @@ enabled_services:
 authelia_protected_hosts:
   - home
   - inventory-home
+  - excalidraw-home
   - sonarr-home
   - radarr-home
   - bazarr-home

@@ -27,9 +27,13 @@
                   url: https://blog.${PUBLIC_TOP_DOMAIN}
                   description: Personal blog
                   icon: mdi:post-outline
+                - title: Personal website
+                  url: https://${PUBLIC_TOP_DOMAIN}
+                  description: Personal website
+                  icon: mdi:file-account-outline
                 - title: CV
                   url: https://cv.${PUBLIC_TOP_DOMAIN}
-                  description: Personal website
+                  description: cv
                   icon: mdi:file-account-outline
             - title: FrrCode
               hide-arrow: true

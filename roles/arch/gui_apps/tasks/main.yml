@@ -6,3 +6,31 @@
     name: "{{ arch_gui_apps }}"
     use: yay
 
+# Voxtype: same model and languages as on the macs. Its own evdev hotkey is off (it would
+# need the `input` group); Hyprland binds SUPER+M press/release to `voxtype record
+# start/stop` instead (hyprland.lua in dotfiles). The daemon reads its config only on start.
+- name: Set up voxtype
+  ansible.builtin.command: voxtype setup --download --quiet
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}/.config/voxtype/config.toml"
+- name: Download the voxtype model
+  ansible.builtin.command: voxtype setup --download --model {{ arch_voxtype_model }} --quiet
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}/.local/share/voxtype/models/ggml-{{ arch_voxtype_model }}.bin"
+- name: Configure voxtype
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_facts['user_dir'] }}/.config/voxtype/config.toml"
+    regexp: "{{ item.regexp }}"
+    insertafter: "{{ item.section }}"
+    line: "{{ item.line }}"
+  loop:
+    - { section: '^\[hotkey\]', regexp: '^enabled = ', line: enabled = false }
+    - { section: '^\[whisper\]', regexp: '^model = ', line: 'model = "{{ arch_voxtype_model }}"' }
+    - { section: '^\[whisper\]', regexp: '^language = ', line: "language = {{ arch_voxtype_language }}" }
+  loop_control:
+    label: "{{ item.line }}"
+  notify: Restart voxtype
+- name: Install the voxtype user service
+  ansible.builtin.command: voxtype setup systemd
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}/.config/systemd/user/voxtype.service"

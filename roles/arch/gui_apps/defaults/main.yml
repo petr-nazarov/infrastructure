@@ -6,6 +6,7 @@ arch_gui_apps:
   - opera
   - obsidian
   - ferdium-bin # messengers in one window
+  - voxtype-bin # push-to-talk voice typing, prebuilt (voxtype builds from source)
   - okular
   - nemo
   - qbittorrent
@@ -25,3 +26,8 @@ arch_gui_apps:
   # Sound
   - notify-send
   - paplay
+
+# Multilingual (the .en models only know English), same as darwin_voxtype_model
+arch_voxtype_model: large-v3-turbo
+# Constrained auto-detect: whisper picks between these per recording
+arch_voxtype_language: '["en", "ru"]'

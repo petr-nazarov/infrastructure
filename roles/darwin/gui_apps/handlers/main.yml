@@ -1,0 +1,7 @@
+---
+- name: Restart voxtype
+  ansible.builtin.shell: |
+    pkill -f /Applications/Voxtype.app/Contents/MacOS/ || true
+    sleep 1
+    open -g /Applications/Voxtype.app
+  changed_when: true

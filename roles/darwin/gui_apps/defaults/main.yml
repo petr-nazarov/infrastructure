@@ -8,6 +8,8 @@ darwin_gui_apps:
   - opera
   - obsidian
   - ferdium # messengers in one window
+  - peteonrails/voxtype/voxtype # push-to-talk voice typing
+  - hammerspoon # holds cmd+m for voxtype, see ~/.hammerspoon in dotfiles
   # Launcher, replaces Spotlight on cmd+space (see darwin/preferences)
   - raycast
   # qbittorrent: cask disabled by Homebrew on 2026-09-01, it fails the Gatekeeper check
@@ -23,10 +25,19 @@ darwin_gui_apps:
   - font-symbols-only-nerd-font
   - font-noto-sans
 
+# Multilingual (the .en models only know English); large-v3-turbo runs on Metal.
+darwin_voxtype_model: large-v3-turbo
+# Constrained auto-detect: whisper picks between these per recording
+darwin_voxtype_language: '["en", "ru"]'
+
 darwin_ferdium_shortcuts:
   activateNextService: Ctrl+tab
   activatePreviousService: Ctrl+Shift+tab
   activateServiceUsesAlt: true
+
+# Third-party taps the casks above come from
+darwin_gui_taps:
+  - peteonrails/voxtype
 
 # Formulae that go with the GUI
 darwin_gui_packages:

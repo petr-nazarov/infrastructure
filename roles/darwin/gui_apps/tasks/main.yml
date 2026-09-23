@@ -1,4 +1,19 @@
 ---
+# Homebrew refuses to load casks from a third-party tap until it is trusted.
+- name: List trusted Homebrew taps
+  ansible.builtin.command: /opt/homebrew/bin/brew trust --json v1
+  register: darwin_gui_brew_trust
+  changed_when: false
+- name: Trust the gui app taps
+  ansible.builtin.command: /opt/homebrew/bin/brew trust --tap {{ item }}
+  loop: "{{ darwin_gui_taps }}"
+  when: "item not in (darwin_gui_brew_trust.stdout | from_json).taps | string"
+  changed_when: true
+- name: Tap the gui app taps
+  community.general.homebrew_tap:
+    name: "{{ darwin_gui_taps }}"
+    state: present
+
 - name: Install gui applications
   community.general.homebrew_cask:
     name: "{{ darwin_gui_apps }}"
@@ -10,6 +25,41 @@
   community.general.homebrew:
     name: "{{ darwin_gui_packages }}"
     state: present
+
+# Voxtype on macOS: `setup --download` writes the default config and fetches the model,
+# `setup app-bundle` wraps the daemon in /Applications/Voxtype.app and adds it to Login
+# Items. As an app it can hold the Microphone, Accessibility and Input Monitoring grants
+# (a launchd agent never gets the microphone). Those grants stay manual: macOS prompts on
+# first run. `voxtype configure` shows a systemctl error under Service on macOS; ignore it.
+- name: Set up voxtype
+  ansible.builtin.command: /opt/homebrew/bin/voxtype setup --download --quiet
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/config.toml"
+- name: Install the voxtype app bundle
+  ansible.builtin.command: /opt/homebrew/bin/voxtype setup app-bundle
+  args:
+    creates: /Applications/Voxtype.app
+- name: Download the voxtype model
+  ansible.builtin.command: >-
+    /opt/homebrew/bin/voxtype setup --download --model {{ darwin_voxtype_model }} --quiet
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/models/ggml-{{ darwin_voxtype_model }}.bin"
+# fn is remapped to ctrl, so voxtype gets no hotkey of its own: Hammerspoon runs
+# `voxtype record start/stop` while cmd+m is held (~/.hammerspoon in dotfiles). skhd can't,
+# it never sees the key go up. The daemon reads its config only on start.
+- name: Configure voxtype
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/config.toml"
+    regexp: "{{ item.regexp }}"
+    insertafter: "{{ item.section }}"
+    line: "{{ item.line }}"
+  loop:
+    - { section: '^\[hotkey\]', regexp: '^enabled = ', line: enabled = false }
+    - { section: '^\[whisper\]', regexp: '^model = ', line: 'model = "{{ darwin_voxtype_model }}"' }
+    - { section: '^\[whisper\]', regexp: '^language = ', line: "language = {{ darwin_voxtype_language }}" }
+  loop_control:
+    label: "{{ item.line }}"
+  notify: Restart voxtype
 
 # Ferdium switches services on cmd+1..9 by default, the yabai space keys in ~/.skhdrc.
 # alt+1..9 leaves cmd+number to skhd. Ferdium reads this file on start.
@@ -23,3 +73,13 @@
     dest: "{{ ansible_facts['user_dir'] }}/Library/Application Support/Ferdium/config/shortcuts.json"
     mode: "0644"
     content: "{{ darwin_ferdium_shortcuts | to_nice_json(indent=2) }}\n"
+
+# Hammerspoon adds itself to Login Items (hs.autoLaunch in init.lua), but only once it
+# has run, so the first start is on us.
+- name: Start Hammerspoon
+  ansible.builtin.shell: |
+    pgrep -xq Hammerspoon && exit 0
+    open -g -a Hammerspoon
+    echo started
+  register: darwin_hammerspoon_start
+  changed_when: "'started' in darwin_hammerspoon_start.stdout"

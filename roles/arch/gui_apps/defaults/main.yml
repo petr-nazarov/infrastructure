@@ -5,6 +5,7 @@ arch_gui_apps:
   - zen-browser-bin
   - opera
   - obsidian
+  - ferdium-bin # messengers in one window
   - okular
   - nemo
   - qbittorrent

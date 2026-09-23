@@ -10,3 +10,16 @@
   community.general.homebrew:
     name: "{{ darwin_gui_packages }}"
     state: present
+
+# Ferdium switches services on cmd+1..9 by default, the yabai space keys in ~/.skhdrc.
+# alt+1..9 leaves cmd+number to skhd. Ferdium reads this file on start.
+- name: Create the Ferdium config directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/Library/Application Support/Ferdium/config"
+    state: directory
+    mode: "0755"
+- name: Move Ferdium service switching to alt+number
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/Library/Application Support/Ferdium/config/shortcuts.json"
+    mode: "0644"
+    content: "{{ darwin_ferdium_shortcuts | to_nice_json(indent=2) }}\n"

@@ -23,6 +23,11 @@ darwin_gui_apps:
   - font-symbols-only-nerd-font
   - font-noto-sans
 
+darwin_ferdium_shortcuts:
+  activateNextService: Ctrl+tab
+  activatePreviousService: Ctrl+Shift+tab
+  activateServiceUsesAlt: true
+
 # Formulae that go with the GUI
 darwin_gui_packages:
   - mpv

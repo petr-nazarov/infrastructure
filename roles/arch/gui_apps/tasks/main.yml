@@ -6,9 +6,10 @@
     name: "{{ arch_gui_apps }}"
     use: yay
 
-# Voxtype: same model and languages as on the macs. Its own evdev hotkey is off (it would
-# need the `input` group); Hyprland binds SUPER+M press/release to `voxtype record
-# start/stop` instead (hyprland.lua in dotfiles). The daemon reads its config only on start.
+# Voxtype: same model and languages as on the macs. Its own evdev hotkey is off: it misses
+# the release when SUPER comes up before M. voxtype-ptt (dotfiles) reads the keys instead and
+# runs `voxtype record start/stop`; Hyprland only swallows SUPER+M (hyprland.lua in dotfiles).
+# The daemon reads its config only on start.
 - name: Set up voxtype
   ansible.builtin.command: voxtype setup --download --quiet
   args:
@@ -39,6 +40,9 @@
     - { section: '^\[hotkey\]', regexp: '^enabled = ', line: enabled = false }
     - { section: '^\[whisper\]', regexp: '^model = ', line: 'model = "{{ arch_voxtype_model }}"' }
     - { section: '^\[whisper\]', regexp: '^language = ', line: "language = {{ arch_voxtype_language }}" }
+    # Typing waits until SUPER is up, or the letters fire Hyprland binds. The default 750 ms
+    # gives up too early for a slow release and falls back to the clipboard.
+    - { section: '^\[output\]', regexp: '^modifier_release_timeout_ms = ', line: modifier_release_timeout_ms = 3000 }
   loop_control:
     label: "{{ item.line }}"
   notify: Restart voxtype
@@ -46,6 +50,40 @@
   ansible.builtin.command: voxtype setup systemd
   args:
     creates: "{{ ansible_facts['user_dir'] }}/.config/systemd/user/voxtype.service"
+
+# voxtype-ptt and voxtype's wait for modifier release both read /dev/input. Group changes
+# reach the user services only after a fresh login (a reboot is simplest).
+- name: Let the user read keyboards for voxtype
+  become: true
+  ansible.builtin.user:
+    name: "{{ ansible_facts['user_id'] }}"
+    groups: input
+    append: true
+- name: Install the voxtype push-to-talk service
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/.config/systemd/user/voxtype-ptt.service"
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Voxtype push-to-talk on SUPER+M (voxtype-ptt in dotfiles)
+      PartOf=graphical-session.target
+      After=graphical-session.target voxtype.service
+
+      [Service]
+      ExecStart=%h/.local/bin/voxtype-ptt
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=graphical-session.target
+  register: arch_voxtype_ptt_unit
+- name: Start the voxtype push-to-talk service
+  ansible.builtin.systemd_service:
+    name: voxtype-ptt
+    scope: user
+    enabled: true
+    state: "{{ 'restarted' if arch_voxtype_ptt_unit.changed else 'started' }}"
+    daemon_reload: "{{ arch_voxtype_ptt_unit.changed }}"
 
 # Every transcript goes through voxtype-postprocess (dotfiles): it copies the raw text to
 # the clipboard and, with --llm, swaps in the local model's cleanup before it is typed.

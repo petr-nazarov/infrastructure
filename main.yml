@@ -39,6 +39,7 @@
     - role: darwin/gui_apps
     - role: darwin/docker
     - role: darwin/netbird
+    - role: darwin/remote_access
     - role: darwin/syncthing
 
 - name: Setup general server settings

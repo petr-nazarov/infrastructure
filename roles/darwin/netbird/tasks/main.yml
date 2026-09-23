@@ -20,3 +20,18 @@
     name: netbirdio/tap/netbird-ui
     state: present
     sudo_password: "{{ ansible_become_password }}"
+
+# The NetBird SSH server takes port 22 on the NetBird IP and asks for SSO on every
+# connection. darwin/remote_access serves ssh with the macOS sshd instead.
+# `up` flags only take effect on a fresh login, so the peer goes down first. It comes
+# back with its stored key, no SSO, unless its login has expired.
+- name: Get NetBird status
+  ansible.builtin.command: /opt/homebrew/bin/netbird status --json
+  register: darwin_netbird_status
+  changed_when: false
+- name: Turn off the NetBird SSH server
+  ansible.builtin.shell: |
+    /opt/homebrew/bin/netbird down
+    /opt/homebrew/bin/netbird up --allow-server-ssh=false
+  when: (darwin_netbird_status.stdout | from_json).sshServer.enabled
+  changed_when: true

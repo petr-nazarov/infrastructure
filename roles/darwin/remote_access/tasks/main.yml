@@ -1,0 +1,51 @@
+---
+# SSH and VNC into the mac over NetBird, served by the macOS sshd and Screen Sharing.
+# NetBird's own SSH server is off (see darwin/netbird): peers route ssh to it through
+# `netbird ssh proxy`, which asks for SSO on every connection.
+# Neither service listens beyond what the NetBird access policies let through;
+# the policy has to allow TCP 22 and 5900 to this peer.
+
+- name: Authorize ssh keys for the login user
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_facts['user_dir'] }}/.ssh/authorized_keys"
+    create: true
+    mode: "0600"
+    marker: "# {mark} ANSIBLE MANAGED darwin/remote_access"
+    block: "{{ darwin_remote_access_authorized_keys | join('\n') }}"
+
+# Drop-ins are read in name order and the first value wins, so this one sorts before
+# Apple's 100-macos.conf. No `validate`: `sshd -t` needs host keys, which macOS only
+# generates when sshd first starts.
+- name: Allow only key logins over ssh
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/ssh/sshd_config.d/010-remote-access.conf
+    owner: root
+    group: wheel
+    mode: "0644"
+    content: |
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PermitRootLogin no
+
+# Same as the Sharing toggles, which `systemsetup` can only flip with Full Disk Access.
+# Both daemons are socket activated, so launchd starts them on the first connection.
+- name: Check the remote access services
+  become: true
+  ansible.builtin.command: launchctl print system/{{ item.label }}
+  loop: "{{ darwin_remote_access_services }}"
+  loop_control:
+    label: "{{ item.label }}"
+  register: darwin_remote_access_loaded
+  changed_when: false
+  failed_when: false
+- name: Enable the remote access services
+  become: true
+  ansible.builtin.shell: |
+    launchctl enable system/{{ item.item.label }}
+    launchctl bootstrap system {{ item.item.plist }}
+  loop: "{{ darwin_remote_access_loaded.results }}"
+  loop_control:
+    label: "{{ item.item.label }}"
+  when: item.rc != 0
+  changed_when: true

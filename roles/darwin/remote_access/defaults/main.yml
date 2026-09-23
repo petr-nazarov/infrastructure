@@ -1,0 +1,10 @@
+---
+# Keys allowed to ssh in as the login user. personal-server is the key the other
+# workstations already use for the home servers (~/.secrets/home/.ssh/personal-server).
+darwin_remote_access_authorized_keys:
+  - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGn89COs7PoPSYo4By27vXCy1nREwEqMYd8c4LyyADrI personal-server
+
+# System Settings > General > Sharing: Remote Login and Screen Sharing
+darwin_remote_access_services:
+  - { label: com.openssh.sshd, plist: /System/Library/LaunchDaemons/ssh.plist }
+  - { label: com.apple.screensharing, plist: /System/Library/LaunchDaemons/com.apple.screensharing.plist }

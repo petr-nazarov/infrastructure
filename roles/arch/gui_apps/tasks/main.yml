@@ -13,6 +13,18 @@
   ansible.builtin.command: voxtype setup --download --quiet
   args:
     creates: "{{ ansible_facts['user_dir'] }}/.config/voxtype/config.toml"
+# The package links the CPU build; on CPU large-v3-turbo takes ~20s per short recording.
+# The Vulkan build picks device 0, which is the discrete GPU on the desktop.
+- name: Check the active voxtype backend
+  ansible.builtin.stat:
+    path: /usr/bin/voxtype
+  register: arch_voxtype_binary
+- name: Switch voxtype to the Vulkan backend
+  become: true
+  ansible.builtin.command: voxtype setup gpu --enable
+  when: arch_voxtype_binary.stat.lnk_target is not search('vulkan')
+  changed_when: true
+  notify: Restart voxtype
 - name: Download the voxtype model
   ansible.builtin.command: voxtype setup --download --model {{ arch_voxtype_model }} --quiet
   args:

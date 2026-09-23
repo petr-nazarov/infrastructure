@@ -7,6 +7,7 @@ arch_gui_apps:
   - obsidian
   - ferdium-bin # messengers in one window
   - voxtype-bin # push-to-talk voice typing, prebuilt (voxtype builds from source)
+  - wtype # voxtype types through it; without it the text only lands on the clipboard
   - okular
   - nemo
   - qbittorrent

@@ -46,3 +46,39 @@
   ansible.builtin.command: voxtype setup systemd
   args:
     creates: "{{ ansible_facts['user_dir'] }}/.config/systemd/user/voxtype.service"
+
+# Every transcript goes through voxtype-postprocess (dotfiles): it copies the raw text to
+# the clipboard and, with --llm, swaps in the local model's cleanup before it is typed.
+# Flip arch_voxtype_llm_enabled to turn the LLM off; Ollama stays installed.
+- name: Set up Ollama for the voxtype cleanup
+  when: arch_voxtype_llm_enabled
+  block:
+    - name: Install Ollama
+      become: true
+      community.general.pacman:
+        name: ollama-vulkan
+        state: present
+    - name: Start Ollama
+      become: true
+      ansible.builtin.systemd_service:
+        name: ollama
+        enabled: true
+        state: started
+    - name: Check for the voxtype cleanup model
+      ansible.builtin.command: ollama show {{ arch_voxtype_llm_model }}
+      register: arch_voxtype_llm_model_check
+      changed_when: false
+      failed_when: false
+    - name: Pull the voxtype cleanup model
+      ansible.builtin.command: ollama pull {{ arch_voxtype_llm_model }}
+      when: arch_voxtype_llm_model_check.rc != 0
+      changed_when: true
+- name: Configure voxtype post-processing
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_facts['user_dir'] }}/.config/voxtype/config.toml"
+    marker: "# {mark} ANSIBLE MANAGED post-processing (arch/gui_apps)"
+    block: |
+      [output.post_process]
+      command = "{{ ansible_facts['user_dir'] }}/.local/bin/voxtype-postprocess{{ ' --llm ' ~ arch_voxtype_llm_model if arch_voxtype_llm_enabled else '' }}"
+      timeout_ms = 10000
+  notify: Restart voxtype

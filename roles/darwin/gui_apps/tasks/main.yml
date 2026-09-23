@@ -61,6 +61,39 @@
     label: "{{ item.line }}"
   notify: Restart voxtype
 
+# Every transcript goes through voxtype-postprocess (dotfiles): it copies the raw text to
+# the clipboard and, with --llm, swaps in the local model's cleanup before it is typed.
+# Flip darwin_voxtype_llm_enabled to turn the LLM off; Ollama stays installed.
+- name: Set up Ollama for the voxtype cleanup
+  when: darwin_voxtype_llm_enabled
+  block:
+    - name: Install Ollama
+      community.general.homebrew:
+        name: ollama
+        state: present
+    - name: Start Ollama
+      community.general.homebrew_services:
+        name: ollama
+        state: present
+    - name: Check for the voxtype cleanup model
+      ansible.builtin.command: /opt/homebrew/bin/ollama show {{ darwin_voxtype_llm_model }}
+      register: darwin_voxtype_llm_model_check
+      changed_when: false
+      failed_when: false
+    - name: Pull the voxtype cleanup model
+      ansible.builtin.command: /opt/homebrew/bin/ollama pull {{ darwin_voxtype_llm_model }}
+      when: darwin_voxtype_llm_model_check.rc != 0
+      changed_when: true
+- name: Configure voxtype post-processing
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/config.toml"
+    marker: "# {mark} ANSIBLE MANAGED post-processing (darwin/gui_apps)"
+    block: |
+      [output.post_process]
+      command = "{{ ansible_facts['user_dir'] }}/.local/bin/voxtype-postprocess{{ ' --llm ' ~ darwin_voxtype_llm_model if darwin_voxtype_llm_enabled else '' }}"
+      timeout_ms = 10000
+  notify: Restart voxtype
+
 # Ferdium switches services on cmd+1..9 by default, the yabai space keys in ~/.skhdrc.
 # alt+1..9 leaves cmd+number to skhd. Ferdium reads this file on start.
 - name: Create the Ferdium config directory

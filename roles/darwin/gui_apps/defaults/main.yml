@@ -29,6 +29,11 @@ darwin_gui_apps:
 darwin_voxtype_model: large-v3-turbo
 # Constrained auto-detect: whisper picks between these per recording
 darwin_voxtype_language: '["en", "ru"]'
+# LLM cleanup of each dictation through a local Ollama model (voxtype-postprocess in
+# dotfiles). Off: the raw transcript is typed. The transcript lands on the clipboard either way.
+darwin_voxtype_llm_enabled: true
+# Multilingual; thinking is switched off per request
+darwin_voxtype_llm_model: qwen3.5:4b
 
 darwin_ferdium_shortcuts:
   activateNextService: Ctrl+tab

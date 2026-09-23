@@ -33,6 +33,7 @@
   when:
     - arch_iwd_status.status.ActiveState == "active"
     - "'NetworkManager.service' in ansible_facts.services"
+    - ansible_facts.services['NetworkManager.service'].status != 'not-found'
 - name: Enable  system wide related services
   become: true
   ansible.builtin.systemd:

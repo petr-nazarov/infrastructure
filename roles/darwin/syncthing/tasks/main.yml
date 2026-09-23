@@ -1,0 +1,10 @@
+---
+# The macOS counterpart of the `syncthing@<user>` systemd service that arch/hyprland enables.
+# The formula itself is a common_package (vars/terminal_packages.yml), installed by
+# darwin/term_packages; only the login service is missing on macOS.
+# Homebrew's LaunchAgent runs `syncthing --no-browser` as the login user, web UI on
+# http://127.0.0.1:8384. Pairing this mac with the other syncthing nodes stays manual.
+- name: Start syncthing on login
+  community.general.homebrew_services:
+    name: syncthing
+    state: present

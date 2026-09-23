@@ -32,11 +32,15 @@ darwin_preferences:
 darwin_date_format: y-MM-dd
 
 # Menu shortcuts in every app (System Settings > Keyboard > Keyboard Shortcuts > App Shortcuts),
-# by menu item title, '\0' (NUL) removes one. Apps pick changes up when they relaunch.
-# Not "nil": that's a literal string, and a shortcut on the bare n key (Zen logged out on every n).
-# Log Out (cmd+shift+q) goes: it's the skhd close window binding, one missed press from logging out.
+# by menu item title. Apps pick changes up when they relaunch.
+# Log Out (cmd+shift+q) has to go: it's the skhd close window binding, one missed press from
+# logging out. It is moved onto a combo no keyboard here can produce (\UF717 is F20) rather than
+# unbound. Every attempt to say "nothing" came back: "nil" is a literal string macOS read as a
+# shortcut on the bare n key (Zen logged out on every n), and '\0' (NUL) stores correctly yet the
+# bare-n log out still returned after a while, cause never pinned down. A combo that cannot be
+# typed is an ordinary valid shortcut, so there is no "empty" value left for anything to misread.
 darwin_menu_shortcuts:
-  - { title: "Log Out {{ ansible_facts['user_gecos'] }}…", key: '\0' }
+  - { title: "Log Out {{ ansible_facts['user_gecos'] }}…", key: '@~^$\UF717' }
 
 # System shortcuts (System Settings > Keyboard > Keyboard Shortcuts), by com.apple.symbolichotkeys id.
 # key is [ASCII code, virtual key code, modifier mask]; shift is 0x20000, ctrl 0x40000, alt 0x80000,

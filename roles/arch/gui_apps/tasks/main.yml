@@ -6,7 +6,7 @@
     name: "{{ arch_gui_apps }}"
     use: yay
 
-# Voxtype: same model and languages as on the macs. Its own evdev hotkey is off: it misses
+# Voxtype: same languages as on the macs, a bigger model. Its own evdev hotkey is off: it misses
 # the release when SUPER comes up before M. voxtype-ptt (dotfiles) reads the keys instead and
 # runs `voxtype record start/stop`; Hyprland only swallows SUPER+M (hyprland.lua in dotfiles).
 # The daemon reads its config only on start.

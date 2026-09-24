@@ -26,7 +26,7 @@
     name: "{{ darwin_gui_packages }}"
     state: present
 
-# Voxtype on macOS: `setup --download` writes the default config and fetches the model,
+# Voxtype on macOS: `setup --download` writes the default config and fetches a model,
 # `setup app-bundle` wraps the daemon in /Applications/Voxtype.app and adds it to Login
 # Items. As an app it can hold the Microphone, Accessibility and Input Monitoring grants
 # (a launchd agent never gets the microphone). Those grants stay manual: macOS prompts on
@@ -39,11 +39,13 @@
   ansible.builtin.command: /opt/homebrew/bin/voxtype setup app-bundle
   args:
     creates: /Applications/Voxtype.app
+# Straight from whisper.cpp: `setup --download --model small` resolves to SenseVoice, not
+# whisper, and fails.
 - name: Download the voxtype model
-  ansible.builtin.command: >-
-    /opt/homebrew/bin/voxtype setup --download --model {{ darwin_voxtype_model }} --quiet
-  args:
-    creates: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/models/ggml-{{ darwin_voxtype_model }}.bin"
+  ansible.builtin.get_url:
+    url: https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-{{ darwin_voxtype_model }}.bin
+    dest: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/models/ggml-{{ darwin_voxtype_model }}.bin"
+    mode: "0644"
 # fn is remapped to ctrl, so voxtype gets no hotkey of its own: Hammerspoon runs
 # `voxtype record start/stop` while cmd+m is held (~/.hammerspoon in dotfiles). skhd can't,
 # it never sees the key go up. The daemon reads its config only on start.

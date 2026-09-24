@@ -28,7 +28,7 @@ arch_gui_apps:
   - notify-send
   - paplay
 
-# Multilingual (the .en models only know English), same as darwin_voxtype_model
+# Multilingual (the .en models only know English). The macs run small: slower hardware
 arch_voxtype_model: large-v3-turbo
 # Constrained auto-detect: whisper picks between these per recording
 arch_voxtype_language: '["en", "ru"]'

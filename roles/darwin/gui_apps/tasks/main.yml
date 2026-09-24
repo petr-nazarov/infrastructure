@@ -84,6 +84,15 @@
       ansible.builtin.command: /opt/homebrew/bin/ollama pull {{ darwin_voxtype_llm_model }}
       when: darwin_voxtype_llm_model_check.rc != 0
       changed_when: true
+# The hook comes from the dotfiles _common_gui layer; don't point voxtype at a missing file
+- name: Check that the voxtype post-process hook is synced
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['user_dir'] }}/.local/bin/voxtype-postprocess"
+  register: darwin_voxtype_postprocess
+- name: Fail if the voxtype post-process hook is not synced
+  ansible.builtin.fail:
+    msg: ~/.local/bin/voxtype-postprocess is missing. Run `just sync` in ~/dotfiles first.
+  when: not darwin_voxtype_postprocess.stat.exists
 - name: Configure voxtype post-processing
   ansible.builtin.blockinfile:
     path: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/config.toml"

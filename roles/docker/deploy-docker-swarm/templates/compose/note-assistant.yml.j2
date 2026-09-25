@@ -1,54 +1,24 @@
 # services:
   # note-assistant: a remote MCP server that runs Claude Code on the Obsidian vault
   # (github.com/petr-nazarov/note-assistant). It has its own login (email and password +
-  # OAuth for Claude clients), so Caddy doesn't put Authelia in front of it.
-  note-assistant_db:
-    image: docker.io/library/postgres:18-alpine
-    networks:
-      - local_net
-    environment:
-      POSTGRES_DB: note_assistant
-      POSTGRES_USER: note_assistant
-      POSTGRES_PASSWORD: "{{ note_assistant_db_password }}"
-    healthcheck:
-      test:
-        - CMD-SHELL
-        - pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-    volumes:
-      # Postgres 18 keeps its data under /var/lib/postgresql/<major>/.
-      - "{{ remote_data }}/note-assistant/postgres:/var/lib/postgresql"
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - "node.role == manager"
+  # OAuth for Claude clients), so Caddy doesn't put Authelia in front of it. Its login data is
+  # a SQLite file on its own mount (/db), apart from the vault and the state folder.
   note-assistant:
     image: "ghcr.io/petr-nazarov/note-assistant:{{ note_assistant_image_tag }}"
     networks:
       - local_net
     # Syncthing's uid:gid, so the server and Syncthing can both write the vault.
     user: "{{ puid }}:{{ pgid }}"
-    # Swarm ignores depends_on: retry the migrations until the database is up, then
-    # replace the shell with the server so it gets SIGTERM.
+    # Apply the SQLite migrations, then replace the shell with the server so it gets SIGTERM.
     command:
       - sh
       - -c
-      - >-
-        for i in $$(seq 30); do node dist/migrate.js && exec node dist/main.js; sleep 5; done;
-        echo "migrations never succeeded" >&2; exit 1
-    healthcheck:
-      # The image's check allows ~100 s; the migration retries above can take longer
-      # while the database starts, and swarm then kills a healthy boot.
-      start_period: 180s
+      - node dist/migrate.js && exec node dist/main.js
     environment:
       TZ: "{{ tz }}"
       BETTER_AUTH_URL: "https://notes.{{ public_top_domain }}"
       BETTER_AUTH_SECRET: "{{ note_assistant_auth_secret }}"
-      DATABASE_URL: "postgres://note_assistant:{{ note_assistant_db_password }}@note-assistant_db:5432/note_assistant"
+      DATABASE_PATH: /db/note-assistant.sqlite
       # Cloudflare proxies notes.*, so this header holds the real client address.
       AUTH_CLIENT_IP_HEADER: cf-connecting-ip
       CLAUDE_CODE_OAUTH_TOKEN: "{{ note_assistant_claude_token }}"
@@ -58,6 +28,7 @@
     volumes:
       - "{{ remote_data }}/Sync/Notes:/data"
       - "{{ remote_data }}/note-assistant/state:/state"
+      - "{{ remote_data }}/note-assistant/db:/db"
       - "{{ remote_data }}/note-assistant/logs:/var/log/app"
     deploy:
       replicas: 1

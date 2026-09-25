@@ -111,14 +111,13 @@
   register: note_assistant_data_dirs
   loop:
     - "{{ remote_data }}/note-assistant"
-    - "{{ remote_data }}/note-assistant/postgres"
+    - "{{ remote_data }}/note-assistant/db"
     - "{{ remote_data }}/note-assistant/state"
     - "{{ remote_data }}/note-assistant/logs"
   when: "'note-assistant' in enabled_services"
 
 - name: Ensure note-assistant data directories exist
-  # Same as Authelia's: must exist before the deploy, and only created when absent
-  # because postgres chowns its directory on first start. state and logs belong to
+  # Same as Authelia's: must exist before the deploy. db, state and logs belong to
   # puid:pgid, the user the app runs as.
   ansible.builtin.file:
     path: "{{ item.item }}"

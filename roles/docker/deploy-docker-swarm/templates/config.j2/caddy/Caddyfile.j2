@@ -100,6 +100,14 @@ excalidraw-home.{{ public_top_domain }} {
     reverse_proxy excalidraw:80
 }
 
+### Note assistant
+# No Authelia: an MCP server with its own login and OAuth for Claude clients.
+# Claude calls /mcp from claude.ai and the apps, so it must stay reachable.
+notes.{{ public_top_domain }} {
+    import my_tls
+    reverse_proxy note-assistant:3000
+}
+
 
 ## Media
 ### Jellyfin

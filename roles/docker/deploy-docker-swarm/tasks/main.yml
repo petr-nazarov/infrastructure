@@ -105,6 +105,32 @@
     - "'excalidraw' in enabled_services"
     - not item.stat.exists
 
+- name: Check which note-assistant data directories exist
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: note_assistant_data_dirs
+  loop:
+    - "{{ remote_data }}/note-assistant"
+    - "{{ remote_data }}/note-assistant/postgres"
+    - "{{ remote_data }}/note-assistant/state"
+    - "{{ remote_data }}/note-assistant/logs"
+  when: "'note-assistant' in enabled_services"
+
+- name: Ensure note-assistant data directories exist
+  # Same as Authelia's: must exist before the deploy, and only created when absent
+  # because postgres chowns its directory on first start. state and logs belong to
+  # puid:pgid, the user the app runs as.
+  ansible.builtin.file:
+    path: "{{ item.item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ note_assistant_data_dirs.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item | default('') }}"
+  when:
+    - "'note-assistant' in enabled_services"
+    - not item.stat.exists
+
 - name: Template Authelia config files
   ansible.builtin.template:
     src: "config.j2/authelia/{{ item }}.j2"
@@ -130,3 +156,6 @@
       - "{{ remote_root }}/docker-compose.yml"
     # This ensures the stack is updated if the compose file changes
     prune: true
+    # Private GHCR images (note-assistant): pass the manager's `docker login ghcr.io`
+    # to the nodes that pull them.
+    with_registry_auth: true

@@ -246,6 +246,17 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: pushover
+  - name: Note assistant
+    # Public URL: covers Cloudflare, Caddy, the app and its database (/health is cheap
+    # and needs no login).
+    url: https://notes.${PUBLIC_TOP_DOMAIN}/health
+    interval: 1m
+    group: 53 - Other
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].status == ok"
+    alerts:
+      - type: pushover
   # - name: Ollama
   #   url: http://ollama.${LOCAL_DESKTOP_DOMAIN}/api/version
   #   interval: 1m

@@ -47,7 +47,7 @@ authelia_protected_hosts:
 
 # note-assistant image (github.com/petr-nazarov/note-assistant). Pinned to a release,
 # so a redeploy never changes what runs; bump it to roll out a new version.
-note_assistant_image_tag: "0.2.0"
+note_assistant_image_tag: "0.3.1"
 
 authelia_admin_user: nzrv
 authelia_admin_displayname: Nazarov

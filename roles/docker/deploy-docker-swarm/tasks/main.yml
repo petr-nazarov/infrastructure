@@ -81,6 +81,63 @@
     mode: "0755"
   when: "'homelab-inventory' in enabled_services"
 
+- name: Ensure Home Assistant data directory exists
+  # Swarm rejects a missing bind mount source.
+  ansible.builtin.file:
+    path: "{{ remote_data }}/homeassistant"
+    state: directory
+    mode: "0755"
+  when: "'homeassistant' in enabled_services"
+
+- name: Template Home Assistant configuration
+  # HA's /config is its data dir (it holds state too), so this renders into
+  # remote_data, not remote_config. HA reads it only at startup, hence the
+  # restart. The http block is what lets Caddy in: without trusting it, HA
+  # answers 400 to every proxied request. Caddy reaches the host network over
+  # docker_gwbridge, hence 172.18.0.0/16.
+  ansible.builtin.template:
+    src: config.j2/homeassistant/configuration.yaml.j2
+    dest: "{{ remote_data }}/homeassistant/configuration.yaml"
+    mode: "0644"
+  notify: Restart Home Assistant
+  when: "'homeassistant' in enabled_services"
+
+- name: Seed Home Assistant UI-managed files
+  # Only written when absent (force: false): configuration.yaml includes them,
+  # and the automation / script / scene editors own them from then on.
+  ansible.builtin.copy:
+    dest: "{{ remote_data }}/homeassistant/{{ item.file }}"
+    content: "{{ item.content }}"
+    force: false
+    mode: "0644"
+  loop:
+    - {file: automations.yaml, content: "[]\n"}
+    - {file: scripts.yaml, content: ""}
+    - {file: scenes.yaml, content: ""}
+  loop_control:
+    label: "{{ item.file }}"
+  when: "'homeassistant' in enabled_services"
+
+- name: Install Home Assistant custom integrations
+  # Only when absent: HACS updates them from the UI afterwards. Unpacked with
+  # python's zipfile because the hosts have no unzip, into a temp dir first so
+  # a failed download never leaves a half-empty dir that `creates` would skip.
+  ansible.builtin.shell: |
+    set -eu
+    tmp=$(mktemp -d)
+    trap 'rm -rf "$tmp"' EXIT
+    curl -fsSL -o "$tmp/pkg.zip" "{{ item.url }}"
+    python3 -m zipfile -e "$tmp/pkg.zip" "$tmp/pkg"
+    mkdir -p "{{ remote_data }}/homeassistant/custom_components"
+    mv "$tmp/pkg" "{{ remote_data }}/homeassistant/custom_components/{{ item.name }}"
+  args:
+    creates: "{{ remote_data }}/homeassistant/custom_components/{{ item.name }}"
+  loop: "{{ homeassistant_custom_components }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: Restart Home Assistant
+  when: "'homeassistant' in enabled_services"
+
 - name: Check which Excalidraw data directories exist
   ansible.builtin.stat:
     path: "{{ item }}"

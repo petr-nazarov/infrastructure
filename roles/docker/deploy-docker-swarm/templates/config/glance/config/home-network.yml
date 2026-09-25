@@ -150,6 +150,10 @@
                   url: https://inventory-home.${PUBLIC_TOP_DOMAIN}
                   description: Hardware inventory
                   icon: mdi:server-network
+                - title: Home Assistant
+                  url: https://homeassistant-home.${PUBLIC_TOP_DOMAIN}
+                  description: Home automation
+                  icon: sh:home-assistant
             - title: Syncthing
               hide-arrow: true
               links:

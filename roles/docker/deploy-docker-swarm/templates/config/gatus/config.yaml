@@ -161,6 +161,16 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: pushover
+  - name: Home Assistant
+    # Host network, so reach it on the edge IP like UpSnap. The manifest is
+    # served without auth; /api/ needs a token.
+    url: http://${LOCAL_DNS}:8123/manifest.json
+    interval: 1m
+    group: 51 - Infra Management
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: pushover
   ## Media
   - name: Jellyfin
     url: http://jellyfin.${LOCAL_MEDIA_DOMAIN}/health

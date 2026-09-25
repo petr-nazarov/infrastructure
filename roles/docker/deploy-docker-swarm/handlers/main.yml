@@ -20,3 +20,8 @@
   ansible.builtin.command: docker service update --force --detach home_gatus
   when: "'gatus' in enabled_services"
   changed_when: true
+
+- name: Restart Home Assistant
+  ansible.builtin.command: docker service update --force --detach home_homeassistant
+  when: "'homeassistant' in enabled_services"
+  changed_when: true

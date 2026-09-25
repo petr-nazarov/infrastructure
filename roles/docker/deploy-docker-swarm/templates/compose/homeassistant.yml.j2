@@ -1,0 +1,18 @@
+# services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    # Host network, like UpSnap: LAN discovery (mDNS, SSDP, DHCP) doesn't cross
+    # the overlay. Caddy reaches it on the edge IP, port 8123, instead of by name.
+    # No USB/Bluetooth: swarm can't pass devices, so radios need a network bridge.
+    networks:
+      - host
+    environment:
+      TZ: "{{ tz }}"
+    volumes:
+      - "{{ remote_data }}/homeassistant:/config"
+    deploy:
+      replicas: 1
+      endpoint_mode: dnsrr
+      placement:
+        constraints:
+          - "node.role == manager"

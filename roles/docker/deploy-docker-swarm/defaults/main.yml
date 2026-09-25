@@ -19,6 +19,7 @@ enabled_services:
   - homelab-inventory
   - excalidraw
   - note-assistant
+  - homeassistant
   # - cv
   ## Media
   - jellyfin
@@ -48,6 +49,17 @@ authelia_protected_hosts:
 # note-assistant image (github.com/petr-nazarov/note-assistant). Pinned to a release,
 # so a redeploy never changes what runs; bump it to roll out a new version.
 note_assistant_image_tag: "0.4.0"
+
+# Custom integrations dropped into Home Assistant's custom_components when
+# missing. HACS updates them from the UI afterwards, so these pins are only
+# what a fresh install starts from.
+homeassistant_custom_components:
+  - name: hacs
+    url: https://github.com/hacs/integration/releases/download/2.0.5/hacs.zip
+  # The maintained fork (the one HACS lists); configuration.yaml uses its
+  # climate platform.
+  - name: smartir
+    url: https://github.com/litinoveweedle/SmartIR/releases/download/1.19.1/smartir.zip
 
 authelia_admin_user: nzrv
 authelia_admin_displayname: Nazarov

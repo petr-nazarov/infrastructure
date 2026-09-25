@@ -235,6 +235,10 @@
                   description: Personal blog
                   url: https://github.com/petr-nazarov/blog
                   icon: sh:github
+                - title: templates-prompts
+                  description: Prompt templates
+                  url: https://github.com/petr-nazarov/templates-prompts
+                  icon: sh:github
 
                 - title: FrrCard
                   description: Self-hosted digital business card

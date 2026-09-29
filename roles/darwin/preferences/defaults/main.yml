@@ -57,10 +57,12 @@ darwin_symbolic_hotkeys:
 # Modifier key remaps for the built-in keyboard, as System Settings > Keyboard > Keyboard Shortcuts >
 # Modifier Keys writes them. Values are HID usages (page << 32 | usage). The fn/Globe key is
 # 0xFF00000003 on older Macs and 0xFF0100000003 on some Apple silicon ones, so both are mapped.
+# j+k pressed together as Escape, the jk_as_esc combo on the Glove80, is in ~/.hammerspoon (dotfiles).
 darwin_keyboard_id: 0-0-0  # VendorID-ProductID-0 of the Apple Internal Keyboard
 darwin_modifier_mappings:
   - { src: 0xFF00000003, dst: 0x7000000E0 }  # fn -> left Control
   - { src: 0xFF0100000003, dst: 0x7000000E0 }
+  - { src: 0x700000039, dst: 0x700000029 }  # Caps Lock -> Escape
 
 # Dock apps, in order. Finder and the Trash are always in the Dock and can't be removed,
 # everything else (default apps, the Downloads stack) is.

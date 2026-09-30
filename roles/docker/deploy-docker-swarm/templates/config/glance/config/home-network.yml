@@ -69,6 +69,10 @@
                   url: https://money.${PUBLIC_TOP_DOMAIN}
                   description: Personal finance tracker
                   icon: mdi:wallet-outline
+                - title: Notes
+                  url: https://notes.${PUBLIC_TOP_DOMAIN}
+                  description: Note assistant
+                  icon: sh:obsidian
                 - title: VPN
                   description: XRay VLESS Server
                   url: http://65.108.86.24:2096/QtgDtgMkbIa2oTPmJT/

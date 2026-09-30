@@ -43,6 +43,10 @@
     # Typing waits until SUPER is up, or the letters fire Hyprland binds. The default 750 ms
     # gives up too early for a slow release and falls back to the clipboard.
     - { section: '^\[output\]', regexp: '^modifier_release_timeout_ms = ', line: modifier_release_timeout_ms = 3000 }
+    # Paste instead of typing: wtype puts the Nth distinct character on keycode N+8, and Ghostty
+    # reads Cyrillic on keycodes 22/23 as Backspace/Tab. Ctrl+Shift+V is the terminal paste.
+    - { section: '^\[output\]', regexp: '^mode = ', line: mode = "paste" }
+    - { section: '^\[output\]', regexp: '^paste_keys = ', line: paste_keys = "ctrl+shift+v" }
   loop_control:
     label: "{{ item.line }}"
   notify: Restart voxtype

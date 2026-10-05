@@ -14,7 +14,7 @@
         published: 8189
         protocol: udp
         mode: host
-      # RTSP, for Home Assistant (see MTX_AUTHINTERNALUSERS_0_IPS)
+      # RTSP, for Home Assistant and the obs user
       - target: 8554
         published: 8554
         mode: host
@@ -45,8 +45,12 @@
       # host mode: through the ingress mesh every client would look like 10.0.0.x.
       MTX_AUTHINTERNALUSERS_0_IPS: "10.0.0.0/8,{{ edge_ip }}"
       MTX_AUTHINTERNALUSERS_2_USER: "admin"
-      MTX_AUTHINTERNALUSERS_2_PASS: "{{ admin_pass }}"
+      MTX_AUTHINTERNALUSERS_2_PASS: "{{ mediamtx_api_pass }}"
       MTX_AUTHINTERNALUSERS_2_PERMISSIONS_0_ACTION: "api"
+      # Read-only user for OBS / VLC from any LAN device, see docs/desk-camera.md
+      MTX_AUTHINTERNALUSERS_3_USER: "obs"
+      MTX_AUTHINTERNALUSERS_3_PASS: "{{ mediamtx_obs_pass }}"
+      MTX_AUTHINTERNALUSERS_3_PERMISSIONS_0_ACTION: "read"
       # Recording stays off until it's switched on through the API
       MTX_PATHS_DESK_RECORD: "no"
       MTX_PATHS_DESK_RECORDPATH: "/recordings/%path/%Y-%m-%d_%H-%M-%S-%f"

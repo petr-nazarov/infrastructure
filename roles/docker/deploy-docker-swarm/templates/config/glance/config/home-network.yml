@@ -107,6 +107,10 @@
                   description: Torrent client
                   url: https://transmission-home.${PUBLIC_TOP_DOMAIN}
                   icon: sh:transmission
+                - title: Desk camera
+                  description: MediaMTX live view
+                  url: https://cam-home.${PUBLIC_TOP_DOMAIN}/desk/
+                  icon: sh:mediamtx
                 - title: Miniflux
                   description: Rss platform
                   url: http://rss.${PUBLIC_TOP_DOMAIN}

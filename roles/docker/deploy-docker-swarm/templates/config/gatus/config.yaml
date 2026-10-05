@@ -234,6 +234,15 @@ endpoints:
       - "[STATUS] == 200"
     alerts:
       - type: pushover
+  - name: Desk camera
+    # The viewer page loads whether or not the phone is streaming
+    url: http://mediamtx:8889/desk/
+    interval: 1m
+    group: 52 - Media
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: pushover
   - name: Miniflux 
     url: https://rss.${PUBLIC_TOP_DOMAIN}/healthcheck
     interval: 1m

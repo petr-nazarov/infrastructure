@@ -81,6 +81,17 @@
     mode: "0755"
   when: "'homelab-inventory' in enabled_services"
 
+- name: Ensure MediaMTX recordings directory exists
+  # Swarm rejects a missing bind mount source. MediaMTX runs on home-media,
+  # and this play only targets the manager. /mnt/storage is exFAT, mounted
+  # with every directory at 0777, so any other mode would fail to apply.
+  ansible.builtin.file:
+    path: /mnt/storage/Media/Recordings
+    state: directory
+    mode: "0777"
+  delegate_to: home-media
+  when: "'mediamtx' in enabled_services"
+
 - name: Ensure Home Assistant data directory exists
   # Swarm rejects a missing bind mount source.
   ansible.builtin.file:

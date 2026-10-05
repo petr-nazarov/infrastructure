@@ -1,0 +1,62 @@
+# services:
+  mediamtx:
+    image: bluenviron/mediamtx:1
+    networks:
+      - local_net
+    # The image is a bare binary that writes only to /recordings, so run as the
+    # host user. /mnt/storage is exFAT and owned by that uid anyway.
+    user: "{{ puid }}:{{ pgid }}"
+    ports:
+      # Host mode so clients reach home-media's own IP. WebRTC media can't go
+      # through the routing mesh, and the browser is told to send it to
+      # MTX_WEBRTCADDITIONALHOSTS. The web pages (8889) go through Caddy.
+      - target: 8189
+        published: 8189
+        protocol: udp
+        mode: host
+      # RTSP, for Home Assistant (see MTX_AUTHINTERNALUSERS_0_IPS)
+      - target: 8554
+        published: 8554
+        mode: host
+      # Control API, used to toggle recording. Password protected, see below.
+      - target: 9997
+        published: 9997
+        mode: host
+    environment:
+      TZ: "{{ tz }}"
+      # Every setting is an env var: this play renders files only on the
+      # manager, so a config file couldn't be bind mounted on home-media.
+      MTX_API: "yes"
+      MTX_RTMP: "no"
+      MTX_HLS: "no"
+      MTX_SRT: "no"
+      MTX_MOQ: "no"
+      # Only 8554/tcp is published, so RTSP's UDP transport would never connect
+      MTX_RTSPTRANSPORTS: "tcp"
+      # Offer only the LAN IP as a WebRTC candidate, not the overlay ones
+      MTX_WEBRTCADDITIONALHOSTS: "{{ media_ip }}"
+      MTX_WEBRTCIPSFROMINTERFACES: "no"
+      # Users 0 and 1 are the image defaults: anyone may publish and read, and
+      # the API is open from localhost only. User 2 opens the API to the LAN
+      # with a password. MediaMTX rejects ':' and some other characters in it.
+      # Publish and read only from the swarm overlay (Caddy, behind Authelia)
+      # and home-edge (Home Assistant, which is on the host network), so other
+      # LAN devices can't watch over RTSP. This relies on the ports above being
+      # host mode: through the ingress mesh every client would look like 10.0.0.x.
+      MTX_AUTHINTERNALUSERS_0_IPS: "10.0.0.0/8,{{ edge_ip }}"
+      MTX_AUTHINTERNALUSERS_2_USER: "admin"
+      MTX_AUTHINTERNALUSERS_2_PASS: "{{ admin_pass }}"
+      MTX_AUTHINTERNALUSERS_2_PERMISSIONS_0_ACTION: "api"
+      # Recording stays off until it's switched on through the API
+      MTX_PATHS_DESK_RECORD: "no"
+      MTX_PATHS_DESK_RECORDPATH: "/recordings/%path/%Y-%m-%d_%H-%M-%S-%f"
+      MTX_PATHS_DESK_RECORDSEGMENTDURATION: "10m"
+      # Upstream deletes recordings after 1 day by default
+      MTX_PATHS_DESK_RECORDDELETEAFTER: "0s"
+    volumes:
+      - "/mnt/storage/Media/Recordings:/recordings"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - "node.hostname == {{ hostname_media }}"

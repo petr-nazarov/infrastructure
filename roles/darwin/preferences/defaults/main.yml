@@ -44,11 +44,13 @@ darwin_menu_shortcuts:
 
 # System shortcuts (System Settings > Keyboard > Keyboard Shortcuts), by com.apple.symbolichotkeys id.
 # key is [ASCII code, virtual key code, modifier mask]; shift is 0x20000, ctrl 0x40000, alt 0x80000,
-# cmd 0x100000. skhd takes cmd+shift+3/4/5 for moving windows, so screenshots go to cmd+shift+s like
-# hyprshot on Hyprland: 31 is "Copy picture of selected area to the clipboard" (30 saves a file).
+# cmd 0x100000. skhd takes cmd+shift+3/4/5 for moving windows, and screenshots go to cmd+shift+s like
+# hyprshot on Hyprland. That is an skhd binding (~/.skhdrc in dotfiles): it saves the region under
+# ~/Pictures and copies it, which no system shortcut does both of. 31, "Copy picture of selected area
+# to the clipboard", used to hold cmd+shift+s and is switched off so it can't take the keys first.
 # enabled defaults to true; the key stays on a disabled entry so System Settings can re-enable it.
 darwin_symbolic_hotkeys:
-  - { id: 31, key: [115, 1, 0x120000] }  # cmd+shift+s
+  - { id: 31, key: [115, 1, 0x120000], enabled: false }  # cmd+shift+s
   # Spotlight gives cmd+space up to Raycast. 64 is "Show Spotlight search" (cmd+space),
   # 65 "Show Finder search window" (cmd+alt+space), which would still shadow Raycast's alt variants.
   - { id: 64, key: [32, 49, 0x100000], enabled: false }

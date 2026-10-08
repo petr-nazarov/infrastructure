@@ -37,6 +37,8 @@ Then follow the controller node steps above, with `just run HOST`. Ansible renam
 
 Manual steps macOS won't let ansible do:
 - Grant yabai and skhd Accessibility access (System Settings > Privacy & Security > Accessibility)
+- Grant skhd Screen Recording access (System Settings > Privacy & Security > Screen & System Audio
+  Recording), for the cmd+shift+s screenshot binding
 - Launch Raycast once and skip its onboarding; it needs Accessibility access too, to paste the
   clipboard history entry (cmd+shift+v) into the focused app
 - For the yabai scripting addition (space focus / move bindings), partially disable SIP:

@@ -40,6 +40,9 @@ arch_hyprland_packages:
   - brightnessctl
   - bluetui
   - impala
+  # net-popover: waybar's Wi-Fi and Bluetooth panels (talks to iwd and bluez over D-Bus)
+  - gtk4-layer-shell
+  - python-gobject
   - calcurse
   # hyprland
   - hyprpaper

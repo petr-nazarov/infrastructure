@@ -25,6 +25,14 @@
     dest: "{{ ansible_facts['user_dir'] }}/.tmux/plugins/tpm"
     version: master
     update: false
+# Gradle daemons sit on ~2 GB each for 3 h after the last build by default; stop them after 30 min
+- name: Shorten the Gradle daemon idle timeout
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_facts['user_dir'] }}/.gradle/gradle.properties"
+    regexp: '^org\.gradle\.daemon\.idletimeout='
+    line: org.gradle.daemon.idletimeout=1800000
+    create: true
+    mode: "0644"
 ## AI
 - name: Install claude
   ansible.builtin.shell: |

@@ -84,3 +84,25 @@
     != darwin_dock_apps | map('regex_replace', '^', 'file://') | map('regex_replace', '$', '/') | list
   changed_when: true
   notify: Restart Dock and Finder
+
+# The Search Privacy list lives in the volume's Spotlight store, root-owned and behind Full Disk
+# Access. mds reads it on start, so it is restarted after a change and drops those paths' index.
+- name: Exclude directories from Spotlight
+  become: true
+  ansible.builtin.shell: |
+    plist=/System/Volumes/Data/.Spotlight-V100/VolumeConfiguration.plist
+    # XML, not JSON: the JSON from plutil escapes the slashes in paths
+    current=$(plutil -extract Exclusions xml1 -o - "$plist" 2>/dev/null) \
+      || { plutil -insert Exclusions -array "$plist" || exit 1; current=; }
+    changed=
+    {% for d in darwin_spotlight_exclusions %}
+    case $current in
+      *{{ ('<string>' ~ d ~ '</string>') | quote }}*) ;;
+      *) plutil -insert Exclusions -string {{ d | quote }} -append "$plist" || exit 1; changed=1 ;;
+    esac
+    {% endfor %}
+    [ -n "$changed" ] || exit 0
+    killall mds
+    echo changed
+  register: darwin_spotlight_exclusions_write
+  changed_when: "'changed' in darwin_spotlight_exclusions_write.stdout"

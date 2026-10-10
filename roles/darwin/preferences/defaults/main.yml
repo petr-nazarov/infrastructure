@@ -24,6 +24,21 @@ darwin_preferences:
   # yabai: spaces must keep their order, and every display gets its own spaces
   - { domain: com.apple.dock, key: mru-spaces, type: bool, value: false }
   - { domain: com.apple.spaces, key: spans-displays, type: bool, value: false }
+  # Fewer animations: no zoom on window open/close, instant sheet resizes, a snappy Dock and
+  # Mission Control, no bouncing launches, no Finder window animations
+  - { domain: NSGlobalDomain, key: NSAutomaticWindowAnimationsEnabled, type: bool, value: false }
+  - { domain: NSGlobalDomain, key: NSWindowResizeTime, type: float, value: 0.001 }
+  - { domain: com.apple.dock, key: autohide-delay, type: float, value: 0.0 }
+  - { domain: com.apple.dock, key: autohide-time-modifier, type: float, value: 0.15 }
+  - { domain: com.apple.dock, key: expose-animation-duration, type: float, value: 0.1 }
+  - { domain: com.apple.dock, key: launchanim, type: bool, value: false }
+  - { domain: com.apple.dock, key: mineffect, type: string, value: scale }
+  - { domain: com.apple.finder, key: DisableAllAnimations, type: bool, value: true }
+  # Accessibility: crossfades instead of slides (spaces, full screen) and opaque menus and
+  # sidebars, so WindowServer stops blurring what's behind them. Writing this domain needs
+  # Full Disk Access for the terminal that runs the play.
+  - { domain: com.apple.universalaccess, key: reduceMotion, type: bool, value: true }
+  - { domain: com.apple.universalaccess, key: reduceTransparency, type: bool, value: true }
   # Raycast takes over cmd+space from Spotlight (49 is the space key code). Raycast reads this
   # at launch, so it must be quit (or not running yet) when the play writes it.
   - { domain: com.raycast.macos, key: raycastGlobalHotkey, type: string, value: Command-49 }
@@ -71,3 +86,11 @@ darwin_modifier_mappings:
 darwin_dock_apps:
   - /Applications/Zen.app
   - /Applications/Ghostty.app
+
+# Directories Spotlight skips (System Settings > Spotlight > Search Privacy). Build output,
+# node_modules, SDKs and simulators churn constantly and keep mds_stores busy for nothing.
+# Raycast's file search goes through Spotlight, so files in here won't show up in it.
+darwin_spotlight_exclusions:
+  - "{{ ansible_facts['user_dir'] }}/Projects"
+  - "{{ ansible_facts['user_dir'] }}/Android"
+  - "{{ ansible_facts['user_dir'] }}/Library/Developer"

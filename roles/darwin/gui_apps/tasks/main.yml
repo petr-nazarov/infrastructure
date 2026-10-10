@@ -118,6 +118,24 @@
     mode: "0644"
     content: "{{ darwin_ferdium_shortcuts | to_nice_json(indent=2) }}\n"
 
+# The profile Zen opens is the Default of its [Install...] section in profiles.ini
+- name: Find the Zen profile
+  ansible.builtin.shell: |
+    awk -F= '/^\[Install/ { s = 1; next } /^\[/ { s = 0 } s && $1 == "Default" { print $2; exit }' \
+      "{{ ansible_facts['user_dir'] }}/Library/Application Support/zen/profiles.ini"
+  register: darwin_zen_profile
+  changed_when: false
+  failed_when: darwin_zen_profile.rc != 0 or not darwin_zen_profile.stdout
+- name: Write the Zen user.js
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/Library/Application Support/zen/{{ darwin_zen_profile.stdout }}/user.js"
+    mode: "0644"
+    content: |
+      // Managed by Ansible (darwin/gui_apps), changes here are overwritten
+      {% for k, v in darwin_zen_prefs.items() %}
+      user_pref({{ k | to_json }}, {{ v | to_json }});
+      {% endfor %}
+
 # Hammerspoon adds itself to Login Items (hs.autoLaunch in init.lua), but only once it
 # has run, so the first start is on us.
 - name: Start Hammerspoon

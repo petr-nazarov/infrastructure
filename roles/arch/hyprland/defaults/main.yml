@@ -43,6 +43,8 @@ arch_hyprland_packages:
   # net-popover: waybar's Wi-Fi and Bluetooth panels (talks to iwd and bluez over D-Bus)
   - gtk4-layer-shell
   - python-gobject
+  # icon glyphs for waybar and net-popover
+  - ttf-nerd-fonts-symbols
   - calcurse
   # hyprland
   - hyprpaper

@@ -72,6 +72,8 @@
     - { section: '^\[whisper\]', regexp: '^# local language \(voxtype-target\): ', line: "# local language (voxtype-target): {{ darwin_voxtype_language }}" }
     # Spelling hint for jargon (voxtype_initial_prompt); remote mode sends it with the audio
     - { section: '^\[whisper\]', regexp: '^initial_prompt = ', line: "initial_prompt = {{ voxtype_initial_prompt | to_json }}" }
+    # No banner with the text after every dictation: it is typed and on the clipboard already
+    - { section: '^\[output\.notification\]', regexp: '^on_transcription = ', line: on_transcription = false }
   loop_control:
     label: "{{ item.line }}"
   notify: Restart voxtype

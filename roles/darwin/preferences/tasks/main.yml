@@ -64,6 +64,28 @@
   register: darwin_modifier_remap
   changed_when: "'changed' in darwin_modifier_remap.stdout"
 
+# loginwindow keeps the apps to reopen at login in its ByHost plist (TALAppsToRelaunchAtLogin) and
+# reopens them after any restart, `sudo reboot` and crashes included, whatever the checkbox says.
+# The file is kept with an empty list, root-owned and immutable, so loginwindow can neither write
+# to it nor replace it. Login items and launch agents are a separate mechanism and still start.
+- name: Lock the reopen-at-login app list empty
+  become: true
+  ansible.builtin.shell: |
+    set -o pipefail
+    uuid=$(ioreg -rd1 -c IOPlatformExpertDevice | awk -F'"' '/IOPlatformUUID/ { print $4 }')
+    [ -n "$uuid" ] || exit 1
+    f={{ (ansible_facts['user_dir'] ~ '/Library/Preferences/ByHost') | quote }}/com.apple.loginwindow.$uuid.plist
+    [ "$(stat -f '%Su %Lp %Sf' "$f" 2>/dev/null)" = "root 444 uchg" ] \
+      && [ "$(plutil -extract TALAppsToRelaunchAtLogin json -o - "$f" 2>/dev/null)" = "[]" ] \
+      && exit 0
+    [ -e "$f" ] && chflags nouchg "$f" && rm -f "$f"
+    plutil -create xml1 "$f" \
+      && plutil -insert TALAppsToRelaunchAtLogin -array "$f" \
+      && chown root:wheel "$f" && chmod 444 "$f" && chflags uchg "$f" || exit 1
+    echo changed
+  register: darwin_relaunch_lock
+  changed_when: "'changed' in darwin_relaunch_lock.stdout"
+
 - name: Install dockutil
   community.general.homebrew:
     name: dockutil

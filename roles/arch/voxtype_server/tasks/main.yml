@@ -1,0 +1,83 @@
+---
+# Remote dictation for the other machines: whisper-server runs the speech model on the GPU,
+# Ollama (arch/gui_apps) the cleanup model, and a Caddy gateway puts both behind
+# voxtype_server_url with a bearer token, for NetBird peers only. Clients point voxtype's
+# remote mode and voxtype-postprocess at it (arch/gui_apps, darwin/gui_apps).
+- name: Install the voxtype server packages
+  become: true
+  community.general.pacman:
+    name:
+      - whisper-cpp
+      - ggml-vulkan # whisper-cpp alone runs on the CPU
+      - caddy
+    state: present
+- name: Download the voxtype server model
+  ansible.builtin.command: voxtype setup --download --model {{ arch_voxtype_server_model }} --quiet
+  args:
+    creates: "{{ ansible_facts['user_dir'] }}/.local/share/voxtype/models/ggml-{{ arch_voxtype_server_model }}.bin"
+
+# A system service, so it serves while nobody is logged in. Runs as the user to read the
+# model voxtype downloaded. --language auto: clients ask for none, and the default is en.
+- name: Install the whisper server service
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/voxtype-whisper.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Whisper speech-to-text for voxtype clients (infrastructure, arch/voxtype_server)
+      After=network.target
+
+      [Service]
+      User={{ ansible_facts['user_id'] }}
+      ExecStart=/usr/bin/whisper-server --host 127.0.0.1 --port {{ arch_voxtype_server_whisper_port }} --model {{ ansible_facts['user_dir'] }}/.local/share/voxtype/models/ggml-{{ arch_voxtype_server_model }}.bin --inference-path /v1/audio/transcriptions --language auto
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+  notify: Restart voxtype whisper server
+
+- name: Configure the voxtype gateway
+  become: true
+  ansible.builtin.template:
+    src: voxtype.Caddyfile.j2
+    dest: /etc/caddy/voxtype.Caddyfile
+    owner: root
+    group: caddy
+    mode: "0640"
+    validate: caddy validate --adapter caddyfile --config %s
+  notify: Restart voxtype gateway
+# Its own unit rather than the package's caddy.service, which stays off
+- name: Install the voxtype gateway service
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/voxtype-gateway.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Token-checked gateway to the voxtype server (infrastructure, arch/voxtype_server)
+      After=network-online.target voxtype-whisper.service ollama.service
+      Wants=network-online.target
+
+      [Service]
+      User=caddy
+      Group=caddy
+      ExecStart=/usr/bin/caddy run --adapter caddyfile --config /etc/caddy/voxtype.Caddyfile
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=multi-user.target
+  notify: Restart voxtype gateway
+
+- name: Start the voxtype server services
+  become: true
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+  loop:
+    - voxtype-whisper
+    - voxtype-gateway

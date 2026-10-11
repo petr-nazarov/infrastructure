@@ -1,0 +1,26 @@
+# Managed by Ansible (infrastructure, arch/voxtype_server)
+{
+	admin off
+	auto_https off
+}
+
+# Plain HTTP: NetBird's WireGuard tunnel already encrypts the traffic
+http://:{{ voxtype_server_url | urlsplit('port') }} {
+	@denied not {
+		remote_ip {{ arch_voxtype_server_allowed_ips | join(' ') }}
+		header Authorization "Bearer {{ voxtype_server_token }}"
+	}
+	@whisper path /v1/audio/transcriptions /health
+	@ollama path /api/chat /api/tags
+
+	route {
+		respond @denied 401
+		# Speech-to-text, what voxtype's remote mode posts to; /health for the status bars
+		reverse_proxy @whisper 127.0.0.1:{{ arch_voxtype_server_whisper_port }}
+		# The cleanup model for voxtype-postprocess. Only chat and the model list: no pulls or deletes
+		reverse_proxy @ollama 127.0.0.1:11434 {
+			header_up Host 127.0.0.1:11434
+		}
+		respond 404
+	}
+}

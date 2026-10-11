@@ -14,6 +14,13 @@
     - role: arch/netbird
     # - role: arch/kmonad
 
+- name: Setup the voxtype server
+  hosts: voxtype-servers
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  roles:
+    - role: arch/voxtype_server
+
 - name: Setup desktop specific settings
   hosts: desktop
   roles:

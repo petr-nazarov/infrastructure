@@ -1,0 +1,13 @@
+---
+- name: Restart voxtype whisper server
+  become: true
+  ansible.builtin.systemd_service:
+    name: voxtype-whisper
+    state: restarted
+    daemon_reload: true
+- name: Restart voxtype gateway
+  become: true
+  ansible.builtin.systemd_service:
+    name: voxtype-gateway
+    state: restarted
+    daemon_reload: true

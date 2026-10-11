@@ -49,6 +49,14 @@
 # fn is remapped to ctrl, so voxtype gets no hotkey of its own: Hammerspoon runs
 # `voxtype record start/stop` while cmd+m is held (~/.hammerspoon in dotfiles). skhd can't,
 # it never sees the key go up. The daemon reads its config only on start.
+# Whether voxtype-target has switched voxtype to the voxtype server, so a run keeps that
+- name: Read voxtype's config
+  ansible.builtin.slurp:
+    path: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/config.toml"
+  register: darwin_voxtype_config
+- name: Note whether voxtype transcribes on the voxtype server
+  ansible.builtin.set_fact:
+    darwin_voxtype_remote: "{{ darwin_voxtype_config.content | b64decode is search('(?m)^mode = \"remote\"') }}"
 - name: Configure voxtype
   ansible.builtin.lineinfile:
     path: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/config.toml"
@@ -58,9 +66,30 @@
   loop:
     - { section: '^\[hotkey\]', regexp: '^enabled = ', line: enabled = false }
     - { section: '^\[whisper\]', regexp: '^model = ', line: 'model = "{{ darwin_voxtype_model }}"' }
-    - { section: '^\[whisper\]', regexp: '^language = ', line: "language = {{ darwin_voxtype_language }}" }
+    # On the voxtype server whisper only auto-detects: voxtype sends the first language of a list.
+    # voxtype-target swaps between this list (kept in the comment) and "auto" when it switches.
+    - { section: '^\[whisper\]', regexp: '^language = ', line: "language = {{ '\"auto\"' if darwin_voxtype_remote else darwin_voxtype_language }}" }
+    - { section: '^\[whisper\]', regexp: '^# local language \(voxtype-target\): ', line: "# local language (voxtype-target): {{ darwin_voxtype_language }}" }
   loop_control:
     label: "{{ item.line }}"
+  notify: Restart voxtype
+# The desktop's voxtype server (arch/voxtype_server) as the remote endpoint. Never `mode`:
+# under [whisper] that is voxtype-target's (dotfiles) local/remote switch, so a run keeps it.
+# voxtype-postprocess sends the LLM cleanup to the same place while it is remote.
+- name: Point voxtype at the voxtype server
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_facts['user_dir'] }}/Library/Application Support/voxtype/config.toml"
+    regexp: "{{ item.regexp }}"
+    insertafter: '^\[whisper\]'
+    line: "{{ item.line }}"
+    mode: "0600" # holds the token
+  loop:
+    - { regexp: '^remote_endpoint = ', line: 'remote_endpoint = "{{ voxtype_server_url }}"' }
+    - { regexp: '^remote_api_key = ', line: 'remote_api_key = "{{ voxtype_server_token }}"' }
+    # Fail fast when the desktop is asleep; a 5 s dictation takes ~0.3 s there
+    - { regexp: '^remote_timeout_secs = ', line: remote_timeout_secs = 10 }
+  loop_control:
+    label: "{{ item.regexp }}"
   notify: Restart voxtype
 
 # Every transcript goes through voxtype-postprocess (dotfiles): it copies the raw text to

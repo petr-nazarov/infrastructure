@@ -1,0 +1,6 @@
+---
+# Voxtype server on the desktop's GPU (arch/voxtype_server): whisper speech-to-text and the
+# Ollama cleanup model behind one token-checked gateway, reached over NetBird. Every voxtype
+# client gets it as its remote endpoint and switches to it at runtime with voxtype-target
+# (dotfiles). The token is voxtype_server_token in all.sops.yml.
+voxtype_server_url: http://home-desktop.netbird.cloud:8765

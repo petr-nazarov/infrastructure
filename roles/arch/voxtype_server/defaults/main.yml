@@ -1,0 +1,12 @@
+---
+# Same model the desktop runs locally (arch_voxtype_model), so remote dictation sounds the same
+arch_voxtype_server_model: large-v3-turbo
+# whisper-server listens here on loopback; only the gateway (port from voxtype_server_url) is reachable
+arch_voxtype_server_whisper_port: 8178
+# Callers the gateway accepts, on top of the token: this machine and NetBird peers (v4 CGNAT
+# range and the account's v6 prefix)
+arch_voxtype_server_allowed_ips:
+  - 127.0.0.1/8
+  - ::1/128
+  - 100.64.0.0/10
+  - fd39:eadd:e6f9:85c8::/64

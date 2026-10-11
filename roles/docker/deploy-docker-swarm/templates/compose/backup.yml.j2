@@ -16,6 +16,8 @@
       RESTIC_COMPRESSION: "auto"
       RESTIC_BACKUP_ARGS: "--tag restic-s3 --verbose"
       RESTIC_FORGET_ARGS: "--keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12"
+      # clear locks left by a container killed mid-run, else forget fails forever
+      PRE_COMMANDS: "restic unlock"
       TZ: "{{ tz }}"
       NOTIF_SERVER: "{{ notif_server }}"
       NOTIF_TOKEN: "{{ notif_network_token }}"
@@ -40,6 +42,8 @@
       RESTIC_COMPRESSION: "auto"
       RESTIC_BACKUP_ARGS: "--tag restic-auto --verbose"
       RESTIC_FORGET_ARGS: "--keep-last 10 --keep-daily 7 --keep-weekly 5 --keep-monthly 12"
+      # clear locks left by a container killed mid-run, else forget fails forever
+      PRE_COMMANDS: "restic unlock"
       TZ: "{{ tz }}"
       NOTIF_SERVER: "{{ notif_server }}"
       NOTIF_TOKEN: "{{ notif_network_token }}"

@@ -106,18 +106,19 @@
       community.general.homebrew:
         name: ollama
         state: present
-    - name: Start Ollama
-      community.general.homebrew_services:
-        name: ollama
-        state: present
+    # On disk, so the check works with Ollama stopped (it only runs while voxtype is local)
     - name: Check for the voxtype cleanup model
-      ansible.builtin.command: /opt/homebrew/bin/ollama show {{ darwin_voxtype_llm_model }}
+      ansible.builtin.stat:
+        path: "{{ ansible_facts['user_dir'] }}/.ollama/models/manifests/registry.ollama.ai/library/\
+          {{ darwin_voxtype_llm_model | regex_replace(':', '/') }}"
       register: darwin_voxtype_llm_model_check
-      changed_when: false
-      failed_when: false
+    # `run` starts Ollama without adding it to login; voxtype-target settles that below
     - name: Pull the voxtype cleanup model
-      ansible.builtin.command: /opt/homebrew/bin/ollama pull {{ darwin_voxtype_llm_model }}
-      when: darwin_voxtype_llm_model_check.rc != 0
+      ansible.builtin.shell: |
+        /opt/homebrew/bin/brew services run ollama
+        for _ in $(seq 20); do /opt/homebrew/bin/ollama list >/dev/null 2>&1 && break; sleep 0.5; done
+        /opt/homebrew/bin/ollama pull {{ darwin_voxtype_llm_model | quote }}
+      when: not darwin_voxtype_llm_model_check.stat.exists
       changed_when: true
 # The hook comes from the dotfiles _common_gui layer; don't point voxtype at a missing file
 - name: Check that the voxtype post-process hook is synced
@@ -137,6 +138,13 @@
       command = "{{ ansible_facts['user_dir'] }}/.local/bin/voxtype-postprocess{{ ' --llm ' ~ darwin_voxtype_llm_model if darwin_voxtype_llm_enabled else '' }}"
       timeout_ms = 10000
   notify: Restart voxtype
+# The local Ollama runs only while voxtype transcribes locally with the cleanup on, and is
+# not started at login otherwise. voxtype-target (dotfiles) starts and stops it on each switch;
+# this brings it in line after a run (a pull above, the LLM turned on or off).
+- name: Run the local Ollama only while voxtype is local
+  ansible.builtin.command: "{{ ansible_facts['user_dir'] }}/.local/bin/voxtype-target ollama"
+  register: darwin_voxtype_ollama
+  changed_when: "'changed' in darwin_voxtype_ollama.stdout"
 
 # Ferdium switches services on cmd+1..9 by default, the yabai space keys in ~/.skhdrc.
 # alt+1..9 leaves cmd+number to skhd. Ferdium reads this file on start.

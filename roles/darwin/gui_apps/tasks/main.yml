@@ -70,6 +70,8 @@
     # voxtype-target swaps between this list (kept in the comment) and "auto" when it switches.
     - { section: '^\[whisper\]', regexp: '^language = ', line: "language = {{ '\"auto\"' if darwin_voxtype_remote else darwin_voxtype_language }}" }
     - { section: '^\[whisper\]', regexp: '^# local language \(voxtype-target\): ', line: "# local language (voxtype-target): {{ darwin_voxtype_language }}" }
+    # Spelling hint for jargon (voxtype_initial_prompt); remote mode sends it with the audio
+    - { section: '^\[whisper\]', regexp: '^initial_prompt = ', line: "initial_prompt = {{ voxtype_initial_prompt | to_json }}" }
   loop_control:
     label: "{{ item.line }}"
   notify: Restart voxtype

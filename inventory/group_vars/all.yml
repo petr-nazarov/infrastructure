@@ -4,3 +4,13 @@
 # client gets it as its remote endpoint and switches to it at runtime with voxtype-target
 # (dotfiles). The token is voxtype_server_token in all.sops.yml.
 voxtype_server_url: http://home-desktop.netbird.cloud:8765
+# Whisper's spelling hint for the words it hears wrong ("Claude" as "cloud"), set as
+# initial_prompt on every voxtype client. Remote mode sends it with the audio, so the server
+# needs nothing. Whisper reads only ~224 tokens of it: keep it short, spelled as it should be typed.
+voxtype_initial_prompt: >-
+  Developer notes about Claude, Claude Code, Anthropic, Ollama, MCP, dotfiles, voxtype,
+  Ansible, Hyprland, Waybar, Ghostty, kitty, tmux, NetBird, Caddy, Authelia, SOPS, Cloudflare,
+  Docker Swarm, Kubernetes, kubectl, Helm, Terraform, nginx, systemd, GitHub Actions, CI/CD,
+  PostgreSQL, Redis, SQLite, Node.js, npm, pnpm, Bun, TypeScript, React, Next.js, Vite,
+  Tailwind, Zod, Prisma, Python, FastAPI, Django, pytest, uv, Pydantic, async/await, JSON,
+  YAML, TOML, regex, OAuth, JWT, API, CLI, SSH, localhost, repo, PR.

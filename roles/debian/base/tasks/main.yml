@@ -25,3 +25,20 @@
     name: "{{ base_packages }}"
     state: present
     update_cache: true
+- name: Gather installed packages
+  ansible.builtin.package_facts:
+- name: Install systemd-timesyncd
+  become: true
+  ansible.builtin.apt:
+    name: systemd-timesyncd
+    state: present
+  # apt would remove an existing chrony/ntpsec to satisfy the Conflicts
+  when: not (['chrony', 'ntpsec', 'ntp'] | intersect(ansible_facts.packages.keys()))
+  register: timesyncd_install
+- name: Enable and start systemd-timesyncd
+  become: true
+  ansible.builtin.systemd_service:
+    name: systemd-timesyncd
+    enabled: true
+    state: started
+  when: timesyncd_install is not skipped

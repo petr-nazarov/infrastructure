@@ -1,6 +1,6 @@
 # Handover: voxtype-remote-mac
 
-2026-10-11 13:14 · infrastructure · branch `main` · HEAD `395c259`
+2026-10-11 13:14 · infrastructure · branch `main` · HEAD `c6618ba`
 
 ## Goal
 
@@ -28,7 +28,7 @@ Not yet done or tested on the Mac:
 ## Changed files
 
 Committed this session:
-- `395c259` feat(voxtype): serve dictation from the desktop gpu to other machines
+- `c6618ba` feat(voxtype): serve dictation from the desktop gpu to other machines
 - dotfiles `799bf77` feat(voxtype): switch dictation between local and the desktop server
 
 Uncommitted: none from this work. Unrelated edits by the user sit in dotfiles

@@ -3,7 +3,8 @@
 # okular / qimgv -> Preview, nemo -> Finder, gparted -> Disk Utility, ark -> Archive Utility
 darwin_gui_apps:
   # Personal
-  - ghostty
+  - kitty # the terminal, config in dotfiles
+  - ghostty # kept as a fallback terminal
   - zen
   - opera
   - obsidian

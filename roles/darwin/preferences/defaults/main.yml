@@ -90,7 +90,7 @@ darwin_modifier_mappings:
 # everything else (default apps, the Downloads stack) is.
 darwin_dock_apps:
   - /Applications/Zen.app
-  - /Applications/Ghostty.app
+  - /Applications/kitty.app
 
 # Directories Spotlight skips (System Settings > Spotlight > Search Privacy). Build output,
 # node_modules, SDKs and simulators churn constantly and keep mds_stores busy for nothing.

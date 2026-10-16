@@ -26,11 +26,11 @@ fix:
 ci:
   dagger call lint --source .
 run-tags tags:
-  ansible-playbook -i inventory/hosts.yml --tags {{ tags }} main.yml
+  .venv/bin/ansible-playbook -i inventory/hosts.yml --tags {{ tags }} main.yml
   just notify "Infrastructure applied for tags {{ tags }}"
 
-run host: source
-  ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml
+run host:
+  .venv/bin/ansible-playbook -i inventory/hosts.yml -l {{ host }} main.yml
   just notify "Infrastructure applied for {{ host }}"
 
 # Sync the config dir and restart Glance + Gatus, skipping the full stack deploy

@@ -28,6 +28,8 @@
 - name: Join Swarm as Worker
   community.docker.docker_swarm:
     state: join
+    # Pin the address; auto-detection at boot can pick a 169.254.x link-local one
+    advertise_addr: "{{ ansible_host }}"
     join_token: "{{ swarm_manager_info.swarm_facts.JoinTokens.Worker }}"
     remote_addrs: ["{{ hostvars[groups['docker-swarm-managers'][0]]['ansible_host'] }}:2377"]
   when: inventory_hostname in groups['docker-swarm-workers']

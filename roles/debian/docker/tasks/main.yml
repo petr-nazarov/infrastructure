@@ -82,6 +82,10 @@
       [Unit]
       StartLimitIntervalSec=0
       [Service]
+      # ifupdown-wait-online skips allow-hotplug interfaces, so
+      # network-online.target can pass before DHCP. A swarm worker that starts
+      # then advertises a 169.254.x address and drops out of the overlay.
+      ExecStartPre=/bin/sh -c 'for i in $(seq 60); do ip -4 route show default | grep -q . && exit 0; sleep 1; done'
       Restart=always
       RestartSec=5
   notify: Reload systemd daemon

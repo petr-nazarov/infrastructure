@@ -43,6 +43,16 @@
   loop:
     - bluetooth.service
   when: item in ansible_facts.services
+# Realtek RTL8761BU dongles stop answering HCI commands after USB autosuspend,
+# so the kernel keeps resetting the adapter and connections never complete.
+- name: Disable btusb autosuspend
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/modprobe.d/btusb.conf
+    content: "options btusb enable_autosuspend=0\n"
+    owner: root
+    group: root
+    mode: "0644"
 - name: Enable syncthing service
   become: true
   ansible.builtin.systemd:

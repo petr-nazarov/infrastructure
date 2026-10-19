@@ -37,6 +37,8 @@ darwin_voxtype_language: '["en", "ru"]'
 darwin_voxtype_llm_enabled: true
 # Multilingual; thinking is switched off per request
 darwin_voxtype_llm_model: qwen3.5:4b
+# LaunchAgent that keeps the daemon's /tmp/voxtype files from macOS's tmp cleaner
+darwin_voxtype_tmp_agent_label: local.voxtype-keep-tmp
 
 # Zen prefs, written to the active profile's user.js (applied on every Zen start, so a change
 # in about:config that these cover reverts on restart). They are about memory on a 16 GB Mac:

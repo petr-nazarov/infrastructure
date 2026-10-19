@@ -39,6 +39,54 @@
   ansible.builtin.command: /opt/homebrew/bin/voxtype setup app-bundle
   args:
     creates: /Applications/Voxtype.app
+# With no XDG_RUNTIME_DIR the daemon keeps its pid and state files in /tmp/voxtype, and
+# macOS's nightly tmp_cleaner deletes /tmp files untouched for 3 days. After 3 days without
+# a dictation `voxtype record` no longer finds the daemon and cmd+m does nothing. The
+# cleaner can't be told to skip a directory, so this agent touches the files every day.
+- name: Install the agent that keeps voxtype's /tmp files
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/Library/LaunchAgents/{{ darwin_voxtype_tmp_agent_label }}.plist"
+    mode: "0644"
+    validate: plutil -lint %s
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0">
+      <dict>
+        <key>Label</key>
+        <string>{{ darwin_voxtype_tmp_agent_label }}</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>/usr/bin/find</string>
+          <string>/tmp/voxtype</string>
+          <string>-type</string>
+          <string>f</string>
+          <string>-exec</string>
+          <string>/usr/bin/touch</string>
+          <string>{}</string>
+          <string>+</string>
+        </array>
+        <key>StartCalendarInterval</key>
+        <dict>
+          <key>Hour</key>
+          <integer>12</integer>
+          <key>Minute</key>
+          <integer>0</integer>
+        </dict>
+      </dict>
+      </plist>
+  notify: Reload the voxtype tmp agent
+- name: Check if the voxtype tmp agent is loaded
+  ansible.builtin.command: launchctl print gui/{{ ansible_facts['user_uid'] }}/{{ darwin_voxtype_tmp_agent_label }}
+  register: darwin_voxtype_tmp_agent
+  changed_when: false
+  failed_when: false
+- name: Load the voxtype tmp agent
+  ansible.builtin.command: >-
+    launchctl bootstrap gui/{{ ansible_facts['user_uid'] }}
+    {{ ansible_facts['user_dir'] }}/Library/LaunchAgents/{{ darwin_voxtype_tmp_agent_label }}.plist
+  when: darwin_voxtype_tmp_agent.rc != 0
+  changed_when: true
 # Straight from whisper.cpp: `setup --download --model small` resolves to SenseVoice, not
 # whisper, and fails.
 - name: Download the voxtype model

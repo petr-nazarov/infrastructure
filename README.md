@@ -35,7 +35,8 @@ EDITOR=vim sops inventory/host_vars/HOST.sops.yml # ansible_become_password: ...
 ```
 Then follow the controller node steps above, with `just run HOST`. Ansible renames the mac to HOST.
 
-Manual steps macOS won't let ansible do:
+After the first `just run HOST` on a fresh install, do these by hand, once. macOS won't let
+ansible do them, and without them the tools below are installed but do nothing:
 - Grant yabai and skhd Accessibility access (System Settings > Privacy & Security > Accessibility)
 - Grant skhd Screen Recording access (System Settings > Privacy & Security > Screen & System Audio
   Recording), for the cmd+shift+s screenshot binding
@@ -43,6 +44,12 @@ Manual steps macOS won't let ansible do:
   clipboard history entry (cmd+shift+v) into the focused app
 - Grant LinearMouse Accessibility access and turn on "Start at login" in its settings; it
   reverses the mouse wheel (darwin/preferences)
+- Karabiner-Elements (Linux-style ctrl+c/v/... on external keyboards, config in dotfiles
+  `_mac_gui/.config/karabiner`): open it once and allow
+  - Input Monitoring for karabiner_grabber and karabiner_observer, when it asks
+  - its driver: System Settings > General > Login Items & Extensions > Extensions, the (i) next
+    to .Karabiner-VirtualHIDDevice-Manager, switch it on. `systemextensionsctl list` then shows
+    `org.pqrs.Karabiner-DriverKit-VirtualHIDDevice` as `[activated enabled]`
 - For the yabai scripting addition (space focus / move bindings), partially disable SIP:
   https://github.com/asmvik/yabai/wiki/Disabling-System-Integrity-Protection
 

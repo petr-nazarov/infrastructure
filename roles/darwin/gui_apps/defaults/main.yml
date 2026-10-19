@@ -11,6 +11,8 @@ darwin_gui_apps:
   - ferdium # messengers in one window
   - peteonrails/voxtype/voxtype # push-to-talk voice typing
   - hammerspoon # holds cmd+m for voxtype, see ~/.hammerspoon in dotfiles
+  # Linux-style ctrl+c/v/... on external keyboards, see ~/.config/karabiner in dotfiles
+  - karabiner-elements
   # Launcher, replaces Spotlight on cmd+space (see darwin/preferences)
   - raycast
   # qbittorrent: cask disabled by Homebrew on 2026-09-01, it fails the Gatekeeper check

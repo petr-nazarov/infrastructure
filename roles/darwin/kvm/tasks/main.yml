@@ -16,6 +16,10 @@
 # they are free for the desktop. Connecting runs in the background (`&amp;` in the plist) and
 # fails after a few seconds when the earphones are off, without holding up the loop. It polls because macOS has
 # no command that streams device changes; one SwitchAudioSource call every 2 s costs nothing.
+# While the KVM is on the mac and it is charging, a `caffeinate -d` keeps the display from
+# sleeping (and so from locking): the mac itself never sleeps on AC (darwin/power), and the
+# display going dark at the desk only meant typing the password again. On battery, or with
+# the KVM switched away, it is killed and displaysleep applies again.
 # Waking only works while the mac is awake with the display off: on AC darwin/power keeps it
 # from sleeping even with the lid closed, and a sleeping mac doesn't wake on a USB plug.
 - name: Install the kvm agent
@@ -54,6 +58,12 @@
                   $bt --disconnect {{ darwin_kvm_earphones.address }} &amp;
                 fi
                 was=$now
+              fi
+              if [ "$now" = 1 ] &amp;&amp; /usr/bin/pmset -g batt | grep -qF "'AC Power'"; then
+                [ -n "$hold" ] || { /usr/bin/caffeinate -d &amp; hold=$!; }
+              elif [ -n "$hold" ]; then
+                kill "$hold"
+                hold=
               fi
               sleep 2
             done

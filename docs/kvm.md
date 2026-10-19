@@ -61,6 +61,9 @@ What this means in practice:
 
 - Lid closed on the USB-C dongle (charging): switching to KVM port 2 turns the screen on
   within ~2 s. You still get the lock screen; type the password (Touch ID is under the lid).
+- While the KVM stays on the mac and it is charging, the display doesn't sleep or lock at
+  all: the agent holds a `caffeinate -d`. Switch the KVM away or unplug the power and the
+  normal 10 minute display sleep is back.
 - Lid closed on battery: the mac really sleeps, and switching the KVM won't wake it.
   Plugging in the dongle (power + monitor) wakes a closed Mac.
 

@@ -41,6 +41,8 @@ Manual steps macOS won't let ansible do:
   Recording), for the cmd+shift+s screenshot binding
 - Launch Raycast once and skip its onboarding; it needs Accessibility access too, to paste the
   clipboard history entry (cmd+shift+v) into the focused app
+- Grant LinearMouse Accessibility access and turn on "Start at login" in its settings; it
+  reverses the mouse wheel (darwin/preferences)
 - For the yabai scripting addition (space focus / move bindings), partially disable SIP:
   https://github.com/asmvik/yabai/wiki/Disabling-System-Integrity-Protection
 

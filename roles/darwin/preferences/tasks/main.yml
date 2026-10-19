@@ -128,3 +128,29 @@
     echo changed
   register: darwin_spotlight_exclusions_write
   changed_when: "'changed' in darwin_spotlight_exclusions_write.stdout"
+
+- name: Install LinearMouse
+  community.general.homebrew_cask:
+    name: linearmouse
+    state: present
+    install_options: adopt
+- name: Create the LinearMouse config directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.config/linearmouse"
+    state: directory
+    mode: "0755"
+# Plain JSON: LinearMouse refuses a config with comments
+- name: Write the LinearMouse config
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/.config/linearmouse/linearmouse.json"
+    mode: "0644"
+    content: "{{ darwin_linearmouse_config | to_nice_json }}\n"
+  notify: Restart LinearMouse
+# Starting at login is a switch in LinearMouse's own settings (README, manual steps)
+- name: Start LinearMouse
+  ansible.builtin.shell: |
+    pgrep -xq LinearMouse && exit 0
+    open -g -a LinearMouse
+    echo started
+  register: darwin_linearmouse_start
+  changed_when: "'started' in darwin_linearmouse_start.stdout"

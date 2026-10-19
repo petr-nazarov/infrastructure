@@ -2,3 +2,8 @@
 - name: Restart Dock and Finder
   ansible.builtin.command: killall Dock Finder
   changed_when: true
+- name: Restart LinearMouse
+  ansible.builtin.shell: |
+    pkill -x LinearMouse && sleep 1
+    open -g -a LinearMouse
+  changed_when: true

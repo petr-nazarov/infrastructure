@@ -1,0 +1,6 @@
+---
+- name: Reload the kvm agent
+  ansible.builtin.shell: |
+    launchctl bootout gui/{{ ansible_facts['user_uid'] }}/{{ darwin_kvm_agent_label }} 2>/dev/null || true
+    launchctl bootstrap gui/{{ ansible_facts['user_uid'] }} "{{ ansible_facts['user_dir'] }}/Library/LaunchAgents/{{ darwin_kvm_agent_label }}.plist"
+  changed_when: true

@@ -1,0 +1,12 @@
+---
+# The desk KVM (docs/kvm.md) hands the mic, webcam, keyboards and Bluetooth dongle to
+# whichever computer it is switched to. These are the CoreAudio input names of its mic and
+# of the mac's own mic, as `SwitchAudioSource -a -t input` prints them.
+darwin_kvm_mic: USB/XLR Dynamic Microphone
+darwin_kvm_fallback_mic: MacBook Air Microphone
+# Bluetooth earphones paired with the mac's own Bluetooth, connected while on the KVM.
+# address as `blueutil --paired` prints it, name as `SwitchAudioSource -a -t output` does.
+darwin_kvm_earphones:
+  address: 58-18-62-20-20-da
+  name: WH-1000XM6
+darwin_kvm_agent_label: local.kvm-watch

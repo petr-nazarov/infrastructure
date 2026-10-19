@@ -1,0 +1,80 @@
+---
+- name: Install SwitchAudioSource and blueutil
+  community.general.homebrew:
+    name:
+      - switchaudio-osx
+      - blueutil
+    state: present
+
+# The KVM's mic showing up in CoreAudio means the KVM was just switched to this mac. Then the
+# agent makes it the default input and wakes the display (`caffeinate -u`), so the screen is
+# on without a keypress. When it goes away it switches back to the built-in mic. It only acts
+# on those changes, so an input picked by hand in between stays.
+# It also connects the earphones to the mac's own Bluetooth (the KVM's dongle is useless on
+# macOS, docs/kvm.md) and makes them the output. Connecting a headset can take over the
+# default input, so the mic is set again after it. On the way out it disconnects them, so
+# they are free for the desktop. Connecting runs in the background (`&amp;` in the plist) and
+# fails after a few seconds when the earphones are off, without holding up the loop. It polls because macOS has
+# no command that streams device changes; one SwitchAudioSource call every 2 s costs nothing.
+# Waking only works while the mac is awake with the display off: on AC darwin/power keeps it
+# from sleeping even with the lid closed, and a sleeping mac doesn't wake on a USB plug.
+- name: Install the kvm agent
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/Library/LaunchAgents/{{ darwin_kvm_agent_label }}.plist"
+    mode: "0644"
+    validate: plutil -lint %s
+    content: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+      <plist version="1.0">
+      <dict>
+        <key>Label</key>
+        <string>{{ darwin_kvm_agent_label }}</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>/bin/sh</string>
+          <string>-c</string>
+          <string>
+            sas=/opt/homebrew/bin/SwitchAudioSource
+            bt=/opt/homebrew/bin/blueutil
+            while :; do
+              if $sas -a -t input | grep -qxF '{{ darwin_kvm_mic }}'; then now=1; else now=0; fi
+              if [ "$now" != "$was" ]; then
+                if [ "$now" = 1 ]; then
+                  $sas -t input -s '{{ darwin_kvm_mic }}'
+                  /usr/bin/caffeinate -u -t 2
+                  {
+                    $bt --connect {{ darwin_kvm_earphones.address }} || exit
+                    sleep 2
+                    $sas -t output -s '{{ darwin_kvm_earphones.name }}'
+                    $sas -t input -s '{{ darwin_kvm_mic }}'
+                  } &amp;
+                elif [ -n "$was" ]; then
+                  $sas -t input -s '{{ darwin_kvm_fallback_mic }}'
+                  $bt --disconnect {{ darwin_kvm_earphones.address }} &amp;
+                fi
+                was=$now
+              fi
+              sleep 2
+            done
+          </string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>KeepAlive</key>
+        <true/>
+      </dict>
+      </plist>
+  notify: Reload the kvm agent
+
+- name: Check if the kvm agent is loaded
+  ansible.builtin.command: launchctl print gui/{{ ansible_facts['user_uid'] }}/{{ darwin_kvm_agent_label }}
+  register: darwin_kvm_agent
+  changed_when: false
+  failed_when: false
+- name: Load the kvm agent
+  ansible.builtin.command: >-
+    launchctl bootstrap gui/{{ ansible_facts['user_uid'] }}
+    {{ ansible_facts['user_dir'] }}/Library/LaunchAgents/{{ darwin_kvm_agent_label }}.plist
+  when: darwin_kvm_agent.rc != 0
+  changed_when: true

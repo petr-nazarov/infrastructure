@@ -1,0 +1,5 @@
+---
+# The desk KVM (docs/kvm.md) carries the desktop's only Bluetooth adapter, a Realtek dongle.
+# When the KVM switches here the adapter appears, and these earphones are connected to it.
+# Address as `bluetoothctl devices Paired` prints it.
+arch_kvm_earphones: 58:18:62:20:20:DA

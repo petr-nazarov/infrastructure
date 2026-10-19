@@ -1,0 +1,32 @@
+---
+# Switching the KVM here plugs in the Bluetooth dongle, and BlueZ doesn't reconnect audio
+# devices to a new adapter on its own. udev starts this service for every new adapter. It
+# retries for ~30 s: bluetoothd needs a moment to power the adapter (AutoEnable), and macmom
+# lets go of the earphones only once it sees the KVM leave. Switching away needs nothing,
+# the adapter and its connections just disappear. WirePlumber makes the earphones the output.
+- name: Install the earphones connect service
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/kvm-earphones.service
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=Connect the earphones to the Bluetooth adapter on the desk KVM
+      After=bluetooth.service
+      Requires=bluetooth.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/bin/sh -c 'for i in $(seq 15); do \
+        bluetoothctl connect {{ arch_kvm_earphones }} >/dev/null; \
+        bluetoothctl info {{ arch_kvm_earphones }} | grep -q "Connected: yes" && exit 0; \
+        sleep 2; done; exit 1'
+  notify: Reload systemd
+- name: Start the earphones connect service when a Bluetooth adapter appears
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/udev/rules.d/90-kvm-earphones.rules
+    mode: "0644"
+    content: |
+      ACTION=="add", SUBSYSTEM=="bluetooth", ENV{DEVTYPE}=="host", TAG+="systemd", ENV{SYSTEMD_WANTS}+="kvm-earphones.service"
+  notify: Reload udev rules

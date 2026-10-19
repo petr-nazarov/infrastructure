@@ -29,6 +29,11 @@
     - role: arch/wake-on-lan
     - role: arch/hibernation
 
+- name: Setup the desk KVM on home-desktop
+  hosts: home-desktop
+  roles:
+    - role: arch/kvm
+
 - name: Setup laptop specific settings
   hosts: matebook
   roles:

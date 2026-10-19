@@ -99,8 +99,15 @@ and with macmom's built-in Bluetooth. `local.kvm-watch` swaps them over:
 The address and name are `darwin_kvm_earphones` in `roles/darwin/kvm/defaults/main.yml`.
 Re-pairing with the mac keeps the address, so nothing changes there.
 
-Not done yet: the desktop doesn't reconnect them on its own when the dongle comes back.
-Press the earphones' power button briefly, or `bluetoothctl connect <address>` there.
+On home-desktop, `roles/arch/kvm` does the other half. A udev rule starts
+`kvm-earphones.service` whenever a Bluetooth adapter appears, which on the desktop means the
+KVM switched back with the dongle. The service runs `bluetoothctl connect` until the
+earphones are connected, for up to ~30 s, which covers the adapter powering up and macmom
+letting go of them. WirePlumber makes them the output. Check it with
+`journalctl -u kvm-earphones`.
+
+home-desktop runs its own playbook (`ansible_connection: local`), so apply it there with
+`just run home-desktop`.
 
 The seamless alternative is a USB Bluetooth audio transmitter on the KVM (Creative
 BT-W5/BT-W6, Avantree DG80, ...). Every OS sees it as an ordinary USB sound card and the

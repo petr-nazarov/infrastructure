@@ -160,6 +160,22 @@ class MergeSession(unittest.TestCase):
         _, _, changes = merge(s)
         self.assertNotIn("Personal: pin FrrCode", changes)
 
+    def test_pin_in_another_contexts_container(self):
+        contexts = CONTEXTS + [{"name": "Communication", "color": "white", "container": None, "pins": [
+            {"title": "Slack", "url": "https://app.slack.com/client", "match": "app.slack.com",
+             "container": "Tadam"}]}]
+        s = session()
+        s["spaces"].append({"uuid": "{d}", "name": "Communication", "theme": None, "containerTabId": 0})
+        s["tabs"].insert(0, pinned("{d}", "https://app.slack.com/client/T1", ctx=0))
+        s["tabs"][0]["zenDefaultUserContextId"] = "true"
+        out, c, changes = z.merge_session(s, CONTAINERS, contexts, PALETTE, now_ms=1, rng=random.Random(1))
+        slack = next(t for t in out["tabs"] if t["zenWorkspace"] == "{d}")
+        self.assertEqual(slack["userContextId"], 6)
+        self.assertNotIn("zenDefaultUserContextId", slack)
+        self.assertIn("Communication: Slack in container Tadam", changes)
+        _, _, again = z.merge_session(out, c, contexts, PALETTE, now_ms=1, rng=random.Random(1))
+        self.assertEqual(again, [])
+
     def test_manual_pin_added_after_first_run_survives_second(self):
         s, c, _ = merge()
         s["tabs"].insert(0, pinned("{b}", "https://github.com/x/y", ctx=6))

@@ -235,7 +235,22 @@ def merge_session(session, containers, contexts, palette, now_ms=None, rng=None)
 
         in_space = [t for t in tabs if t.get("pinned") and t.get("zenWorkspace") == space["uuid"]]
         for pin in context.get("pins") or []:
-            if any(pin_matches(pin, t) for t in in_space):
+            # A pin can open in another context's container than its space's (Slack signed in
+            # as one client, kept in Communication). Named containers must exist by then.
+            pin_context_id = user_context_id
+            if pin.get("container"):
+                ident = next((i for i in containers.get("identities", []) if i.get("public", True)
+                              and (i.get("name") or "").lower() == pin["container"].lower()), None)
+                if ident is None:
+                    raise ValueError("%s: pin %s: no container %r" % (context["name"], pin["title"],
+                                                                      pin["container"]))
+                pin_context_id = ident["userContextId"]
+            existing = next((t for t in in_space if pin_matches(pin, t)), None)
+            if existing is not None:
+                if pin.get("container") and existing.get("userContextId") != pin_context_id:
+                    existing["userContextId"] = pin_context_id
+                    existing.pop("zenDefaultUserContextId", None)
+                    changes.append("%s: %s in container %s" % (context["name"], pin["title"], pin["container"]))
                 continue
             tab = {
                 "entries": [{"url": pin["url"], "title": pin["title"],
@@ -247,7 +262,7 @@ def merge_session(session, containers, contexts, palette, now_ms=None, rng=None)
                 "zenSyncId": _new_sync_id(now_ms, rng),
                 "zenEssential": False,
                 # The tab got its container from the space, as tabs Zen opens itself do
-                "zenDefaultUserContextId": "true",
+                "zenDefaultUserContextId": None if pin.get("container") else "true",
                 "zenPinnedIcon": None,
                 "zenIsEmpty": False,
                 "zenHasStaticIcon": False,
@@ -256,7 +271,7 @@ def merge_session(session, containers, contexts, palette, now_ms=None, rng=None)
                 "_zenPinnedInitialState": {"entry": {"url": pin["url"], "title": pin["title"]}, "image": None},
                 "zenLiveFolderItemId": None,
                 "searchMode": None,
-                "userContextId": user_context_id,
+                "userContextId": pin_context_id,
                 "attributes": {},
                 "index": 1,
                 "userTypedValue": "",

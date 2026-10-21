@@ -1,7 +1,8 @@
 ---
 # Zen on every workstation, macOS and Arch alike. The spaces themselves (zen_contexts: name,
 # color, container, pinned tabs) are in vars/zen_contexts.sops.yml; their colors come from
-# context_palette in group_vars/all.yml.
+# context_palette in group_vars/all.yml. A pin may name its own container (another context's
+# login, e.g. one client's Slack in Communication); otherwise it opens in its space's.
 
 # Prefs written to the profile's user.js, applied on every Zen start (a change in
 # about:config that these cover reverts on restart). About memory with many tabs:

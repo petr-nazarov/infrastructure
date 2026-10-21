@@ -33,6 +33,10 @@ arch_gui_apps_removed:
   - ferdium-bin
 # What they leave in the home directory (Ferdium: ~4 GB of messenger caches and logins, and
 # an autostart entry that still tries to start it at login)
+# Still running from before the removal (Ferdium runs as plain "electron /opt/ferdium-bin/"),
+# it would recreate its data: matched against the full command line
+arch_gui_apps_removed_processes:
+  - /opt/ferdium-bin/
 arch_gui_apps_removed_data:
   - .config/Ferdium
   - .config/autostart/ferdium.desktop

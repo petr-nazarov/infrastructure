@@ -10,6 +10,13 @@
   community.general.pacman:
     name: "{{ arch_gui_apps_removed }}"
     state: absent
+# The [x] trick keeps pkill from matching the shell running it
+- name: Stop replaced gui applications that are still running
+  ansible.builtin.command: pkill -f {{ ('[' ~ item[0] ~ ']' ~ item[1:]) | quote }}
+  loop: "{{ arch_gui_apps_removed_processes }}"
+  register: arch_gui_removed_kill
+  changed_when: arch_gui_removed_kill.rc == 0
+  failed_when: arch_gui_removed_kill.rc > 1
 - name: Remove what the replaced gui applications left behind
   ansible.builtin.file:
     path: "{{ ansible_facts['user_dir'] }}/{{ item }}"

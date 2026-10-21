@@ -31,6 +31,11 @@ arch_gui_apps:
 # Replaced by Zen's Communication space (common/zen)
 arch_gui_apps_removed:
   - ferdium-bin
+# What they leave in the home directory (Ferdium: ~4 GB of messenger caches and logins, and
+# an autostart entry that still tries to start it at login)
+arch_gui_apps_removed_data:
+  - .config/Ferdium
+  - .config/autostart/ferdium.desktop
 
 # Multilingual (the .en models only know English). The macs run small: slower hardware
 arch_voxtype_model: large-v3-turbo

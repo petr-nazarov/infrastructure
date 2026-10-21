@@ -26,6 +26,11 @@
     name: "{{ darwin_gui_apps_removed }}"
     state: absent
     sudo_password: "{{ ansible_become_password }}"
+- name: Remove what the replaced gui applications left behind
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/{{ item }}"
+    state: absent
+  loop: "{{ darwin_gui_apps_removed_data }}"
 - name: Install gui related packages
   community.general.homebrew:
     name: "{{ darwin_gui_packages }}"

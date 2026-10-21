@@ -44,6 +44,10 @@ darwin_voxtype_tmp_agent_label: local.voxtype-keep-tmp
 # Replaced by Zen's Communication space (common/zen)
 darwin_gui_apps_removed:
   - ferdium
+# What they leave in the home directory (Ferdium: ~3 GB of messenger caches and logins)
+darwin_gui_apps_removed_data:
+  - Library/Application Support/Ferdium
+  - Library/Preferences/org.ferdium.ferdium-app.plist
 
 # Third-party taps the casks above come from
 darwin_gui_taps:

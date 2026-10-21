@@ -10,6 +10,11 @@
   community.general.pacman:
     name: "{{ arch_gui_apps_removed }}"
     state: absent
+- name: Remove what the replaced gui applications left behind
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/{{ item }}"
+    state: absent
+  loop: "{{ arch_gui_apps_removed_data }}"
 
 # Voxtype: same languages as on the macs, a bigger model. Its own evdev hotkey is off: it misses
 # the release when SUPER comes up before M. voxtype-ptt (dotfiles) reads the keys instead and

@@ -120,9 +120,16 @@
     - name: Show what changed in the Zen spaces
       ansible.builtin.debug:
         var: zen_session_result.changes
+    - name: Start Zen again
+      ansible.builtin.command: open -a Zen
+      when: zen_darwin and zen_running.stdout | length > 0
+      changed_when: true
     # Hyprland's exec, so it lands in the session like a SUPER+W start
     - name: Start Zen again
-      ansible.builtin.command: >-
-        {{ 'open -a Zen' if zen_darwin else "hyprctl -i 0 dispatch 'hl.dsp.exec_cmd(\"uwsm app -- zen-browser\")'" }}
-      when: zen_running.stdout | length > 0
+      ansible.builtin.command:
+        argv: [hyprctl, -i, "0", dispatch, 'hl.dsp.exec_cmd("uwsm app -- zen-browser")']
+      when: not zen_darwin and zen_running.stdout | length > 0
+      register: zen_started
       changed_when: true
+      # hyprctl exits 0 on a dispatch error and prints it instead
+      failed_when: zen_started.rc != 0 or zen_started.stdout != 'ok'

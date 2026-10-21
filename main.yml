@@ -9,6 +9,7 @@
     - role: linux/developer_env
     - role: arch/hyprland
     - role: arch/gui_apps
+    - role: common/zen
     - role: arch/docker
     - role: arch/virtualization
     - role: arch/netbird
@@ -50,6 +51,7 @@
     - role: darwin/kvm
     - role: darwin/yabai
     - role: darwin/gui_apps
+    - role: common/zen
     - role: darwin/docker
     - role: darwin/netbird
     - role: darwin/remote_access

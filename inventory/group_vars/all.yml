@@ -14,3 +14,12 @@ voxtype_initial_prompt: >-
   PostgreSQL, Redis, SQLite, Node.js, npm, pnpm, Bun, TypeScript, React, Next.js, Vite,
   Tailwind, Zod, Prisma, Python, FastAPI, Django, pytest, uv, Pydantic, async/await, JSON,
   YAML, TOML, regex, OAuth, JWT, API, CLI, SSH, localhost, repo, PR.
+# One color per context (project), so the same context looks the same everywhere: Zen space
+# themes (common/zen) today, tmux/kitty later. hex is the color; container is the nearest
+# Firefox container color (blue turquoise green yellow orange red pink purple toolbar).
+context_palette:
+  white: {hex: "#ececec", container: toolbar}
+  black: {hex: "#2b2b2b", container: toolbar}
+  blue: {hex: "#5b6ea4", container: blue}
+  purple: {hex: "#7f46b9", container: purple}
+  yellow: {hex: "#d1cf61", container: yellow}

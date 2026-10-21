@@ -5,6 +5,11 @@
   kewlfft.aur.aur:
     name: "{{ arch_gui_apps }}"
     use: yay
+- name: Remove replaced gui applications
+  become: true
+  community.general.pacman:
+    name: "{{ arch_gui_apps_removed }}"
+    state: absent
 
 # Voxtype: same languages as on the macs, a bigger model. Its own evdev hotkey is off: it misses
 # the release when SUPER comes up before M. voxtype-ptt (dotfiles) reads the keys instead and

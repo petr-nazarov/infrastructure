@@ -6,7 +6,6 @@ arch_gui_apps:
   - zen-browser-bin
   - opera
   - obsidian
-  - ferdium-bin # messengers in one window
   - voxtype-bin # push-to-talk voice typing, prebuilt (voxtype builds from source)
   - wtype # voxtype types through it; without it the text only lands on the clipboard
   - okular
@@ -28,6 +27,10 @@ arch_gui_apps:
   # Sound
   - notify-send
   - paplay
+
+# Replaced by Zen's Communication space (common/zen)
+arch_gui_apps_removed:
+  - ferdium-bin
 
 # Multilingual (the .en models only know English). The macs run small: slower hardware
 arch_voxtype_model: large-v3-turbo

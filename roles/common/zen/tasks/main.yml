@@ -1,0 +1,128 @@
+---
+# Zen the same way on macOS and Arch: policies (extensions), user.js prefs, then the spaces
+# with their pinned tabs and the keyboard shortcuts. Those two live in files Zen holds in
+# memory and writes back on quit, so when they need a change Zen is quit, the files written
+# and Zen started again (the session restores). Runs after gui_apps installed Zen.
+- name: Set the Zen paths for this OS
+  ansible.builtin.set_fact:
+    zen_darwin: "{{ ansible_facts['os_family'] == 'Darwin' }}"
+    zen_dir: >-
+      {{ ansible_facts['user_dir'] ~ ('/Library/Application Support/zen'
+         if ansible_facts['os_family'] == 'Darwin' else '/.config/zen') }}
+    # macOS: the app's distribution dir. Linux: /etc/zen, which wins over the package's
+    # /opt/zen-browser-bin/distribution/policies.json and survives its updates.
+    zen_policies_dir: >-
+      {{ '/Applications/Zen.app/Contents/Resources/distribution'
+         if ansible_facts['os_family'] == 'Darwin' else '/etc/zen/policies' }}
+
+- name: Load the Zen contexts
+  ansible.builtin.set_fact:
+    zen_contexts: "{{ (lookup('community.sops.sops', playbook_dir + '/vars/zen_contexts.sops.yml') | from_yaml).zen_contexts }}"
+
+- name: Create the Zen policies directory
+  become: "{{ not zen_darwin }}"
+  ansible.builtin.file:
+    path: "{{ zen_policies_dir }}"
+    state: directory
+    mode: "0755"
+# Takes effect on Zen's next start
+- name: Write the Zen policies
+  become: "{{ not zen_darwin }}"
+  ansible.builtin.template:
+    src: policies.json.j2
+    dest: "{{ zen_policies_dir }}/policies.json"
+    mode: "0644"
+
+# The profile Zen opens is the Default of its [Install...] section in profiles.ini
+- name: Find the Zen profile
+  ansible.builtin.shell: |
+    awk -F= '/^\[Install/ { s = 1; next } /^\[/ { s = 0 } s && $1 == "Default" { print $2; exit }' \
+      "{{ zen_dir }}/profiles.ini"
+  register: zen_profile_name
+  changed_when: false
+  check_mode: false # only reads, and the dry runs below need the profile
+  failed_when: zen_profile_name.rc != 0 or not zen_profile_name.stdout
+- name: Note the Zen profile directory
+  ansible.builtin.set_fact:
+    zen_profile: "{{ zen_dir }}/{{ zen_profile_name.stdout }}"
+
+- name: Write the Zen user.js
+  ansible.builtin.copy:
+    dest: "{{ zen_profile }}/user.js"
+    mode: "0644"
+    content: |
+      // Managed by Ansible (common/zen), changes here are overwritten
+      {% for k, v in zen_prefs.items() %}
+      user_pref({{ k | to_json }}, {{ v | to_json }});
+      {% endfor %}
+
+- name: Collect the Zen shortcuts for this OS
+  ansible.builtin.set_fact:
+    zen_shortcuts: "{{ zen_shortcuts_common + (zen_shortcuts_darwin if zen_darwin else zen_shortcuts_linux) }}"
+
+# Dry runs first: Zen is only quit when one of them has something to change
+- name: Check the Zen spaces
+  zen_session:
+    profile: "{{ zen_profile }}"
+    contexts: "{{ zen_contexts }}"
+    palette: "{{ context_palette }}"
+  check_mode: true
+  register: zen_session_plan
+- name: Check the Zen shortcuts
+  zen_shortcuts:
+    profile: "{{ zen_profile }}"
+    shortcuts: "{{ zen_shortcuts }}"
+    control_is_accel: "{{ not zen_darwin }}"
+  check_mode: true
+  register: zen_shortcuts_plan
+
+- name: Update the Zen spaces and shortcuts
+  when: (zen_session_plan.changed or zen_shortcuts_plan.changed) and not ansible_check_mode
+  block:
+    # Zen's main process: zen on macOS; zen-bin on Linux, whose content processes share the
+    # name and carry -contentproc
+    - name: Check whether Zen is running
+      ansible.builtin.shell: |
+        {% if zen_darwin %}
+        pgrep -x zen
+        {% else %}
+        for p in $(pgrep -x zen-bin); do grep -q contentproc /proc/$p/cmdline || echo $p; done
+        {% endif %}
+      register: zen_running
+      changed_when: false
+      failed_when: false
+    - name: Quit Zen
+      ansible.builtin.shell: |
+        {% if zen_darwin %}
+        osascript -e 'quit app "Zen"'
+        {% else %}
+        kill -TERM {{ zen_running.stdout_lines | join(' ') }}
+        {% endif %}
+        for _ in $(seq 60); do
+          {{ 'pgrep -x zen' if zen_darwin else 'kill -0 ' ~ (zen_running.stdout_lines | join(' ')) }} >/dev/null 2>&1 || exit 0
+          sleep 0.5
+        done
+        echo "Zen did not quit within 30 s" >&2
+        exit 1
+      when: zen_running.stdout | length > 0
+      changed_when: true
+    - name: Write the Zen spaces
+      zen_session:
+        profile: "{{ zen_profile }}"
+        contexts: "{{ zen_contexts }}"
+        palette: "{{ context_palette }}"
+      register: zen_session_result
+    - name: Write the Zen shortcuts
+      zen_shortcuts:
+        profile: "{{ zen_profile }}"
+        shortcuts: "{{ zen_shortcuts }}"
+        control_is_accel: "{{ not zen_darwin }}"
+    - name: Show what changed in the Zen spaces
+      ansible.builtin.debug:
+        var: zen_session_result.changes
+    # Hyprland's exec, so it lands in the session like a SUPER+W start
+    - name: Start Zen again
+      ansible.builtin.command: >-
+        {{ 'open -a Zen' if zen_darwin else "hyprctl -i 0 dispatch 'hl.dsp.exec_cmd(\"uwsm app -- zen-browser\")'" }}
+      when: zen_running.stdout | length > 0
+      changed_when: true

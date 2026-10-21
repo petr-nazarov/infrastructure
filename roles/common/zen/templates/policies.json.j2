@@ -1,0 +1,15 @@
+{% set extension_settings = {} %}
+{% for id, slug in zen_extensions.items() %}
+{%   set _ = extension_settings.update({id: {
+       'installation_mode': 'normal_installed',
+       'install_url': 'https://addons.mozilla.org/firefox/downloads/latest/' ~ slug ~ '/latest.xpi'}}) %}
+{% endfor %}
+{% set policies = {
+     'ExtensionSettings': extension_settings,
+     '3rdparty': {'Extensions': {'{c2c003ee-bd69-42a2-b0e9-6f34222cb046}': zen_auto_tab_discard}}} %}
+{% if not zen_darwin %}
+{#   zen-browser-bin's own policies.json turns off the app updater (pacman updates Zen), and
+     only one policies.json is read #}
+{%   set _ = policies.update({'DisableAppUpdate': true}) %}
+{% endif %}
+{{ {'policies': policies} | to_nice_json(indent=2) }}

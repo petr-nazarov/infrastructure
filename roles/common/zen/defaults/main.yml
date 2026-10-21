@@ -1,0 +1,80 @@
+---
+# Zen on every workstation, macOS and Arch alike. The spaces themselves (zen_contexts: name,
+# color, container, pinned tabs) are in vars/zen_contexts.sops.yml; their colors come from
+# context_palette in group_vars/all.yml.
+
+# Prefs written to the profile's user.js, applied on every Zen start (a change in
+# about:config that these cover reverts on restart). About memory with many tabs:
+# - one content process per site instead of up to 4 (Fission site isolation stays on)
+# - unload background tabs when the OS reports memory pressure as warning, not only critical
+zen_prefs:
+  dom.ipc.processCount.webIsolated: 1
+  browser.tabs.unloadOnLowMemory: true
+  browser.lowMemoryResponseOnWarn: true
+
+# Installed from addons.mozilla.org by policy and kept updated by Zen. normal_installed:
+# they can be switched off in about:addons but not removed. id -> AMO slug.
+zen_extensions:
+  "{446900e4-71c2-419f-a6a7-df9c091e268b}": bitwarden-password-manager
+  uBlock0@raymondhill.net: ublock-origin
+  jid1-ZAdIEUB7XOzOJw@jetpack: duckduckgo-for-firefox
+  idcac-pub@guus.ninja: istilldontcareaboutcookies
+  "{036a55b4-5e72-4d05-a06c-cba2dfcc134a}": traduzir-paginas-web
+  harper@writewithharper.com: private-grammar-checker-harper
+  "{762f9885-5a13-4abd-9c77-433dcd38b8fd}": return-youtube-dislikes
+  i@diygod.me: rsshub-radar
+  "{66d5f9d5-c343-4806-bfa3-93dd0853174c}": pixel-perfect-pro
+  zen-browser-tab-switcher@zen-browser-addons.mwco.app: zen-browser-tab-switcher
+  "{c2c003ee-bd69-42a2-b0e9-6f34222cb046}": auto-tab-discard
+
+# Auto Tab Discard: Zen itself unloads tabs only under memory pressure, this unloads any tab
+# left alone for 15 minutes, pinned ones too, so the spaces you are not in give their memory
+# back. Tabs that can notify (WhatsApp, Slack, Gmail) or play sound stay loaded. Pushed as the
+# extension's managed defaults: its options page can still change them.
+zen_auto_tab_discard:
+  period: 900
+  number: 6
+  pinned: false
+  audio: true
+  form: true
+  notification.permission: true
+  whitelist:
+    - meet.google.com
+
+# Keyboard shortcuts, by the ids in <profile>/zen-keyboard-shortcuts.json. Only these are
+# set; the rest keep Zen's defaults for the OS. cmd+number (macOS) and super+number (Hyprland)
+# stay with the window manager, so inside Zen:
+# - ctrl+1..0: spaces in zen_contexts order
+# - alt+1..9: tabs by position (alt+9 is the last one)
+zen_shortcuts_common:
+  - {id: zen-workspace-switch-1, key: "1", modifiers: [control]}
+  - {id: zen-workspace-switch-2, key: "2", modifiers: [control]}
+  - {id: zen-workspace-switch-3, key: "3", modifiers: [control]}
+  - {id: zen-workspace-switch-4, key: "4", modifiers: [control]}
+  - {id: zen-workspace-switch-5, key: "5", modifiers: [control]}
+  - {id: zen-workspace-switch-6, key: "6", modifiers: [control]}
+  - {id: zen-workspace-switch-7, key: "7", modifiers: [control]}
+  - {id: zen-workspace-switch-8, key: "8", modifiers: [control]}
+  - {id: zen-workspace-switch-9, key: "9", modifiers: [control]}
+  - {id: zen-workspace-switch-10, key: "0", modifiers: [control]}
+  - {id: key_selectTab1, key: "1", modifiers: [alt]}
+  - {id: key_selectTab2, key: "2", modifiers: [alt]}
+  - {id: key_selectTab3, key: "3", modifiers: [alt]}
+  - {id: key_selectTab4, key: "4", modifiers: [alt]}
+  - {id: key_selectTab5, key: "5", modifiers: [alt]}
+  - {id: key_selectTab6, key: "6", modifiers: [alt]}
+  - {id: key_selectTab7, key: "7", modifiers: [alt]}
+  - {id: key_selectTab8, key: "8", modifiers: [alt]}
+  - {id: key_selectLastTab, key: "9", modifiers: [alt]}
+  # Split view's add/separate tab: off, nothing should land on them by accident
+  - {id: key_addTabSplitView, key: "", disabled: true}
+  - {id: key_separateTabSplitView, key: "", disabled: true}
+
+# macOS only: the otherwise free ctrl key holds the sidebars and mute. On Linux ctrl+z/x are
+# undo and cut, so Zen's defaults stay there (ctrl+alt+z sidebar, ctrl+alt+x AI chat, ctrl+m mute).
+zen_shortcuts_darwin:
+  - {id: toggleSidebarKb, key: z, modifiers: [control]}
+  - {id: viewGenaiChatSidebarKb, key: x, modifiers: [control]}
+  - {id: key_toggleMute, key: m, modifiers: [control]}
+  - {id: viewOpenTabsSidebarKb, key: "", disabled: true}
+zen_shortcuts_linux: []

@@ -73,6 +73,7 @@
     profile: "{{ zen_profile }}"
     shortcuts: "{{ zen_shortcuts }}"
     control_is_accel: "{{ not zen_darwin }}"
+    extension_shortcuts: "{{ zen_extension_shortcuts }}"
   check_mode: true
   register: zen_shortcuts_plan
 
@@ -117,6 +118,7 @@
         profile: "{{ zen_profile }}"
         shortcuts: "{{ zen_shortcuts }}"
         control_is_accel: "{{ not zen_darwin }}"
+        extension_shortcuts: "{{ zen_extension_shortcuts }}"
     - name: Show what changed in the Zen spaces
       ansible.builtin.debug:
         var: zen_session_result.changes

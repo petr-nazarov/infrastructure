@@ -153,6 +153,13 @@ class MergeSession(unittest.TestCase):
         _, _, again = z.merge_session(s, c, contexts, PALETTE, now_ms=1, rng=random.Random(1))
         self.assertEqual(again, [])
 
+    def test_pin_on_its_login_redirect_without_initial_state(self):
+        s = session()
+        s["tabs"][0] = {"entries": [{"url": "https://auth.frrcode.com/?rd=https%3A%2F%2Fhome.frrcode.com%2F&rm="}],
+                        "index": 1, "pinned": True, "zenWorkspace": "{a}", "_zenPinnedInitialState": None}
+        _, _, changes = merge(s)
+        self.assertNotIn("Personal: pin FrrCode", changes)
+
     def test_manual_pin_added_after_first_run_survives_second(self):
         s, c, _ = merge()
         s["tabs"].insert(0, pinned("{b}", "https://github.com/x/y", ctx=6))
@@ -194,6 +201,35 @@ class MergeShortcuts(unittest.TestCase):
         _, changes, _ = z.merge_shortcuts(
             data, [{"id": "zen-workspace-switch-1", "key": "1", "modifiers": ["control"]}], control_is_accel=True)
         self.assertEqual(changes, [])
+
+
+class MergeExtensionShortcuts(unittest.TestCase):
+    ADDONS = [{"id": "bw@x", "installDate": 5, "defaultLocale": {"name": "Bitwarden"}},
+              {"id": "other@x", "installDate": 9}]
+    WANT = [{"extension": "bw@x", "command": "_execute_browser_action", "shortcut": "Ctrl+B"}]
+
+    def test_adds_entry_next_to_other_extensions(self):
+        settings = {"version": 3, "commands": {"_execute_browser_action": {"precedenceList": [
+            {"id": "other@x", "installDate": 9, "value": {"shortcut": "Alt+K"}, "enabled": True}]}}}
+        out, changes, missing = z.merge_extension_shortcuts(settings, self.ADDONS, self.WANT)
+        items = out["commands"]["_execute_browser_action"]["precedenceList"]
+        self.assertEqual([i["id"] for i in items], ["other@x", "bw@x"])
+        self.assertEqual(items[1], {"id": "bw@x", "installDate": 5, "value": {"shortcut": "Ctrl+B"},
+                                    "enabled": True})
+        self.assertEqual(items[0]["value"], {"shortcut": "Alt+K"})
+        self.assertTrue(changes)
+        self.assertEqual(missing, [])
+        _, again, _ = z.merge_extension_shortcuts(out, self.ADDONS, self.WANT)
+        self.assertEqual(again, [])
+
+    def test_keeps_other_updates_and_reports_missing(self):
+        settings = {"commands": {"_execute_browser_action": {"precedenceList": [
+            {"id": "bw@x", "installDate": 5, "value": {"description": "d", "shortcut": "Ctrl+Y"}, "enabled": True}]}}}
+        out, _, missing = z.merge_extension_shortcuts(
+            settings, self.ADDONS, self.WANT + [{"extension": "gone@x", "command": "c", "shortcut": "Ctrl+Q"}])
+        self.assertEqual(out["commands"]["_execute_browser_action"]["precedenceList"][0]["value"],
+                         {"description": "d", "shortcut": "Ctrl+B"})
+        self.assertEqual(missing, ["gone@x"])
 
 
 class ProfileIni(unittest.TestCase):

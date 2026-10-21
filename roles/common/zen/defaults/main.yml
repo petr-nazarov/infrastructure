@@ -46,6 +46,7 @@ zen_auto_tab_discard:
 # stay with the window manager, so inside Zen:
 # - ctrl+1..0: spaces in zen_contexts order
 # - alt+1..9: tabs by position (alt+9 is the last one)
+# - cmd+b (macOS) / ctrl+b (Linux, SUPER+B in Hyprland): Bitwarden, see zen_extension_shortcuts
 zen_shortcuts_common:
   - {id: zen-workspace-switch-1, key: "1", modifiers: [control]}
   - {id: zen-workspace-switch-2, key: "2", modifiers: [control]}
@@ -69,12 +70,20 @@ zen_shortcuts_common:
   # Split view's add/separate tab: off, nothing should land on them by accident
   - {id: key_addTabSplitView, key: "", disabled: true}
   - {id: key_separateTabSplitView, key: "", disabled: true}
+  # cmd/ctrl+b: Bitwarden instead of the bookmarks sidebar
+  - {id: viewBookmarksSidebarKb, key: b, modifiers: [accel], disabled: true}
 
-# macOS only: the otherwise free ctrl key holds the sidebars and mute. On Linux ctrl+z/x are
-# undo and cut, so Zen's defaults stay there (ctrl+alt+z sidebar, ctrl+alt+x AI chat, ctrl+m mute).
+# macOS only. Earlier runs put the sidebars and mute on ctrl+z/x/m, unused: switched off.
 zen_shortcuts_darwin:
-  - {id: toggleSidebarKb, key: z, modifiers: [control]}
-  - {id: viewGenaiChatSidebarKb, key: x, modifiers: [control]}
-  - {id: key_toggleMute, key: m, modifiers: [control]}
+  - {id: toggleSidebarKb, key: z, modifiers: [control], disabled: true}
+  - {id: viewGenaiChatSidebarKb, key: x, modifiers: [control], disabled: true}
+  - {id: key_toggleMute, key: m, modifiers: [control], disabled: true}
   - {id: viewOpenTabsSidebarKb, key: "", disabled: true}
 zen_shortcuts_linux: []
+
+# Extension shortcuts, as set in about:addons > Manage Extension Shortcuts. "Ctrl" is cmd on
+# macOS and ctrl on Linux. Set once the extension is installed (the run after its first start).
+zen_extension_shortcuts:
+  - extension: "{446900e4-71c2-419f-a6a7-df9c091e268b}" # Bitwarden: open the popup
+    command: _execute_browser_action
+    shortcut: Ctrl+B

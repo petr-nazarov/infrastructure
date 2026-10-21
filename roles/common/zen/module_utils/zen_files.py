@@ -9,7 +9,7 @@ import re
 import struct
 import time
 import uuid
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlsplit
 
 MOZLZ4_MAGIC = b"mozLz40\0"
 
@@ -98,17 +98,27 @@ def url_key(url):
     return (parts.netloc + parts.path).rstrip("/").lower()
 
 
+def _keys_with_redirects(url):
+    """The url's key, plus those of urls in its query: a login page (Authelia's ?rd=,
+    Google's ?continue=) stands for the page it returns to."""
+    keys = [url_key(url)]
+    for _, value in parse_qsl(urlsplit(url).query):
+        if value.startswith(("http://", "https://")):
+            keys.append(url_key(value))
+    return keys
+
+
 def tab_keys(tab):
     """Where a pinned tab points: the url it was pinned with and the one it shows now."""
     keys = []
     entry = (tab.get("_zenPinnedInitialState") or {}).get("entry") or {}
     if entry.get("url"):
-        keys.append(url_key(entry["url"]))
+        keys += _keys_with_redirects(entry["url"])
     entries = tab.get("entries") or []
     if entries:
         index = min(max(tab.get("index", len(entries)), 1), len(entries))
         if entries[index - 1].get("url"):
-            keys.append(url_key(entries[index - 1]["url"]))
+            keys += _keys_with_redirects(entries[index - 1]["url"])
     return keys
 
 
@@ -324,3 +334,37 @@ def profile_from_ini(text):
         if values.get("Default") == "1" and "Path" in values:
             return values["Path"]
     return None
+
+
+def merge_extension_shortcuts(settings, addons, wanted):
+    """Set extension command shortcuts the way about:addons does, in extension-settings.json.
+
+    settings is that file's data, addons the "addons" list of extensions.json (for the
+    install date Firefox orders an extension's entries by). wanted: [{extension, command,
+    shortcut}], shortcut in WebExtension form ("Ctrl+B": cmd on macOS, ctrl elsewhere).
+    Extensions that are not installed yet are reported, not added.
+    """
+    settings = copy.deepcopy(settings)
+    changes, missing = [], []
+    installed = {a["id"]: a for a in addons}
+    commands = settings.setdefault("commands", {})
+    for w in wanted:
+        addon = installed.get(w["extension"])
+        if addon is None:
+            missing.append(w["extension"])
+            continue
+        key_info = commands.setdefault(w["command"], {"precedenceList": []})
+        items = key_info.setdefault("precedenceList", [])
+        item = next((i for i in items if i.get("id") == w["extension"]), None)
+        if item is None:
+            item = {"id": w["extension"], "installDate": addon.get("installDate", 0),
+                    "value": {}, "enabled": False}
+            items.append(item)
+            items.sort(key=lambda i: i.get("installDate", 0), reverse=True)
+        if (item.get("value") or {}).get("shortcut") != w["shortcut"] or not item.get("enabled"):
+            changes.append("%s %s: %r -> %r" % (addon.get("defaultLocale", {}).get("name", w["extension"]),
+                                                w["command"], (item.get("value") or {}).get("shortcut"),
+                                                w["shortcut"]))
+            item["value"] = dict(item.get("value") or {}, shortcut=w["shortcut"])
+            item["enabled"] = True
+    return settings, changes, missing

@@ -4,8 +4,9 @@
 # context_palette in group_vars/all.yml. A pin may name its own container (another context's
 # login, e.g. one client's Slack in Communication); otherwise it opens in its space's.
 
-# Prefs written to the profile's user.js, applied on every Zen start (a change in
-# about:config that these cover reverts on restart). About memory with many tabs:
+# Prefs written to the profile's user.js, applied on every Zen start (a change in about:config
+# that these cover reverts on restart). browser.startup.homepage joins them from zen_homepage
+# in the sops file. About memory with many tabs:
 # - one content process per site instead of up to 4 (Fission site isolation stays on)
 # - unload background tabs when the OS reports memory pressure as warning, not only critical
 zen_prefs:

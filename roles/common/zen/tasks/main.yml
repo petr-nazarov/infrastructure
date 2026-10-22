@@ -17,7 +17,11 @@
 
 - name: Load the Zen contexts
   ansible.builtin.set_fact:
-    zen_contexts: "{{ (lookup('community.sops.sops', playbook_dir + '/vars/zen_contexts.sops.yml') | from_yaml).zen_contexts }}"
+    zen_private: "{{ lookup('community.sops.sops', playbook_dir + '/vars/zen_contexts.sops.yml') | from_yaml }}"
+- name: Note the Zen contexts and homepage
+  ansible.builtin.set_fact:
+    zen_contexts: "{{ zen_private.zen_contexts }}"
+    zen_prefs: "{{ zen_prefs | combine({'browser.startup.homepage': zen_private.zen_homepage}) }}"
 
 - name: Create the Zen policies directory
   become: "{{ not zen_darwin }}"

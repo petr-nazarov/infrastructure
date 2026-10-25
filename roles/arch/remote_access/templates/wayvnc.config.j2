@@ -1,0 +1,12 @@
+# Managed by infrastructure (arch/remote_access)
+address={{ ansible_facts['wt0']['ipv4']['address'] }}
+port={{ arch_remote_access_vnc_port }}
+enable_auth=true
+# Log in with the Linux user and password
+enable_pam=true
+# Apple Diffie-Hellman, which macOS Screen Sharing uses; the link is WireGuard already
+relax_encryption=true
+use_relative_paths=true
+private_key_file=tls_key.pem
+certificate_file=tls_cert.pem
+rsa_private_key_file=rsa_key.pem

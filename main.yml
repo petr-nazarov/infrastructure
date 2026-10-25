@@ -13,6 +13,7 @@
     - role: arch/docker
     - role: arch/virtualization
     - role: arch/netbird
+    - role: arch/remote_access
     # - role: arch/kmonad
 
 - name: Setup the voxtype server

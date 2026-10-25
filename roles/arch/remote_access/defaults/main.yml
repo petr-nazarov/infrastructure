@@ -1,0 +1,9 @@
+---
+# wayvnc listens on the NetBird address only; the NetBird policy has to allow TCP 5900 to
+# this peer (as for the macs, darwin/remote_access).
+arch_remote_access_vnc_port: 5900
+# Off: start it over ssh when needed (`systemctl --user start wayvnc`). On: it starts with
+# the Hyprland session.
+arch_remote_access_start_on_login: false
+# Remmina profiles for reaching the macs' Screen Sharing, logged in as this macOS user
+arch_remote_access_mac_user: "{{ ansible_facts['user_id'] }}"

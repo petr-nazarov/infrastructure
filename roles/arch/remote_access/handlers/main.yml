@@ -1,0 +1,5 @@
+---
+# try-restart: a stopped wayvnc stays stopped, which systemd_service cannot express
+- name: Restart wayvnc if running
+  ansible.builtin.command: systemctl --user try-restart wayvnc # noqa: command-instead-of-module
+  changed_when: true

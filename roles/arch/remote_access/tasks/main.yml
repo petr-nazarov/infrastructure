@@ -1,0 +1,88 @@
+---
+# Graphical login into the Hyprland session over NetBird: wayvnc serves the screen with
+# keyboard and mouse, logged in with the Linux user's password (PAM). It needs a running
+# Hyprland session, so after a reboot log in at sddm first. The macs serve Screen Sharing
+# instead (darwin/remote_access); Remmina here connects to them.
+- name: Install wayvnc and the vnc client
+  become: true
+  community.general.pacman:
+    name:
+      - wayvnc
+      - remmina
+      - libvncserver # Remmina's VNC plugin
+    state: present
+
+- name: Fail without a NetBird address to listen on
+  ansible.builtin.assert:
+    that: "'wt0' in ansible_facts and 'ipv4' in ansible_facts['wt0']"
+    fail_msg: NetBird (wt0) is not up; wayvnc only listens on the NetBird address
+
+- name: Create the wayvnc config directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.config/wayvnc"
+    state: directory
+    mode: "0700"
+
+# TLS for VeNCrypt clients (Remmina), RSA-AES for the ones that speak it (TigerVNC)
+- name: Create the wayvnc TLS key and certificate
+  ansible.builtin.command:
+    cmd: >-
+      openssl req -x509 -newkey ec -pkeyopt ec_paramgen_curve:secp384r1 -sha384 -days 3650
+      -nodes -keyout tls_key.pem -out tls_cert.pem -subj /CN={{ inventory_hostname }}
+      -addext subjectAltName=DNS:{{ inventory_hostname }}.netbird.cloud
+    chdir: "{{ ansible_facts['user_dir'] }}/.config/wayvnc"
+    creates: tls_cert.pem
+  notify: Restart wayvnc if running
+- name: Create the wayvnc RSA-AES key
+  ansible.builtin.command:
+    cmd: openssl genrsa -traditional -out rsa_key.pem 4096
+    chdir: "{{ ansible_facts['user_dir'] }}/.config/wayvnc"
+    creates: rsa_key.pem
+  notify: Restart wayvnc if running
+- name: Configure wayvnc
+  ansible.builtin.template:
+    src: wayvnc.config.j2
+    dest: "{{ ansible_facts['user_dir'] }}/.config/wayvnc/config"
+    mode: "0600"
+  notify: Restart wayvnc if running
+
+# The user manager has the session's WAYLAND_DISPLAY (uwsm exports it), so this starts
+# from an ssh shell as well.
+- name: Install the wayvnc user service
+  ansible.builtin.copy:
+    dest: "{{ ansible_facts['user_dir'] }}/.config/systemd/user/wayvnc.service"
+    mode: "0644"
+    content: |
+      [Unit]
+      Description=VNC into the Hyprland session over NetBird (infrastructure, arch/remote_access)
+      PartOf=graphical-session.target
+      After=graphical-session.target
+
+      [Service]
+      ExecStart=/usr/bin/wayvnc
+      Restart=on-failure
+      RestartSec=5
+
+      [Install]
+      WantedBy=graphical-session.target
+  register: arch_remote_access_unit
+- name: Set whether wayvnc starts with the session
+  ansible.builtin.systemd_service:
+    name: wayvnc
+    scope: user
+    enabled: "{{ arch_remote_access_start_on_login }}"
+    daemon_reload: "{{ arch_remote_access_unit.changed }}"
+
+# Not overwritten: Remmina saves the password into the profile once asked to
+- name: Create the Remmina profile directory
+  ansible.builtin.file:
+    path: "{{ ansible_facts['user_dir'] }}/.local/share/remmina"
+    state: directory
+    mode: "0700"
+- name: Add Remmina profiles for the macs
+  ansible.builtin.template:
+    src: mac.remmina.j2
+    dest: "{{ ansible_facts['user_dir'] }}/.local/share/remmina/{{ item }}.remmina"
+    mode: "0600"
+    force: false
+  loop: "{{ groups['mac-workstations'] }}"
